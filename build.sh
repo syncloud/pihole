@@ -56,7 +56,8 @@ make
 make install
 
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
-tar xf ${FTL_VERSION}.tar.gz
+tar xf v${FTL_VERSION}.tar.gz
+cd FTL-${FTL_VERSION}
 for f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
