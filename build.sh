@@ -10,7 +10,8 @@ fi
 
 NAME=$1
 NETTLE_VERSION=3.4
-
+GMV_VERSION=6.1.2
+FTL_VERSION=4.3.1
 ARCH=$(uname -m)
 VERSION=$2
 
@@ -32,6 +33,26 @@ cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xzf ${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
+./configure --help
+./configure --prefix=${BUILD_DIR}
+make
+make install
+
+wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
+tar xzf ${GMP_VERSION}.tar.gz
+cd gmp-${GMP_VERSION}
+export CFLAGS="-fPIC"
+./configure --help
+./configure --prefix=${BUILD_DIR}
+make
+make install
+
+wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
+tar xzf ${FTL_VERSION}.tar.gz
+for f in ${DIR}/patches/*.patch
+do
+  patch -p0 < $f
+done
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
 make
