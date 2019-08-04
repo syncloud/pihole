@@ -39,7 +39,7 @@ ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
 cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
-tar xzf ${NETTLE_VERSION}.tar.gz
+tar xzf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
@@ -47,7 +47,7 @@ make
 make install
 
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
-tar xzf ${GMP_VERSION}.tar.gz
+tar xzf gmp-${GMP_VERSION}.tar.gz
 cd gmp-${GMP_VERSION}
 export CFLAGS="-fPIC"
 ./configure --help
