@@ -39,7 +39,7 @@ ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
 cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
-tar xzf nettle-${NETTLE_VERSION}.tar.gz
+tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
@@ -47,7 +47,7 @@ make
 make install
 
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
-tar xzf gmp-${GMP_VERSION}.tar.bz2
+tar xf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
 export CFLAGS="-fPIC"
 ./configure --help
@@ -56,7 +56,7 @@ make
 make install
 
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
-tar xzf ${FTL_VERSION}.tar.gz
+tar xf ${FTL_VERSION}.tar.gz
 for f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
