@@ -33,7 +33,7 @@ mv python ${BUILD_DIR}/
 
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
-#cp -r ${DIR}/bin ${BUILD_DIR}
+cp -r ${DIR}/bin ${BUILD_DIR}
 #cp -r ${DIR}/config ${BUILD_DIR}/config.templates
 #cp -r ${DIR}/hooks ${BUILD_DIR}
 
@@ -62,10 +62,8 @@ for f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
 done
-./configure --help
-./configure --prefix=${BUILD_DIR}
 make
-make install
+cp pihole-FTL ${BUILD_DIR}/bin/pihole-FTL
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
