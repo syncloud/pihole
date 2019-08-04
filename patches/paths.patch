@@ -1,6 +1,6 @@
 diff -Naur FTL/dnsmasq/config.h FTL-snap/dnsmasq/config.h
---- FTL/dnsmasq/config.h	2018-11-06 22:57:03.686524083 +0000
-+++ FTL-snap/dnsmasq/config.h	2018-11-06 23:22:48.437456951 +0000
+--- dnsmasq/config.h	2018-11-06 22:57:03.686524083 +0000
++++ dnsmasq/config.h	2018-11-06 23:22:48.437456951 +0000
 @@ -214,7 +214,7 @@
  #   if defined(__ANDROID__)
  #      define RUNFILE "/data/dnsmasq.pid"
@@ -11,8 +11,8 @@ diff -Naur FTL/dnsmasq/config.h FTL-snap/dnsmasq/config.h
  #endif
 
 diff -Naur FTL/socket_client.c FTL-snap/socket_client.c
---- FTL/socket_client.c	2018-11-06 22:57:03.694524037 +0000
-+++ FTL-snap/socket_client.c	2018-11-06 23:22:54.681420214 +0000
+--- socket_client.c	2018-11-06 22:57:03.694524037 +0000
++++ socket_client.c	2018-11-06 23:22:54.681420214 +0000
 @@ -40,7 +40,7 @@
  	address.sun_family = AF_LOCAL;
 
@@ -23,8 +23,8 @@ diff -Naur FTL/socket_client.c FTL-snap/socket_client.c
  	int i;
  	for(i = 1; i < argc; i++) {
 diff -Naur FTL/sqlite3.c FTL-snap/sqlite3.c
---- FTL/sqlite3.c	2018-11-06 22:57:03.738523780 +0000
-+++ FTL-snap/sqlite3.c	2018-11-06 23:22:22.913607124 +0000
+--- sqlite3.c	2018-11-06 22:57:03.738523780 +0000
++++ sqlite3.c	2018-11-06 23:22:22.913607124 +0000
 @@ -37743,8 +37743,8 @@
    static const char *azDirs[] = {
       0,
