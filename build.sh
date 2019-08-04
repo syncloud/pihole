@@ -47,7 +47,7 @@ make
 make install
 
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
-tar xzf gmp-${GMP_VERSION}.tar.gz
+tar xzf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
 export CFLAGS="-fPIC"
 ./configure --help
