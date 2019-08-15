@@ -62,7 +62,7 @@ for f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
 done
-export CFLAGS=-I${BUILD_DIR}/include
+export CFLAGS=-I${BUILD_DIR}/include/nettle
 make
 cp pihole-FTL ${BUILD_DIR}/bin/pihole-FTL
 
