@@ -49,7 +49,7 @@ make install
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
 tar xf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
-#export CFLAGS="-fPIC"
+export CFLAGS="-fPIC"
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
 make
