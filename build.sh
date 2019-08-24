@@ -54,7 +54,7 @@ cd gmp-${GMP_VERSION}
 if [[ $ARCH == "x86_64" ]]; then
     export CFLAGS="-fPIC -O2 -pedantic -fomit-frame-pointer -m64 -mtune=slm -march=slm" 
 else
-    expprt CFLAGS="-fPIC -O2 -pedantic -fomit-frame-pointer -march=armv7-a -mfloat-abi=hard -mfpu=neon -mtune=cortex-a15" 
+    export CFLAGS="-fPIC -O2 -pedantic -fomit-frame-pointer -march=armv7-a -mfloat-abi=hard -mfpu=neon -mtune=cortex-a15" 
 fi
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
