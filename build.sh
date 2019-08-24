@@ -46,14 +46,16 @@ cd nettle-${NETTLE_VERSION}
 make
 make install
 
-wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
-tar xf gmp-${GMP_VERSION}.tar.bz2
-cd gmp-${GMP_VERSION}
-export CFLAGS="-fPIC"
-./configure --help
-./configure --prefix=${BUILD_DIR}
-make
-make install
+apt update
+apt install libgmp-dev
+#wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
+#tar xf gmp-${GMP_VERSION}.tar.bz2
+#cd gmp-${GMP_VERSION}
+#export CFLAGS="-fPIC"
+#./configure --help
+#./configure --prefix=${BUILD_DIR}
+#make
+#make install
 
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
 tar xf v${FTL_VERSION}.tar.gz
