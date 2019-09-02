@@ -78,7 +78,7 @@ cp pihole-FTL ${BUILD_DIR}/bin/pihole
 
 wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
 tar xf v${WEB_VERSION}.tar.gz
-cp AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
+cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
