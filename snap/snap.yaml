@@ -12,6 +12,17 @@ apps:
     restart-condition: always
     before: [nginx]
 
+  php-fpm:
+    user: pihole
+    command: bin/service.php-fpm.sh start
+    daemon: forking
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+    #post-start-command: bin/service.php-fpm.sh post-start
+    after: [server]
+    before: [nginx]
   nginx:
     user: pihole
     command: bin/service.nginx.sh start

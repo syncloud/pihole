@@ -12,6 +12,7 @@ NAME=$1
 NETTLE_VERSION=3.4
 GMP_VERSION=6.1.2
 FTL_VERSION=4.3.1
+WEB_VERSION=4.3
 ARCH=$(uname -m)
 VERSION=$2
 
@@ -27,6 +28,10 @@ wget --progress=dot:giga ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
 tar xf nginx-${ARCH}.tar.gz
 mv nginx ${BUILD_DIR}/
 
+wget --progress=dot:giga ${DOWNLOAD_URL}/php7-${ARCH}.tar.gz
+tar xf php7-${ARCH}.tar.gz
+mv php7 ${BUILD_DIR}/php
+
 wget --progress=dot:giga ${DOWNLOAD_URL}/python-${ARCH}.tar.gz
 tar xf python-${ARCH}.tar.gz
 mv python ${BUILD_DIR}/
@@ -34,7 +39,7 @@ mv python ${BUILD_DIR}/
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
 cp -r ${DIR}/bin ${BUILD_DIR}
-#cp -r ${DIR}/config ${BUILD_DIR}/config.templates
+cp -r ${DIR}/config ${BUILD_DIR}/config.templates
 cp -r ${DIR}/hooks ${BUILD_DIR}
 
 cd ${DIR}/build
@@ -46,8 +51,6 @@ cd nettle-${NETTLE_VERSION}
 make
 make install
 
-#apt update
-#apt install libgmp-dev
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
 tar xf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
@@ -71,7 +74,11 @@ done
 sed -i 's#/usr/local/lib#'${BUILD_DIR}/lib'#g' Makefile
 export CFLAGS=-I${BUILD_DIR}/include
 make
-cp pihole-FTL ${BUILD_DIR}/bin/pihole-FTL
+cp pihole-FTL ${BUILD_DIR}/bin/pihole
+
+wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
+tar xf v${WEB_VERSION}.tar.gz
+cp AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
