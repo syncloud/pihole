@@ -37,7 +37,7 @@ apps:
     #reload-command: bin/service.nginx.sh reload
 
 confinement: strict
-description: Users
+description: PiHole
 grade: stable
-name: users
-summary: Users
+name: pihole
+summary: PiHole
