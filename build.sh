@@ -41,6 +41,7 @@ ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 cp -r ${DIR}/bin ${BUILD_DIR}
 cp -r ${DIR}/config ${BUILD_DIR}/config.templates
 cp -r ${DIR}/hooks ${BUILD_DIR}
+cp -r ${DIR}/etc ${BUILD_DIR}
 
 cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
