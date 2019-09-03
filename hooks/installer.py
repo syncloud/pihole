@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from os.path import join, isfile
 
 from syncloudlib import fs, linux, gen, logger
@@ -46,6 +47,7 @@ class Installer:
         gen.generate_files(templates_path, config_path, variables)
         fs.chownpath(self.snap_data_dir, USER_NAME, recursive=True)
         fs.chownpath(self.app_data_dir, USER_NAME, recursive=True)
+        shutil.copytree(join(self.app_dir, 'etc'), self.snap_data_dir)
 
     def install(self):
         self.install_config()
