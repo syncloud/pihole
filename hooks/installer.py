@@ -47,7 +47,7 @@ class Installer:
         gen.generate_files(templates_path, config_path, variables)
         fs.chownpath(self.snap_data_dir, USER_NAME, recursive=True)
         fs.chownpath(self.app_data_dir, USER_NAME, recursive=True)
-        shutil.copytree(join(self.app_dir, 'etc'), self.snap_data_dir)
+        shutil.copytree(join(self.app_dir, 'etc'), join(os.environ['SNAP_COMMON'], 'etc'))
 
     def install(self):
         self.install_config()
