@@ -1,6 +1,6 @@
 apps:
   server:
-    user: pihole
+    #user: pihole
     #pre-start-command: bin/service.server.sh pre-start
     command: bin/service.server.sh start
     #post-start-command: bin/service.server.sh post-start
