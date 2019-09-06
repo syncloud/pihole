@@ -80,6 +80,7 @@ cp pihole-FTL ${BUILD_DIR}/bin/pihole
 wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
 tar xf v${WEB_VERSION}.tar.gz
 cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
+sed -i 's#/etc/pihole#/snap/pihole/current/data/etc/pihole#g' ${BUILD_DIR}/web/scripts/pi-hole/php/header.php
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
