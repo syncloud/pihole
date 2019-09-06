@@ -54,7 +54,7 @@ def test_activate_device(device):
     assert response.status_code == 200, response.text
 
 
-def test_install(app_archive_path, device_host, app_domain, device_password):
+def test_install(device_session, app_archive_path, device_host, app_domain, device_password):
     local_install(device_host, device_password, app_archive_path)
     wait_for_installer(device_session, device_host)
 
