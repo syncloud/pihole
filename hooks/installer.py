@@ -4,7 +4,7 @@ import shutil
 from os.path import join, isfile
 from subprocess import check_output
 from syncloudlib import fs, linux, gen, logger
-from syncloudlib.application import paths, storage
+from syncloudlib.application import paths, storage, urls
 
 APP_NAME = 'pihole'
 
@@ -44,7 +44,7 @@ class Installer:
             'app_data_dir': self.app_data_dir,
             'snap_data': self.snap_data_dir,
             'snap_common': os.environ['SNAP_COMMON'],
-            'domain': = urls.get_app_domain_name(APP_NAME),
+            'domain': urls.get_app_domain_name(APP_NAME),
             'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
