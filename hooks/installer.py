@@ -43,7 +43,9 @@ class Installer:
             'app_dir': self.app_dir,
             'app_data_dir': self.app_data_dir,
             'snap_data': self.snap_data_dir,
-            'snap_common': os.environ['SNAP_COMMON']
+            'snap_common': os.environ['SNAP_COMMON'],
+            'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
+            #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
         gen.generate_files(templates_path, config_path, variables)
         gen.generate_files(join(self.app_dir, 'etc'), join(os.environ['SNAP_COMMON'], 'etc'), variables)
