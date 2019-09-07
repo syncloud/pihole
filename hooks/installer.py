@@ -44,6 +44,7 @@ class Installer:
             'app_data_dir': self.app_data_dir,
             'snap_data': self.snap_data_dir,
             'snap_common': os.environ['SNAP_COMMON'],
+            'domain': = urls.get_app_domain_name(APP_NAME),
             'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
