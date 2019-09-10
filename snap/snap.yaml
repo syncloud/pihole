@@ -2,6 +2,7 @@ apps:
   server:
     #user: pihole
     command: bin/service.server.sh start
+    daemon: simple
     start-timeout: 600s
     plugs:
     - network
