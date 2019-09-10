@@ -32,10 +32,8 @@ apps:
     - network-bind
     restart-condition: always
     start-timeout: 600s
-    pre-start-command: bin/service.nginx.sh pre-start
     stop-command: bin/service.nginx.sh stop
-    #reload-command: bin/service.nginx.sh reload
-
+    
 confinement: strict
 description: PiHole
 grade: stable
