@@ -77,11 +77,17 @@ export CFLAGS=-I${BUILD_DIR}/include
 make
 cp pihole-FTL ${BUILD_DIR}/bin/pihole
 
-wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
-tar xf v${WEB_VERSION}.tar.gz
-cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
-find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} +
-find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
+# old web
+#wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
+#tar xf v${WEB_VERSION}.tar.gz
+*cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
+#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} +
+#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
+
+# new web
+curl https://sh.rustup.rs -sSf | sh
+rustup update
+rustc --version
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
