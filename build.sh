@@ -13,6 +13,7 @@ NETTLE_VERSION=3.4
 GMP_VERSION=6.1.2
 FTL_VERSION=4.3.1
 WEB_VERSION=4.3
+API_VERSION=development
 ARCH=$(uname -m)
 VERSION=$2
 
@@ -85,11 +86,14 @@ cp pihole-FTL ${BUILD_DIR}/bin/pihole
 #find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
 
 # new web
-
+wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
+tar xf ${API_VERSION}.tar.gz
+cd api-${API_VERSION}
 curl https://sh.rustup.rs -sSf | sh -s -- -y
-export PATH=$PATH:$HOME/.cargo/bin
+source ~/.cargo/env
 rustup update
 rustc --version
+cargo build
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
