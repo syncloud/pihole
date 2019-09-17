@@ -76,7 +76,7 @@ done
 sed -i 's#/usr/local/lib#'${BUILD_DIR}/lib'#g' Makefile
 export CFLAGS=-I${BUILD_DIR}/include
 make
-cp pihole-FTL ${BUILD_DIR}/bin/pihole
+cp pihole-FTL ${BUILD_DIR}/bin/ftl
 
 # old web
 #wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
@@ -93,8 +93,8 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
-cargo build
-ls target/debug
+cargo build --release
+cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app

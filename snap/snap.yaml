@@ -1,5 +1,5 @@
 apps:
-  server:
+  ftl:
     #user: pihole
     command: bin/service.server.sh start
     daemon: simple
@@ -8,17 +8,6 @@ apps:
     - network
     - network-bind
     restart-condition: always
-    before: [nginx]
-
-  php-fpm:
-    user: pihole
-    command: bin/service.php-fpm.sh start
-    daemon: forking
-    plugs:
-    - network
-    - network-bind
-    restart-condition: always
-    after: [server]
     before: [nginx]
   nginx:
     user: pihole
@@ -30,7 +19,17 @@ apps:
     restart-condition: always
     start-timeout: 600s
     stop-command: bin/service.nginx.sh stop
-    
+  api:
+    #user: pihole
+    command: bin/service.api.sh start
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+    start-timeout: 600s
+    stop-command: bin/service.api.sh stop
+
 confinement: strict
 description: PiHole
 grade: stable
