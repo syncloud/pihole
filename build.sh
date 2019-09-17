@@ -94,6 +94,7 @@ source ~/.cargo/env
 rustup update
 rustc --version
 cargo build
+ls target
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
