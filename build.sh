@@ -85,7 +85,7 @@ cp pihole-FTL ${BUILD_DIR}/bin/pihole
 #find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
 
 # new web
-curl https://sh.rustup.rs -sSf | sh
+curl https://sh.rustup.rs -sSf | sh -s -- -y
 rustup update
 rustc --version
 
