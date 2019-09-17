@@ -12,11 +12,17 @@ NAME=$1
 NETTLE_VERSION=3.4
 GMP_VERSION=6.1.2
 FTL_VERSION=4.3.1
-WEB_VERSION=4.3
+WEB_VERSION=development
 API_VERSION=development
 ARCH=$(uname -m)
 VERSION=$2
-
+NODE_ARCH=armv6l
+NODE_VERSION=10.15.1
+if [[ ${ARCH} == "x86_64" ]]; then
+    GO_ARCH=amd64
+    NODE_ARCH=x64
+fi
+export PATH=${DIR}/node/bin:$PATH
 DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
 
 rm -rf ${DIR}/build
@@ -28,10 +34,6 @@ cd ${DIR}/build
 wget --progress=dot:giga ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
 tar xf nginx-${ARCH}.tar.gz
 mv nginx ${BUILD_DIR}/
-
-wget --progress=dot:giga ${DOWNLOAD_URL}/php7-${ARCH}.tar.gz
-tar xf php7-${ARCH}.tar.gz
-mv php7 ${BUILD_DIR}/php
 
 wget --progress=dot:giga ${DOWNLOAD_URL}/python-${ARCH}.tar.gz
 tar xf python-${ARCH}.tar.gz
@@ -66,6 +68,7 @@ fi
 make
 make install
 
+cd ${DIR}/build
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
 tar xf v${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
@@ -86,6 +89,7 @@ cp pihole-FTL ${BUILD_DIR}/bin/ftl
 #find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
 
 # new web
+cd ${DIR}/build
 wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
 tar xf ${API_VERSION}.tar.gz
 cd api-${API_VERSION}
@@ -95,6 +99,22 @@ rustup update
 rustc --version
 cargo build --release
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
+
+cd ${DIR}/build
+wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
+    --progress dot:giga -O node.tar.gz
+tar xzf node.tar.gz
+mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
+
+cd ${DIR}/build
+wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
+tar xf ${WEB_VERSION}.tar.gz
+cd web-${WEB_VERSION}
+npm install
+npm run build
+ls -la
+
+cd ${DIR}/build
 
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
