@@ -56,9 +56,10 @@ cp -r ${DIR}/etc ${BUILD_DIR}
 # new web
 cd ${DIR}/build
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-nvm install ${NODE_VERSION}
 source ~/.bashrc
 command -v nvm
+nvm install ${NODE_VERSION}
+
 #wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
 #    --progress dot:giga -O node.tar.gz
 #tar xzf node.tar.gz
