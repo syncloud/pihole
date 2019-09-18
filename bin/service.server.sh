@@ -9,7 +9,7 @@ fi
 
 case $1 in
 start)
-    exec $DIR/bin/pihole debug
+    exec $DIR/bin/ftl debug
     ;;
 *)
     echo "not valid command"
