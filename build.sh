@@ -22,7 +22,7 @@ if [[ ${ARCH} == "x86_64" ]]; then
     GO_ARCH=amd64
     NODE_ARCH=x64
 fi
-export PATH=${DIR}/node/bin:$PATH
+export PATH=${DIR}/build/node/bin:$PATH
 DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
 
 rm -rf ${DIR}/build
@@ -46,6 +46,43 @@ cp -r ${DIR}/config ${BUILD_DIR}/config.templates
 cp -r ${DIR}/hooks ${BUILD_DIR}
 cp -r ${DIR}/etc ${BUILD_DIR}
 
+# old web
+#wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
+#tar xf v${WEB_VERSION}.tar.gz
+#cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
+#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} +
+#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
+
+# new web
+cd ${DIR}/build
+wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
+    --progress dot:giga -O node.tar.gz
+tar xzf node.tar.gz
+mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
+
+cd ${DIR}/build
+wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
+tar xf ${WEB_VERSION}.tar.gz
+rm ${WEB_VERSION}.tar.gz
+cd web-${WEB_VERSION}
+npm install
+npm run build
+ls -la
+cp -r build ${BUILD_DIR}/web
+
+cd ${DIR}/build
+wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
+tar xf ${API_VERSION}.tar.gz
+rm ${API_VERSION}.tar.gz
+cd api-${API_VERSION}
+sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source ~/.cargo/env
+rustup update
+rustc --version
+cargo build --release
+cp target/release/pihole_api ${BUILD_DIR}/bin/api
+
 cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
@@ -55,6 +92,7 @@ cd nettle-${NETTLE_VERSION}
 make
 make install
 
+cd ${DIR}/build
 wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
 tar xf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
@@ -81,43 +119,7 @@ export CFLAGS=-I${BUILD_DIR}/include
 make
 cp pihole-FTL ${BUILD_DIR}/bin/ftl
 
-# old web
-#wget --progress=dot:giga https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
-#tar xf v${WEB_VERSION}.tar.gz
-#cp -r AdminLTE-${WEB_VERSION} ${BUILD_DIR}/web
-#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} +
-#find ${BUILD_DIR}/web -name "*.php" -exec sed -i 's#/var/log/lighttpd#/var/snap/pihole/common/log#g' {} +
-
-# new web
 cd ${DIR}/build
-wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
-tar xf ${API_VERSION}.tar.gz
-rm ${API_VERSION}.tar.gz
-cd api-${API_VERSION}
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-source ~/.cargo/env
-rustup update
-rustc --version
-cargo build --release
-cp target/release/pihole_api ${BUILD_DIR}/bin/api
-
-cd ${DIR}/build
-wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
-    --progress dot:giga -O node.tar.gz
-tar xzf node.tar.gz
-mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
-
-cd ${DIR}/build
-wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
-tar xf ${WEB_VERSION}.tar.gz
-rm ${WEB_VERSION}.tar.gz
-cd web-${WEB_VERSION}
-npm install
-npm run build
-ls -la
-
-cd ${DIR}/build
-
 mkdir ${DIR}/build/${NAME}/META
 echo ${NAME} >> ${DIR}/build/${NAME}/META/app
 echo ${VERSION} >> ${DIR}/build/${NAME}/META/version
