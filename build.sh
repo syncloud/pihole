@@ -16,12 +16,12 @@ WEB_VERSION=development
 API_VERSION=development
 ARCH=$(uname -m)
 VERSION=$2
-NODE_ARCH=armv6l
+#NODE_ARCH=armv6l
 NODE_VERSION=10.15.1
-if [[ ${ARCH} == "x86_64" ]]; then
-    GO_ARCH=amd64
-    NODE_ARCH=x64
-fi
+#if [[ ${ARCH} == "x86_64" ]]; then
+#    GO_ARCH=amd64
+#    NODE_ARCH=x64
+#fi
 export PATH=${DIR}/build/node/bin:$PATH
 DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
 
@@ -55,10 +55,13 @@ cp -r ${DIR}/etc ${BUILD_DIR}
 
 # new web
 cd ${DIR}/build
-wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
-    --progress dot:giga -O node.tar.gz
-tar xzf node.tar.gz
-mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+nvm install ${NODE_VERSION}
+command -v nvm
+#wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.gz \
+#    --progress dot:giga -O node.tar.gz
+#tar xzf node.tar.gz
+#mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
 
 cd ${DIR}/build
 wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
