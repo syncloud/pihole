@@ -92,6 +92,7 @@ cp pihole-FTL ${BUILD_DIR}/bin/ftl
 cd ${DIR}/build
 wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
 tar xf ${API_VERSION}.tar.gz
+rm ${API_VERSION}.tar.gz
 cd api-${API_VERSION}
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
@@ -109,6 +110,7 @@ mv node-v${NODE_VERSION}-linux-${NODE_ARCH} node
 cd ${DIR}/build
 wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
 tar xf ${WEB_VERSION}.tar.gz
+rm ${WEB_VERSION}.tar.gz
 cd web-${WEB_VERSION}
 npm install
 npm run build
