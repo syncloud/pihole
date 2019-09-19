@@ -65,7 +65,7 @@ def test_index(app_domain):
 
 
 def test_api(app_domain):
-    response = requests.get('https://{0}/stats/summary'.format(app_domain), verify=False)
+    response = requests.get('https://{0}/api/stats/summary'.format(app_domain), verify=False)
     assert response.status_code == 200, response.text
 
 
