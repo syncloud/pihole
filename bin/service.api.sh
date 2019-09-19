@@ -9,7 +9,7 @@ fi
 
 case $1 in
 start)
-    exec ${DIR}/bin/api
+    exec ${DIR}/bin/api 2>&1 | logger -t pihole
     ;;
 *)
     echo "not valid command"
