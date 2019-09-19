@@ -9,7 +9,7 @@ fi
 
 case $1 in
 start)
-    exec $DIR/bin/ftl debug
+    exec $DIR/bin/ftl debug 2>&1 | logger -t pihole-ftl
     ;;
 *)
     echo "not valid command"
