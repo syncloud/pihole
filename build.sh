@@ -59,9 +59,9 @@ wget https://github.com/cyberb/api/archive/${API_VERSION}.tar.gz
 tar xf ${API_VERSION}.tar.gz
 rm ${API_VERSION}.tar.gz
 cd api-${API_VERSION}
-find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
 sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+cfind . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
+url https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
