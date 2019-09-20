@@ -2,4 +2,4 @@
 port = 8081
 
 [web]
-path = "/api" 
+path = "" 
