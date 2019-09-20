@@ -54,14 +54,14 @@ ls -la
 cp -r build ${BUILD_DIR}/web
 
 cd ${DIR}/build
-wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
+wget https://github.com/cyberb/api/archive/${API_VERSION}.tar.gz
+#wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
 tar xf ${API_VERSION}.tar.gz
 rm ${API_VERSION}.tar.gz
 cd api-${API_VERSION}
 find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
 sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
-sed 's#80#8081#g' -i src/env/config/config.rs
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+url https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
