@@ -41,6 +41,15 @@ cp -r ${DIR}/hooks ${BUILD_DIR}
 cp -r ${DIR}/etc ${BUILD_DIR}
 
 cd ${DIR}/build
+wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
+tar xf api.tar.gz
+rm api.tar.gz
+cd pi-hole-feature-api
+sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' gravity.sh
+sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pihole"#g' gravity.sh
+cp gravity.sh ${BUILD_DIR}/bin
+
+cd ${DIR}/build
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 source ~/.bashrc
 nvm install ${NODE_VERSION}
