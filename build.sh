@@ -48,6 +48,7 @@ wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
 tar xf ${WEB_VERSION}.tar.gz
 rm ${WEB_VERSION}.tar.gz
 cd web-${WEB_VERSION}
+sed '/"homepage": "."/d' -i package.json
 npm install
 npm run build
 ls -la

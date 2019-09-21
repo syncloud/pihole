@@ -34,8 +34,16 @@ def test_start(module_setup, app, device_host):
 
     add_host_alias(app, device_host)
 
-def test_login(driver, app_domain, ui_mode):
+def test_index(driver, app_domain, ui_mode):
     url = "https://{0}".format(app_domain)
+    driver.get(url)
+    time.sleep(10)
+    
+    screenshots(driver, screenshot_dir, 'index-' + ui_mode)
+
+
+def test_login(driver, app_domain, ui_mode):
+    url = "https://{0}/login".format(app_domain)
     driver.get(url)
     time.sleep(10)
     
