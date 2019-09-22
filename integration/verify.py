@@ -36,7 +36,7 @@ def module_teardown(device, data_dir, platform_data_dir, app_dir, log_dir):
     device.run_ssh('ls -la {0}/web/ > {1}/web.ls.log'.format(app_dir, TMP_DIR), throw=False)
     device.run_ssh('ls -la {0}/log/ > {1}/log.ls.log'.format(data_dir, TMP_DIR), throw=False)
     device.run_ssh('rm {0}/etc/pihole/gravity.db'.format(data_dir), throw=False)
-    device.run_ssh('{0}/bin/gravity.sh 2>&1 > {1}/gravity.log'.format(app_dir, TMP_DIR), throw=False)
+    device.run_ssh('{0}/bin/gravity.sh > {1}/gravity.log 2>&1'.format(app_dir, TMP_DIR), throw=False)
     device.run_ssh('ls -la {0}/etc/pihole > {1}/data.etc.pihole.1.ls.log'.format(data_dir, TMP_DIR), throw=False)
     app_log_dir = join(log_dir, 'log')
     os.mkdir(app_log_dir)
