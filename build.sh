@@ -47,8 +47,9 @@ rm api.tar.gz
 cd pi-hole-feature-api
 sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' gravity.sh
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pihole"#g' gravity.sh
+sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
 cp gravity.sh ${BUILD_DIR}/bin
-
+cp -r advanced ${BUILD_DIR}/
 cd ${DIR}/build
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 source ~/.bashrc
