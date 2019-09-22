@@ -35,6 +35,10 @@ mv python ${BUILD_DIR}/
 
 ${BUILD_DIR}/python/bin/pip install -r ${DIR}/requirements.txt
 
+wget --progress=dot:giga ${DOWNLOAD_URL}/sqlite-${ARCH}.tar.gz
+tar xf sqlite-${ARCH}.tar.gz
+mv sqlite ${BUILD_DIR}/
+
 cp -r ${DIR}/bin ${BUILD_DIR}
 cp -r ${DIR}/config ${BUILD_DIR}/config.templates
 cp -r ${DIR}/hooks ${BUILD_DIR}
@@ -49,6 +53,7 @@ sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' gravity.sh
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pihole"#g' gravity.sh
 sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
 sed -i 's#/opt/pihole/#/snap/pihole/current/advanced/Scripts"#g' gravity.sh
+sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite3"#g' gravity.sh
 cp gravity.sh ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}/
 cd ${DIR}/build
