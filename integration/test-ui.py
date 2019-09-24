@@ -56,3 +56,10 @@ def test_login(driver, app_domain, ui_mode):
 
     screenshots(driver, screenshot_dir, 'login-2-' + ui_mode)
 
+
+def test_blacklist_exact(driver, app_domain, ui_mode):
+    url = "https://{0}/blacklist/exact".format(app_domain)
+    driver.get(url)
+    time.sleep(10)
+    
+    screenshots(driver, screenshot_dir, 'blacklist-' + ui_mode)
