@@ -37,7 +37,7 @@ def test_start(module_setup, app, device_host):
 def test_index(driver, app_domain, ui_mode):
     url = "https://{0}".format(app_domain)
     driver.get(url)
-    time.sleep(10)
+    time.sleep(5)
     
     screenshots(driver, screenshot_dir, 'index-' + ui_mode)
 
@@ -45,7 +45,7 @@ def test_index(driver, app_domain, ui_mode):
 def test_login(driver, app_domain, ui_mode):
     url = "https://{0}/login".format(app_domain)
     driver.get(url)
-    time.sleep(10)
+    time.sleep(5)
     screenshots(driver, screenshot_dir, 'login-' + ui_mode)
    
     password = driver.find_element_by_xpath("//input[@type='password']")
@@ -61,6 +61,14 @@ def test_login(driver, app_domain, ui_mode):
 def test_blacklist_exact(driver, app_domain, ui_mode):
     url = "https://{0}/blacklist/exact".format(app_domain)
     driver.get(url)
-    time.sleep(10)
+    time.sleep(5)
     
     screenshots(driver, screenshot_dir, 'blacklist-' + ui_mode)
+
+def test_settings_networking(driver, app_domain, ui_mode):
+    url = "https://{0}/settings/networking".format(app_domain)
+    driver.get(url)
+    time.sleep(5)
+    
+    screenshots(driver, screenshot_dir, 'settings-networking-' + ui_mode)
+
