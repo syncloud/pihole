@@ -25,6 +25,10 @@ mkdir -p ${BUILD_DIR}
 
 cd ${DIR}/build
 
+wget --progress=dot:giga ${DOWNLOAD_URL}/bind9-${ARCH}.tar.gz
+tar xf bind9-${ARCH}.tar.gz
+mv bind9 ${BUILD_DIR}/
+
 wget --progress=dot:giga ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
 tar xf nginx-${ARCH}.tar.gz
 mv nginx ${BUILD_DIR}/
@@ -54,6 +58,7 @@ sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pi
 sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
 sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts"#g' gravity.sh
 sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite3#g' gravity.sh
+sed -i 's#dig#/snap/pihole/current/bind9/bin/dig#g' gravity.sh
 sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' gravity.sh
 cp gravity.sh ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}/
