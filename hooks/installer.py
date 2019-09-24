@@ -57,7 +57,7 @@ class Installer:
 
     def install(self):
         self.install_config()
-        check_output(['/snap/platform/current/bin/gravity.sh'])
+        check_output(['/snap/pihole/current/bin/gravity.sh'])
 
     def refresh(self):
         self.install_config()
