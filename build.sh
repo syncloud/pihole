@@ -9,7 +9,7 @@ if [[ -z "$2" ]]; then
 fi
 
 NAME=$1
-NETTLE_VERSION=3.4
+NETTLE_VERSION=3.5
 GMP_VERSION=6.1.2
 FTL_VERSION=development
 WEB_VERSION=development
@@ -120,7 +120,7 @@ tar xf ${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
 sed -i '#/var/tmp#/var/snap/pihole/common/var/tmp#' src/database/sqlite3.c
 sed -i '#/usr/tmp#/var/snap/pihole/common/isr/tmp#' src/database/sqlite3.c
-ffor f in ${DIR}/patches/*.patch
+for f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
 done
