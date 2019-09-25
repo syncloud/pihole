@@ -118,7 +118,9 @@ cd ${DIR}/build
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
 tar xf ${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
-for f in ${DIR}/patches/*.patch
+sed -i '#/var/tmp#/var/snap/pihole/common/var/tmp#' FTL/sqlite3.c
+sed -i '#/usr/tmp#/var/snap/pihole/common/isr/tmp#' FTL/sqlite3.c
+ffor f in ${DIR}/patches/*.patch
 do
   patch -p0 < $f
 done
