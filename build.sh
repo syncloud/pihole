@@ -115,8 +115,8 @@ make
 make install
 
 cd ${DIR}/build
-wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
-tar xf v${FTL_VERSION}.tar.gz
+wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
+tar xf ${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
 for f in ${DIR}/patches/*.patch
 do
