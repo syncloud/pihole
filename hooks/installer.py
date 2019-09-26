@@ -62,7 +62,9 @@ class Installer:
 
     def install(self):
         self.install_config()
-        check_output(['/snap/pihole/current/bin/gravity.sh'])
+        gravity_log = check_output(['/snap/pihole/current/bin/gravity.sh'])
+        with open(join(self.app_data_dir, 'log', 'gravity.log'), 'w') as f:
+            f.write(gravity_log)
 
     def refresh(self):
         self.install_config()
