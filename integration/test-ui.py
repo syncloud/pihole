@@ -72,3 +72,12 @@ def test_settings_networking(driver, app_domain, ui_mode):
     
     screenshots(driver, screenshot_dir, 'settings-networking-' + ui_mode)
 
+
+def test_settings_ftl(driver, app_domain, ui_mode):
+    url = "https://{0}/settings/networking".format(app_domain)
+    driver.get(url)
+    time.sleep(5)
+    driver.find_element_by_xpath("//a[contains(text(),'FTL')]").click()
+    time.sleep(2)
+    screenshots(driver, screenshot_dir, 'settings-ftl-' + ui_mode)
+
