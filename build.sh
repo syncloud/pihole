@@ -54,6 +54,7 @@ tar xf api.tar.gz
 rm api.tar.gz
 cd pi-hole-feature-api
 sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' gravity.sh
+sed -i 's#/etc/.pihole#/snap/pihole/current#g' gravity.sh
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pihole"#g' gravity.sh
 sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
 sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' gravity.sh
