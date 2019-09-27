@@ -60,6 +60,7 @@ sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
 sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' gravity.sh
 sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite3#g' gravity.sh
 sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite3#g' advanced/Scripts/database_migration/gravity-db.sh
+sed -i 's#/etc/.pihole#/snap/pihole/current#g' advanced/Scripts/database_migration/gravity-db.sh
 sed -i 's#dig#/snap/pihole/current/bind9/bin/dig#g' gravity.sh
 sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' gravity.sh
 cp gravity.sh ${BUILD_DIR}/bin
