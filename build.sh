@@ -49,6 +49,21 @@ cp -r ${DIR}/hooks ${BUILD_DIR}
 cp -r ${DIR}/etc ${BUILD_DIR}
 
 cd ${DIR}/build
+wget https://github.com/cyberb/api/archive/${API_VERSION}.tar.gz
+#wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
+tar xf ${API_VERSION}.tar.gz
+rm ${API_VERSION}.tar.gz
+cd api-${API_VERSION}
+sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
+find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source ~/.cargo/env
+rustup update
+rustc --version
+cargo build --release
+cp target/release/pihole_api ${BUILD_DIR}/bin/api
+
+cd ${DIR}/build
 wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
 tar xf api.tar.gz
 rm api.tar.gz
@@ -78,21 +93,6 @@ npm install
 npm run build
 ls -la
 cp -r build ${BUILD_DIR}/web
-
-cd ${DIR}/build
-wget https://github.com/cyberb/api/archive/${API_VERSION}.tar.gz
-#wget https://github.com/pi-hole/api/archive/${API_VERSION}.tar.gz
-tar xf ${API_VERSION}.tar.gz
-rm ${API_VERSION}.tar.gz
-cd api-${API_VERSION}
-sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
-find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-source ~/.cargo/env
-rustup update
-rustc --version
-cargo build --release
-cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
