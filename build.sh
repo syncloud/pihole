@@ -80,11 +80,13 @@ sed -i 's#dig#/snap/pihole/current/bind9/bin/dig#g' gravity.sh
 sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' gravity.sh
 cp gravity.sh ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}/
+
 cd ${DIR}/build
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 source ~/.bashrc
 nvm install ${NODE_VERSION}
-wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
+wget https://github.com/cyberb/web/archive/${WEB_VERSION}.tar.gz
+#wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
 tar xf ${WEB_VERSION}.tar.gz
 rm ${WEB_VERSION}.tar.gz
 cd web-${WEB_VERSION}
