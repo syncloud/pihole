@@ -7,3 +7,4 @@ path = "/"
 [ldap]
 enabled = true
 bind_dn = "uid={},ou=users,dc=syncloud,dc=org"
+address = "ldap://localhost:389"

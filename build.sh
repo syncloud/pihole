@@ -56,6 +56,7 @@ rm ${API_VERSION}.tar.gz
 cd api-${API_VERSION}
 sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
 find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
+find . -name "*.rs" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} + 
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
