@@ -48,9 +48,9 @@ def test_login(driver, app_domain, ui_mode, device_user, device_password):
     time.sleep(5)
     screenshots(driver, screenshot_dir, 'login-' + ui_mode)
    
-    username = driver.find_element_by_xpath("//input[@type='username']")
+    username = driver.find_element_by_xpath("//input[@name='username']")
     username.send_keys(device_user)
-    password = driver.find_element_by_xpath("//input[@type='password']")
+    password = driver.find_element_by_xpath("//input[@name='password']")
     password.send_keys(device_password)
     screenshots(driver, screenshot_dir, 'login-1-' + ui_mode)
 
