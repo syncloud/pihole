@@ -1,5 +1,5 @@
 [general]
-port = 8081
+port = 1090
 
 [web]
 path = "/"
@@ -7,4 +7,4 @@ path = "/"
 [ldap]
 enabled = true
 bind_dn = "cn={},ou=users,dc=syncloud,dc=org"
-address = "ldap://localhost:389"
+address = "ldap://127.0.0.1:389"
