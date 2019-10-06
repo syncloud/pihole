@@ -43,11 +43,11 @@ def test_index(driver, app_domain, ui_mode):
 
 
 def test_login_wrong(driver, app_domain, ui_mode, device_user):
-    _test_login(driver, app_domain, ui_mode, device_user, "wrong")
+    _test_login(driver, app_domain, "wrong-" + ui_mode, device_user, "wrong")
 
 
 def test_login_good(driver, app_domain, ui_mode, device_user, device_password):
-    _test_login(driver, app_domain, ui_mode, device_user, device_password)
+    _test_login(driver, app_domain, "good-" + ui_mode, device_user, device_password)
 
 
 def _test_login(driver, app_domain, ui_mode, device_user, device_password):
