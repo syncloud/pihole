@@ -6,5 +6,5 @@ path = "/"
 
 [ldap]
 enabled = true
-bind_dn = "uid={},ou=users,dc=syncloud,dc=org"
+bind_dn = "cn={},ou=users,dc=syncloud,dc=org"
 address = "ldap://127.0.0.1:389"
