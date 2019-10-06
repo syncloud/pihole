@@ -42,7 +42,15 @@ def test_index(driver, app_domain, ui_mode):
     screenshots(driver, screenshot_dir, 'index-' + ui_mode)
 
 
-def test_login(driver, app_domain, ui_mode, device_user, device_password):
+def test_login_wrong(driver, app_domain, ui_mode, device_user):
+    _test_login(driver, app_domain, ui_mode, device_user, "wrong"):
+
+
+def test_login_good(driver, app_domain, ui_mode, device_user, device_password):
+    _test_login(driver, app_domain, ui_mode, device_user, device_password):
+
+
+def _test_login(driver, app_domain, ui_mode, device_user, device_password):
     url = "https://{0}/login".format(app_domain)
     driver.get(url)
     time.sleep(5)
