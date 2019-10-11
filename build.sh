@@ -85,6 +85,7 @@ cp -r advanced ${BUILD_DIR}/
 cd ${DIR}/build
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 source ~/.bashrc
+set +x
 nvm install ${NODE_VERSION}
 wget https://github.com/cyberb/web/archive/${WEB_VERSION}.tar.gz
 #wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
