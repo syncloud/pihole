@@ -44,10 +44,10 @@ def module_teardown(device, data_dir, platform_data_dir, app_dir, log_dir):
     device.scp_from_device('{0}/*'.format(TMP_DIR), app_log_dir)
     
 
-def test_start(module_setup, device, device_host, app, log_dir):
+def test_start(module_setup, device, device_host, app, log_dir, domain):
     shutil.rmtree(log_dir, ignore_errors=True)
     os.mkdir(log_dir)
-    add_host_alias(app, device_host)
+    add_host_alias(app, device_host, domain)
     print(check_output('date', shell=True))
     device.run_ssh('date', retries=20)
 
