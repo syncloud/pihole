@@ -7,6 +7,20 @@ local build(arch) = {
         arch: arch
     },
     steps: [
+        { 
+           name: "restore-cache",
+           image: "drillster/drone-volume-cache",
+           volumes: [
+               {
+		                  name: "cache",
+		                  path: "/cache"
+		             }
+	           ],
+	           settings: {
+	               restore: true,
+		              mount: [ "./cargo_target"]
+	           }
+        },
         {
             name: "version",
             image: "syncloud/build-deps-" + arch,
@@ -24,6 +38,20 @@ local build(arch) = {
                 "VERSION=$(cat version)",
                 "./build.sh $NAME $VERSION"
             ]
+        },
+        {
+	           name: "rebuild-cache",
+	           image: "drillster/drone-volume-cache",
+	           volumes: [
+	               {
+                    name: "cache",
+                    path: "/cache"
+                }
+            ],
+            settings: {
+                rebuild: true,
+                mount: [ "./cargo_target"]
+            }
         },
         {
             name: "test-intergation",
@@ -110,6 +138,12 @@ local build(arch) = {
         ]
     }],
     volumes: [
+        {
+            name: "cache",
+            host: {
+                path: "/tmp/cache"
+            }
+        },
         {
             name: "dbus",
             host: {

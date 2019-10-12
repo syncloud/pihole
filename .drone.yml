@@ -7,6 +7,16 @@ platform:
   arch: arm
 
 steps:
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - ./cargo_target
+    restore: true
+  volumes:
+  - name: cache
+    path: /cache
+
 - name: version
   image: syncloud/build-deps-arm
   commands:
@@ -20,6 +30,16 @@ steps:
   - NAME=$(cat name)
   - VERSION=$(cat version)
   - ./build.sh $NAME $VERSION
+
+- name: rebuild-cache
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - ./cargo_target
+    rebuild: true
+  volumes:
+  - name: cache
+    path: /cache
 
 - name: test-intergation
   image: syncloud/build-deps-arm
@@ -74,6 +94,9 @@ services:
     path: /dev
 
 volumes:
+- name: cache
+  host:
+    path: /tmp/cache
 - name: dbus
   host:
     path: /var/run/dbus
@@ -92,6 +115,16 @@ platform:
   arch: amd64
 
 steps:
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - ./cargo_target
+    restore: true
+  volumes:
+  - name: cache
+    path: /cache
+
 - name: version
   image: syncloud/build-deps-amd64
   commands:
@@ -105,6 +138,16 @@ steps:
   - NAME=$(cat name)
   - VERSION=$(cat version)
   - ./build.sh $NAME $VERSION
+
+- name: rebuild-cache
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - ./cargo_target
+    rebuild: true
+  volumes:
+  - name: cache
+    path: /cache
 
 - name: test-intergation
   image: syncloud/build-deps-amd64
@@ -171,6 +214,9 @@ services:
     path: /dev
 
 volumes:
+- name: cache
+  host:
+    path: /tmp/cache
 - name: dbus
   host:
     path: /var/run/dbus
