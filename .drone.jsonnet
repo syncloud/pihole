@@ -11,15 +11,15 @@ local build(arch) = {
            name: "restore-cache",
            image: "plugins/volume-cache",
            volumes: [
-               {
-		                  name: "cache",
-		                  path: "/cache"
-		             }
-	           ],
-	           settings: {
-	               restore: true,
-		              mount: [ "./cargo_target"]
-	           }
+	   	{
+	           name: "cache",
+		   path: "/cache"
+		}
+		],
+	   settings: {
+	   	restore: true,
+		mount: [ "./cache"]
+	   }
         },
         {
             name: "version",
@@ -50,7 +50,7 @@ local build(arch) = {
             ],
             settings: {
                 rebuild: true,
-                mount: [ "./cargo_target"]
+                mount: [ "./cache"]
             }
         },
         {

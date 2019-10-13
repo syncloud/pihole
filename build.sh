@@ -61,9 +61,10 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
-export CARGO_TARGET_DIR=../../cargo_target
+cp -rf ${DIR}/cache/target target
 cargo build --release
-cp ${CARGO_TARGET_DIR}/release/pihole_api ${BUILD_DIR}/bin/api
+cp -rf target ${DIR}/cache/
+cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
 wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
@@ -93,8 +94,10 @@ tar xf ${WEB_VERSION}.tar.gz
 rm ${WEB_VERSION}.tar.gz
 cd web-${WEB_VERSION}
 sed '/"homepage": "."/d' -i package.json
+cp -rf ${DIR}/cache/node_modules node_modules
 npm install
 npm run build
+cp -rf node_modules ${DIR}/cache/
 ls -la
 cp -r build ${BUILD_DIR}/web
 

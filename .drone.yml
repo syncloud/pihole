@@ -11,7 +11,7 @@ steps:
   image: plugins/volume-cache
   settings:
     mount:
-    - ./cargo_target
+    - ./cache
     restore: true
   volumes:
   - name: cache
@@ -35,7 +35,7 @@ steps:
   image: plugins/volume-cache
   settings:
     mount:
-    - ./cargo_target
+    - ./cache
     rebuild: true
   volumes:
   - name: cache
@@ -119,7 +119,7 @@ steps:
   image: plugins/volume-cache
   settings:
     mount:
-    - ./cargo_target
+    - ./cache
     restore: true
   volumes:
   - name: cache
@@ -143,7 +143,7 @@ steps:
   image: plugins/volume-cache
   settings:
     mount:
-    - ./cargo_target
+    - ./cache
     rebuild: true
   volumes:
   - name: cache
