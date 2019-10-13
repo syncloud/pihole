@@ -61,8 +61,9 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
-CARGO_TARGET_DIR=${DIR}/cargo_target cargo build --release
-cp ${DIR}/cargo_target/release/pihole_api ${BUILD_DIR}/bin/api
+export CARGO_TARGET_DIR=../../cargo_target
+cargo build --release
+cp ${CARGO_TARGET_DIR}/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
 wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
