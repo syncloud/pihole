@@ -23,6 +23,8 @@ rm -rf ${DIR}/build
 BUILD_DIR=${DIR}/build/${NAME}
 mkdir -p ${BUILD_DIR}
 
+ls -la ${DIR}/cache || true
+
 cd ${DIR}/build
 
 wget --progress=dot:giga ${DOWNLOAD_URL}/bind9-${ARCH}.tar.gz
@@ -61,7 +63,7 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 rustup update
 rustc --version
-cp -rf ${DIR}/cache/target target
+cp -rf ${DIR}/cache/target target || true
 cargo build --release
 cp -rf target ${DIR}/cache/
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
@@ -94,7 +96,7 @@ tar xf ${WEB_VERSION}.tar.gz
 rm ${WEB_VERSION}.tar.gz
 cd web-${WEB_VERSION}
 sed '/"homepage": "."/d' -i package.json
-cp -rf ${DIR}/cache/node_modules node_modules
+cp -rf ${DIR}/cache/node_modules node_modules || true
 npm install
 npm run build
 cp -rf node_modules ${DIR}/cache/
