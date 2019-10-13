@@ -62,6 +62,7 @@ find . -name "*.rs" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} +
 cp -Rf ${DIR}/cache/.cargo ${HOME}/.cargo || true
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
+rm -rf target
 cp -Rf ${DIR}/cache/target target || true
 cargo build --release
 rm -rf ${DIR}/cache/target
