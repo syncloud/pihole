@@ -9,7 +9,7 @@ local build(arch) = {
     steps: [
         { 
            name: "restore-cache",
-           image: "drillster/drone-volume-cache",
+           image: "plugins/volume-cache",
            volumes: [
                {
 		                  name: "cache",
@@ -41,7 +41,7 @@ local build(arch) = {
         },
         {
 	           name: "rebuild-cache",
-	           image: "drillster/drone-volume-cache",
+	           image: "plugins/volume-cache",
 	           volumes: [
 	               {
                     name: "cache",

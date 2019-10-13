@@ -8,7 +8,7 @@ platform:
 
 steps:
 - name: restore-cache
-  image: drillster/drone-volume-cache
+  image: plugins/volume-cache
   settings:
     mount:
     - ./cargo_target
@@ -32,7 +32,7 @@ steps:
   - ./build.sh $NAME $VERSION
 
 - name: rebuild-cache
-  image: drillster/drone-volume-cache
+  image: plugins/volume-cache
   settings:
     mount:
     - ./cargo_target
@@ -116,7 +116,7 @@ platform:
 
 steps:
 - name: restore-cache
-  image: drillster/drone-volume-cache
+  image: plugins/volume-cache
   settings:
     mount:
     - ./cargo_target
@@ -140,7 +140,7 @@ steps:
   - ./build.sh $NAME $VERSION
 
 - name: rebuild-cache
-  image: drillster/drone-volume-cache
+  image: plugins/volume-cache
   settings:
     mount:
     - ./cargo_target
