@@ -59,7 +59,7 @@ cd api-${API_VERSION}
 sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
 find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
 find . -name "*.rs" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} + 
-cp -Rf ${DIR}/cache/.cargo ${DIR}/.cargo || true
+cp -Rf ${DIR}/cache/.cargo ${HOME}/.cargo || true
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source ~/.cargo/env
 cp -Rf ${DIR}/cache/target target || true
@@ -67,7 +67,7 @@ cargo build --release
 rm -rf ${DIR}/cache/target
 cp -Rf target/ ${DIR}/cache/
 rm -rf ${DIR}/cache/.cargo
-cp -Rf ${DIR}/.cargo/ ${DIR}/cache/
+cp -Rf ${HOME}/.cargo/ ${DIR}/cache/
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
