@@ -68,7 +68,7 @@ else
     curl https://sh.rustup.rs -sSf | sh -s -- -y
 fi
 source ~/.cargo/env
-ls -la target/
+
 cargo build --release
 rm -rf ${DIR}/cache/.cargo
 cp -r ${HOME}/.cargo ${DIR}/cache
