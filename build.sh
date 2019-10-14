@@ -60,7 +60,10 @@ sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/e
 find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
 find . -name "*.rs" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} + 
 if [[ -d ${DIR}/cache/.cargo ]]; then
-    cp -r ${DIR}/cache/.cargo ${HOME}/.cargo
+    cp -r ${DIR}/cache/.cargo ${HOME}
+fi
+if [[ -d ${DIR}/cache/.rustup ]]; then
+    cp -r ${DIR}/cache/.rustup ${HOME}
 else
     curl https://sh.rustup.rs -sSf | sh -s -- -y
 fi
@@ -75,6 +78,9 @@ rm -rf ${DIR}/cache/target
 cp -r target ${DIR}/cache
 rm -rf ${DIR}/cache/.cargo
 cp -r ${HOME}/.cargo ${DIR}/cache
+rm -rf ${DIR}/cache/.rustup
+cp -r ${HOME}/.rustup ${DIR}/cache
+
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
