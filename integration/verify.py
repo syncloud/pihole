@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 from os.path import dirname, join
 from subprocess import check_output
 
@@ -70,6 +71,12 @@ def test_index(app_domain):
 def test_api(app_domain):
     response = requests.get('https://{0}/api/stats/summary'.format(app_domain), verify=False)
     assert response.status_code == 200, response.text
+
+
+def test_auth_mode(app_domain):
+    response = requests.get('https://{0}/api/auth/mode'.format(app_domain), verify=False)
+    assert response.status_code == 200, response.text
+    assert json.loads(response.text)["mode"] == "ldap"
 
 
 # def test_upgrade(app_archive_path, device_host, device_password):
