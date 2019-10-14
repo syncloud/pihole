@@ -59,18 +59,22 @@ cd api-${API_VERSION}
 sed 's#/etc/pihole/API.toml#/var/snap/pihole/current/config/api.toml#g' -i src/env/config/root_config.rs
 find . -name "*.rs" -exec sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' {} + 
 find . -name "*.rs" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} + 
-cp -Rf ${DIR}/cache/.cargo ${HOME}/.cargo || true
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+if [[ -d ${DIR}/cache/.cargo]]; then
+    cp -r ${DIR}/cache/.cargo ${HOME}/.cargo
+else
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+fi
 source ~/.cargo/env
-rm -rf target
-cp -Rf ${DIR}/cache/target target || true
+if [[ -d ${DIR}/cache/target]]; then
+    cp -r ${DIR}/cache/target target
+fi
 ls -la target/
 cargo build --release
-ls -la target/
+ls -la target
 rm -rf ${DIR}/cache/target
-cp -Rf target/ ${DIR}/cache/
+cp -r target ${DIR}/cache
 rm -rf ${DIR}/cache/.cargo
-cp -Rf ${HOME}/.cargo/ ${DIR}/cache/
+cp -r ${HOME}/.cargo ${DIR}/cache
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
