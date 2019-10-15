@@ -68,13 +68,7 @@ else
     curl https://sh.rustup.rs -sSf | sh -s -- -y
 fi
 source ~/.cargo/env
-
 cargo build --release
-rm -rf ${DIR}/cache/.cargo
-cp -r ${HOME}/.cargo ${DIR}/cache
-rm -rf ${DIR}/cache/.rustup
-cp -r ${HOME}/.rustup ${DIR}/cache
-
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
@@ -103,13 +97,12 @@ wget https://github.com/cyberb/web/archive/${WEB_VERSION}.tar.gz
 #wget https://github.com/pi-hole/web/archive/${WEB_VERSION}.tar.gz
 tar xf ${WEB_VERSION}.tar.gz
 rm ${WEB_VERSION}.tar.gz
-cd web-${WEB_VERSION}
+mv web-${WEB_VERSION} web
+cd web
 sed '/"homepage": "."/d' -i package.json
 cp -Rf ${DIR}/cache/node_modules node_modules || true
 npm install
 npm run build
-rm -rf ${DIR}/cache/node_modules
-cp -Rf node_modules/ ${DIR}/cache/
 ls -la
 cp -r build ${BUILD_DIR}/web
 
@@ -147,6 +140,12 @@ sed -i 's#/usr/local/lib#'${BUILD_DIR}/lib'#g' Makefile
 export CFLAGS=-I${BUILD_DIR}/include
 make
 cp pihole-FTL ${BUILD_DIR}/bin/ftl
+
+#cache
+rm -rf ${DIR}/cache/*
+cp -r ${HOME}/.cargo ${DIR}/cache
+cp -r ${HOME}/.rustup ${DIR}/cache
+cp -r ${DIR}/build/web/node_modules ${DIR}/cache
 
 cd ${DIR}/build
 mkdir ${DIR}/build/${NAME}/META
