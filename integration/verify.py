@@ -65,7 +65,6 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
 
 
 def test_index(app_domain):
-    assert response.status_code == 200, response.text
     wait_for_rest(requests.session(), 'https://{0}/'.format(app_domain), 200, 500)
 
 
