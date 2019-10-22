@@ -7,20 +7,20 @@ local build(arch) = {
         arch: arch
     },
     steps: [
-        { 
-           name: "restore-cache",
-           image: "plugins/volume-cache",
-           volumes: [
-	   	{
-	           name: "cache",
-		   path: "/cache"
-		}
-		],
-	   settings: {
-	   	restore: true,
-		mount: [ "./cache"]
-	   }
-        },
+        //{ 
+        //   name: "restore-cache",
+        //   image: "plugins/volume-cache",
+        //   volumes: [
+	//   	{
+	//           name: "cache",
+	//	   path: "/cache"
+	//	}
+	//	],
+	//   settings: {
+	//   	restore: true,
+	//	mount: [ "./cache"]
+	//   }
+        //},
         {
             name: "version",
             image: "syncloud/build-deps-" + arch,

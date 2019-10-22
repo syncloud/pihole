@@ -7,16 +7,6 @@ platform:
   arch: arm
 
 steps:
-- name: restore-cache
-  image: plugins/volume-cache
-  settings:
-    mount:
-    - ./cache
-    restore: true
-  volumes:
-  - name: cache
-    path: /cache
-
 - name: version
   image: syncloud/build-deps-arm
   commands:
@@ -115,16 +105,6 @@ platform:
   arch: amd64
 
 steps:
-- name: restore-cache
-  image: plugins/volume-cache
-  settings:
-    mount:
-    - ./cache
-    restore: true
-  volumes:
-  - name: cache
-    path: /cache
-
 - name: version
   image: syncloud/build-deps-amd64
   commands:
