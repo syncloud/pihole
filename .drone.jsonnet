@@ -39,20 +39,20 @@ local build(arch) = {
                 "./build.sh $NAME $VERSION"
             ]
         },
-        {
-	           name: "rebuild-cache",
-	           image: "plugins/volume-cache",
-	           volumes: [
-	               {
-                    name: "cache",
-                    path: "/cache"
-                }
-            ],
-            settings: {
-                rebuild: true,
-                mount: [ "./cache"]
-            }
-        },
+        //{
+	//           name: "rebuild-cache",
+	//           image: "plugins/volume-cache",
+	//           volumes: [
+	//               {
+        //            name: "cache",
+        //            path: "/cache"
+        //        }
+        //    ],
+        //    settings: {
+        //        rebuild: true,
+        //        mount: [ "./cache"]
+        //    }
+        //},
         {
             name: "test-intergation",
             image: "syncloud/build-deps-" + arch,

@@ -21,16 +21,6 @@ steps:
   - VERSION=$(cat version)
   - ./build.sh $NAME $VERSION
 
-- name: rebuild-cache
-  image: plugins/volume-cache
-  settings:
-    mount:
-    - ./cache
-    rebuild: true
-  volumes:
-  - name: cache
-    path: /cache
-
 - name: test-intergation
   image: syncloud/build-deps-arm
   commands:
@@ -118,16 +108,6 @@ steps:
   - NAME=$(cat name)
   - VERSION=$(cat version)
   - ./build.sh $NAME $VERSION
-
-- name: rebuild-cache
-  image: plugins/volume-cache
-  settings:
-    mount:
-    - ./cache
-    rebuild: true
-  volumes:
-  - name: cache
-    path: /cache
 
 - name: test-intergation
   image: syncloud/build-deps-amd64
