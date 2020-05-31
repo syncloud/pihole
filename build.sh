@@ -17,7 +17,7 @@ API_VERSION=development
 ARCH=$(uname -m)
 VERSION=$2
 NODE_VERSION=10.15.1
-DOWNLOAD_URL=http://artifact.syncloud.org/3rdparty
+DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download/1
 
 rm -rf ${DIR}/build
 BUILD_DIR=${DIR}/build/${NAME}
