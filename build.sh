@@ -11,7 +11,7 @@ fi
 NAME=$1
 NETTLE_VERSION=3.5
 GMP_VERSION=6.1.2
-FTL_VERSION=5.0
+FTL_VERSION=e0dc41c76b18d5a4fe1fc69452e84eb0bc30eff9
 WEB_VERSION=development
 API_VERSION=development
 ARCH=$(uname -m)
@@ -132,8 +132,8 @@ make
 make install
 
 cd ${DIR}/build
-wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
-tar xf v${FTL_VERSION}.tar.gz
+wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
+tar xf ${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
 sed -i 's#/var/tmp#/var/snap/pihole/common/var/tmp#g' src/database/sqlite3.c
 sed -i 's#/usr/tmp#/var/snap/pihole/common/usr/tmp#g' src/database/sqlite3.c
