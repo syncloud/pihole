@@ -133,7 +133,7 @@ make install
 
 cd ${DIR}/build
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
-tar xf ${FTL_VERSION}.tar.gz
+tar xf v${FTL_VERSION}.tar.gz
 cd FTL-${FTL_VERSION}
 sed -i 's#/var/tmp#/var/snap/pihole/common/var/tmp#g' src/database/sqlite3.c
 sed -i 's#/usr/tmp#/var/snap/pihole/common/usr/tmp#g' src/database/sqlite3.c
