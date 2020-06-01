@@ -19,9 +19,6 @@ VERSION=$2
 NODE_VERSION=10.15.1
 DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download/1
 
-apt update
-apt -y install ca-certificates
-
 rm -rf ${DIR}/build
 BUILD_DIR=${DIR}/build/${NAME}
 mkdir -p ${BUILD_DIR}
@@ -121,7 +118,7 @@ make
 make install
 
 cd ${DIR}/build
-wget --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
+wget --no-check-certificate --progress=dot:giga https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
 tar xf gmp-${GMP_VERSION}.tar.bz2
 cd gmp-${GMP_VERSION}
 if [[ $ARCH == "x86_64" ]]; then
