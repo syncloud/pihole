@@ -11,30 +11,29 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 DIR = dirname(__file__)
-screenshot_dir = join(DIR, 'screenshot')
 TMP_DIR = '/tmp/syncloud/ui'
 
 @pytest.fixture(scope="session")
-def module_setup(request, device, log_dir, ui_mode):
-    request.addfinalizer(lambda: module_teardown(device, log_dir, ui_mode))
+def module_setup(request, device, artifact_dir, ui_mode):
+    request.addfinalizer(lambda: module_teardown(device, artifact_dir, ui_mode))
 
 
-def module_teardown(device, log_dir, ui_mode):
+def module_teardown(device, artifact_dir, ui_mode):
     device.activated()
     device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
     device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
     device.run_ssh('cp /var/log/syslog {0}/syslog.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
       
-    device.scp_from_device('{0}/*'.format(TMP_DIR), join(log_dir, 'log'))
+    device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir 'log'))
 
 
-def test_start(module_setup, app, device_host):
+def test_start(module_setup, app, device_host, screenshot_dir):
     if not exists(screenshot_dir):
         os.mkdir(screenshot_dir)
 
     add_host_alias(app, device_host)
 
-def test_index(driver, app_domain, ui_mode):
+def test_index(driver, app_domain, ui_mode, screenshot_dir):
     url = "https://{0}".format(app_domain)
     driver.get(url)
     time.sleep(5)
@@ -42,15 +41,15 @@ def test_index(driver, app_domain, ui_mode):
     screenshots(driver, screenshot_dir, 'index-' + ui_mode)
 
 
-def test_login_wrong(driver, app_domain, ui_mode, device_user):
-    _test_login(driver, app_domain, "wrong-" + ui_mode, device_user, "wrong")
+def test_login_wrong(driver, app_domain, ui_mode, device_user, screenshot_dir):
+    _test_login(driver, app_domain, "wrong-" + ui_mode, device_user, "wrong", screenshot_dir)
 
 
-def test_login_good(driver, app_domain, ui_mode, device_user, device_password):
-    _test_login(driver, app_domain, "good-" + ui_mode, device_user, device_password)
+def test_login_good(driver, app_domain, ui_mode, device_user, device_password, screenshot_dir):
+    _test_login(driver, app_domain, "good-" + ui_mode, device_user, device_password, screenshot_dir)
 
 
-def _test_login(driver, app_domain, ui_mode, device_user, device_password):
+def _test_login(driver, app_domain, ui_mode, device_user, device_password, screenshot_dir):
     url = "https://{0}/login".format(app_domain)
     driver.get(url)
     time.sleep(5)
@@ -68,14 +67,14 @@ def _test_login(driver, app_domain, ui_mode, device_user, device_password):
     screenshots(driver, screenshot_dir, 'login-2-' + ui_mode)
 
 
-def test_blacklist_exact(driver, app_domain, ui_mode):
+def test_blacklist_exact(driver, app_domain, ui_mode, screenshot_dir):
     url = "https://{0}/blacklist/exact".format(app_domain)
     driver.get(url)
     time.sleep(5)
     
     screenshots(driver, screenshot_dir, 'blacklist-' + ui_mode)
 
-def test_settings_networking(driver, app_domain, ui_mode):
+def test_settings_networking(driver, app_domain, ui_mode, screenshot_dir):
     url = "https://{0}/settings/networking".format(app_domain)
     driver.get(url)
     time.sleep(5)
@@ -83,7 +82,7 @@ def test_settings_networking(driver, app_domain, ui_mode):
     screenshots(driver, screenshot_dir, 'settings-networking-' + ui_mode)
 
 
-def test_settings_ftl(driver, app_domain, ui_mode):
+def test_settings_ftl(driver, app_domain, ui_mode, screenshot_dir):
     url = "https://{0}/settings/networking".format(app_domain)
     driver.get(url)
     time.sleep(5)
