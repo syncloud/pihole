@@ -24,7 +24,7 @@ def module_teardown(device, artifact_dir, ui_mode):
     device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
     device.run_ssh('cp /var/log/syslog {0}/syslog.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
       
-    device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir 'log'))
+    device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir, 'log'))
 
 
 def test_start(module_setup, app, device_host, screenshot_dir):
