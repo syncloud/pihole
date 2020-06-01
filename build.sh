@@ -70,7 +70,7 @@ cargo build --release
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
-wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
+wget https://github.com/cyberb/pi-hole/archive/feature/api.tar.gz
 tar xf api.tar.gz
 rm api.tar.gz
 cd pi-hole-feature-api
