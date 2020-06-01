@@ -1,3 +1,5 @@
+local name = "pihole";
+
 local build(arch) = {
     kind: "pipeline",
     name: arch,
@@ -7,26 +9,11 @@ local build(arch) = {
         arch: arch
     },
     steps: [
-        //{ 
-        //   name: "restore-cache",
-        //   image: "plugins/volume-cache",
-        //   volumes: [
-	//   	{
-	//           name: "cache",
-	//	   path: "/cache"
-	//	}
-	//	],
-	//   settings: {
-	//   	restore: true,
-	//	mount: [ "./cache"]
-	//   }
-        //},
         {
             name: "version",
             image: "syncloud/build-deps-" + arch,
             commands: [
                 "echo $(date +%y%m%d)$DRONE_BUILD_NUMBER > version",
-                "echo pihole > name",
                 "echo " + arch + "$DRONE_BRANCH > domain"
             ]
         },
@@ -34,25 +21,10 @@ local build(arch) = {
             name: "build",
             image: "syncloud/build-deps-" + arch,
             commands: [
-                "NAME=$(cat name)",
                 "VERSION=$(cat version)",
-                "./build.sh $NAME $VERSION"
+                "./build.sh " + name + " $VERSION"
             ]
         },
-        //{
-	//           name: "rebuild-cache",
-	//           image: "plugins/volume-cache",
-	//           volumes: [
-	//               {
-        //            name: "cache",
-        //            path: "/cache"
-        //        }
-        //    ],
-        //    settings: {
-        //        rebuild: true,
-        //        mount: [ "./cache"]
-        //    }
-        //},
         {
             name: "test-intergation",
             image: "syncloud/build-deps-" + arch,
@@ -60,9 +32,8 @@ local build(arch) = {
               "pip2 install -r dev_requirements.txt",
               "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
               "DOMAIN=$(cat domain)",
-              "NAME=$(cat name)",
               "cd integration",
-              "py.test -x -s verify.py --domain=$DOMAIN --app-archive-path=$APP_ARCHIVE_PATH --device-host=device --app=$NAME"
+              "py.test -x -s verify.py --domain=$DOMAIN --app-archive-path=$APP_ARCHIVE_PATH --device-host=device --app=" + name
             ]
         },
         if arch == "arm" then {} else
@@ -72,10 +43,9 @@ local build(arch) = {
             commands: [
               "pip2 install -r dev_requirements.txt",
               "DOMAIN=$(cat domain)",
-              "NAME=$(cat name)",
               "cd integration",
-              "xvfb-run -l --server-args='-screen 0, 1024x4096x24' py.test -x -s test-ui.py --ui-mode=desktop --domain=$DOMAIN --device-host=device --app=$NAME",
-              "xvfb-run -l --server-args='-screen 0, 1024x4096x24' py.test -x -s test-ui.py --ui-mode=mobile --domain=$DOMAIN --device-host=device --app=$NAME",
+              "xvfb-run -l --server-args='-screen 0, 1024x4096x24' py.test -x -s test-ui.py --ui-mode=desktop --domain=$DOMAIN --device-host=device --app=" + name,
+              "xvfb-run -l --server-args='-screen 0, 1024x4096x24' py.test -x -s test-ui.py --ui-mode=mobile --domain=$DOMAIN --device-host=device --app=" + name,
             ],
             volumes: [{
                 name: "shm",
@@ -95,28 +65,28 @@ local build(arch) = {
             },
             commands: [
               "VERSION=$(cat version)",
-              "NAME=$(cat name)",
               "PACKAGE=$(cat package.name)",
               "pip2 install -r dev_requirements.txt",
-              "syncloud-upload.sh $NAME $DRONE_BRANCH $VERSION $PACKAGE"
+              "syncloud-upload.sh " + name + " $DRONE_BRANCH $VERSION $PACKAGE"
             ]
         },
         {
-            name: "ci-artifact",
-            image: "syncloud/build-deps-" + arch,
-            environment: {
-                ARTIFACT_SSH_KEY: {
-                    from_secret: "ARTIFACT_SSH_KEY"
-                }
+            name: "artifact",
+            image: "appleboy/drone-scp",
+            settings: {
+                host: {
+                    from_secret: "artifact_host"
+                },
+                username: "artifact",
+                key: {
+                    from_secret: "artifact_key"
+                },
+                timeout: "2m",
+                command_timeout: "2m",
+                target: "/home/artifact/repo/" + name + "/${DRONE_BUILD_NUMBER}-" + arch,
+                source: "artifact/*",
+		             strip_components: 1
             },
-            commands: [
-                "NAME=$(cat name)",
-                "PACKAGE=$(cat package.name)",
-                "pip2 install -r dev_requirements.txt",
-                "syncloud-upload-artifact.sh $NAME integration/log $DRONE_BUILD_NUMBER-$(dpkg --print-architecture)",
-                "syncloud-upload-artifact.sh $NAME integration/screenshot $DRONE_BUILD_NUMBER-$(dpkg --print-architecture)",
-                "syncloud-upload-artifact.sh $NAME $PACKAGE $DRONE_BUILD_NUMBER-$(dpkg --print-architecture)"
-            ],
             when: {
               status: [ "failure", "success" ]
             }
@@ -138,12 +108,6 @@ local build(arch) = {
         ]
     }],
     volumes: [
-        {
-            name: "cache",
-            host: {
-                path: "/tmp/cache"
-            }
-        },
         {
             name: "dbus",
             host: {
