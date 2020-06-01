@@ -70,14 +70,14 @@ cargo build --release
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
-#wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
-#tar xf api.tar.gz
-#rm api.tar.gz
-#cd pi-hole-feature-api
-wget https://github.com/cyberb/pi-hole/archive/development.tar.gz
-tar xf development.tar.gz
-rm development.tar.gz
-cd pi-hole-development
+wget https://github.com/pi-hole/pi-hole/archive/feature/api.tar.gz
+tar xf api.tar.gz
+rm api.tar.gz
+cd pi-hole-feature-api
+#wget https://github.com/cyberb/pi-hole/archive/development.tar.gz
+#tar xf development.tar.gz
+#rm development.tar.gz
+#cd pi-hole-development
 sed -i 's#/etc/pihole#/var/snap/pihole/common/etc/pihole#g' gravity.sh
 sed -i 's#/etc/.pihole#/snap/pihole/current#g' gravity.sh
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/common/etc/pihole"#g' gravity.sh
