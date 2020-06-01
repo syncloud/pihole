@@ -11,7 +11,7 @@ fi
 NAME=$1
 NETTLE_VERSION=3.5
 GMP_VERSION=6.1.2
-FTL_VERSION=development
+FTL_VERSION=v4.3.1
 WEB_VERSION=development
 API_VERSION=development
 ARCH=$(uname -m)
