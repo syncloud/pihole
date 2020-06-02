@@ -114,7 +114,7 @@ tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
-make
+make -j4
 make install
 
 cd ${DIR}/build
@@ -128,7 +128,7 @@ else
 fi
 ./configure --help
 ./configure --prefix=${BUILD_DIR}
-make
+make -j4
 make install
 
 cd ${DIR}/build
@@ -140,7 +140,7 @@ sed -i 's#/usr/tmp#/var/snap/pihole/common/usr/tmp#g' src/database/sqlite3.c
 sed -i 's#/var/run#/var/snap/pihole/common/var/run#g' src/dnsmasq/config.h
 sed -i 's#/usr/local/lib#'${BUILD_DIR}/lib'#g' Makefile
 export CFLAGS=-I${BUILD_DIR}/include
-make
+make -j4
 cp pihole-FTL ${BUILD_DIR}/bin/ftl
 
 #cache
