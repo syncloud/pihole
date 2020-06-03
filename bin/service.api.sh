@@ -7,6 +7,8 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
+export LD_LIBRARY_PATH=${DIR}/lib
+
 case $1 in
 start)
     exec ${DIR}/bin/api 2>&1 | logger -t pihole-api

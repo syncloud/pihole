@@ -69,6 +69,10 @@ source ~/.cargo/env
 cargo build --release
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
 ldd ${BUILD_DIR}/bin/api
+cp --remove-destination /usr/lib/$(dpkg-architecture -q DEB_HOST_GNU_TYPE)/libssl*.so* ${BUILD_DIR}/lib
+cp --remove-destination /usr/lib/$(dpkg-architecture -q DEB_HOST_GNU_TYPE)/libcrypto.so* ${BUILD_DIR}/lib
+cp --remove-destination /lib/$(dpkg-architecture -q DEB_HOST_GNU_TYPE)/libgcc_s.so* ${BUILD_DIR}/lib
+
 
 cd ${DIR}/build
 wget https://github.com/cyberb/pi-hole/archive/feature/api.tar.gz
