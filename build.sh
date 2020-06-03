@@ -68,6 +68,7 @@ fi
 source ~/.cargo/env
 cargo build --release
 cp target/release/pihole_api ${BUILD_DIR}/bin/api
+ldd ${BUILD_DIR}/bin/api
 
 cd ${DIR}/build
 wget https://github.com/cyberb/pi-hole/archive/feature/api.tar.gz
