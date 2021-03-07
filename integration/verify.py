@@ -28,12 +28,16 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
         device.run_ssh('journalctl > {0}/journalctl.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/log/syslog {0}/syslog.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/log/messages {0}/messages.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('cp /var/snap/pihole/current/config/pihole/setupVars.conf {0}/setupVars.conf.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la /snap > {0}/snap.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/app.ls.log'.format(app_dir, TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/data.ls.log'.format(data_dir, TMP_DIR), throw=False)
-        device.run_ssh('ls -la {0}/etc/pihole > {1}/data.etc.pihole.ls.log'.format(data_dir, TMP_DIR), throw=False)
-        device.run_ssh('ls -la {0}/web/ > {1}/web.ls.log'.format(app_dir, TMP_DIR), throw=False)
-        device.run_ssh('ls -la {0}/log/ > {1}/log.ls.log'.format(data_dir, TMP_DIR), throw=False)
+        device.run_ssh('ls -la /var/snap/pihole/current/config/pihole > {0}/snap.data.config.pihole.ls.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -la /var/snap/pihole/current/config > {0}/snap.data.config.ls.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -la /var/snap/pihole/current > {0}/snap.data.ls.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -la /var/snap/pihole/common > {0}/snap.common.ls.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -la {0}/web > {1}/web.ls.log'.format(app_dir, TMP_DIR), throw=False)
+        device.run_ssh('ls -la {0}/log > {1}/log.ls.log'.format(data_dir, TMP_DIR), throw=False)
         #device.run_ssh('rm {0}/etc/pihole/gravity.db'.format(data_dir), throw=False)
         #device.run_ssh('{0}/bin/gravity.sh > {1}/gravity.log 2>&1'.format(app_dir, TMP_DIR), throw=False)
         #device.run_ssh('ls -la {0}/etc/pihole > {1}/data.etc.pihole.1.ls.log'.format(data_dir, TMP_DIR), throw=False)
@@ -64,19 +68,19 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
     wait_for_installer(device_session, device_host)
 
 
-def test_index(app_domain):
-    wait_for_rest(requests.session(), 'https://{0}/'.format(app_domain), 200, 500)
+#def test_index(app_domain):
+#    wait_for_rest(requests.session(), 'https://{0}/'.format(app_domain), 200, 500)
 
 
-def test_api(app_domain):
-    response = requests.get('https://{0}/api/stats/summary'.format(app_domain), verify=False)
-    assert response.status_code == 200, response.text
+#def test_api(app_domain):
+#    response = requests.get('https://{0}/api/stats/summary'.format(app_domain), verify=False)
+#    assert response.status_code == 200, response.text
 
 
-def test_auth_mode(app_domain):
-    response = requests.get('https://{0}/api/auth/mode'.format(app_domain), verify=False)
-    assert response.status_code == 200, response.text
-    assert json.loads(response.text)["mode"] == "ldap"
+#def test_auth_mode(app_domain):
+#    response = requests.get('https://{0}/api/auth/mode'.format(app_domain), verify=False)
+#    assert response.status_code == 200, response.text
+#    assert json.loads(response.text)["mode"] == "ldap"
 
 
 # def test_upgrade(app_archive_path, device_host, device_password):

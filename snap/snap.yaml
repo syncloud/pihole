@@ -1,7 +1,7 @@
 apps:
   ftl:
     #user: pihole
-    command: bin/service.server.sh start
+    command: bin/service.ftl.sh
     daemon: simple
     start-timeout: 600s
     plugs:
@@ -19,16 +19,18 @@ apps:
     restart-condition: always
     start-timeout: 600s
     stop-command: bin/service.nginx.sh stop
-  api:
-    #user: pihole
-    command: bin/service.api.sh start
-    daemon: simple
+  php-fpm:
+    user: pihole
+    command: bin/service.php-fpm.sh
+    daemon: forking
     plugs:
     - network
     - network-bind
     restart-condition: always
     start-timeout: 600s
-    stop-command: bin/service.api.sh stop
+
+  pihole:
+    command: bin/gravity.sh
 
 confinement: strict
 description: PiHole

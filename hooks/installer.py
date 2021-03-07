@@ -48,7 +48,7 @@ class Installer:
             'app_dir': self.app_dir,
             'app_data_dir': self.app_data_dir,
             'snap_data': self.snap_data_dir,
-            'snap_common': os.environ['SNAP_COMMON'],
+            'common_dir': os.environ['SNAP_COMMON'],
             'domain': urls.get_app_domain_name(APP_NAME),
             'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
@@ -82,3 +82,4 @@ class Installer:
         
     def prepare_storage(self):
         app_storage_dir = storage.init_storage(APP_NAME, USER_NAME)
+
