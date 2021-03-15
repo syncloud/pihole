@@ -47,6 +47,14 @@ def _test_login(selenium, mode, device_user, device_password):
     selenium.screenshot('login-submitted-' + mode)
 
 
+def test_whitelist(selenium):
+    selenium.find_by_xpath("//span[text()='Whitelist']").click()
+    selenium.screenshot('whitelist')
+    selenium.find_by_id("new_domain").send_keys('test.com')
+    selenium.find_by_id("add2white").click()
+    selenium.find_by_xpath("//span[text()='test.com']")
+
+
 def test_blacklist_exact(selenium):
     selenium.find_by_xpath("//span[text()='Blacklist']").click()
     selenium.screenshot('blacklist')
