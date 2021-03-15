@@ -29,6 +29,7 @@ mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
 
 cd ${BUILD_DIR}/web
 find . -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -name "*.php" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} +
 find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 
 cd ${DIR}/build/pi-hole
