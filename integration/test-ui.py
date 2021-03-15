@@ -53,6 +53,7 @@ def test_whitelist(selenium):
     selenium.find_by_id("new_domain").send_keys('test.com')
     selenium.find_by_id("add2white").click()
     selenium.find_by_xpath("//code[text()='test.com']")
+    selenium.screenshot('whitelist-test')
 
 
 def test_blacklist_exact(selenium):
