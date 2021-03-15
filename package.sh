@@ -33,18 +33,17 @@ find . -name "*.php" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} 
 find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 
 cd ${DIR}/build/pi-hole
-sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' advanced/Templates/gravity_copy.sql
-sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' gravity.sh
-sed -i 's#/etc/.pihole#/snap/pihole/current#g' gravity.sh
-sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/config/pihole"#g' gravity.sh
-sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' gravity.sh
-sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' gravity.sh
-sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' gravity.sh
-sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' advanced/Scripts/database_migration/gravity-db.sh
-sed -i 's#/etc/.pihole#/snap/pihole/current#g' advanced/Scripts/database_migration/gravity-db.sh
-sed -i 's#dig#/snap/pihole/current/bin/dig.sh#g' gravity.sh
-sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' gravity.sh
+find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -name "*.sh" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -name "*.sh" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
+find . -name "*.sh" -exec sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
+find . -name "*.sh" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
+find . -name "*.sh" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
+find . -name "*.sh" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
+find . -name "*.sh" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
+find . -name "*.sh" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 cp gravity.sh ${BUILD_DIR}/bin
+cp pihole.sh ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 
 cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin

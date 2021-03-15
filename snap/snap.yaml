@@ -30,7 +30,10 @@ apps:
     start-timeout: 600s
 
   pihole:
-    command: bin/gravity.sh
+    command: bin/pihole.sh
+
+  sqlite:
+    command: bin/sqlite.sh
 
 confinement: strict
 description: PiHole
