@@ -30,7 +30,7 @@ apps:
     start-timeout: 600s
 
   pihole:
-    command: bin/pihole.sh
+    command: bin/pihole
 
   sqlite:
     command: bin/sqlite.sh

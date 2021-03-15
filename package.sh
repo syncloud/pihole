@@ -43,7 +43,7 @@ find . -name "*.sh" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g
 find . -name "*.sh" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
 find . -name "*.sh" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 cp gravity.sh ${BUILD_DIR}/bin
-cp pihole.sh ${BUILD_DIR}/bin
+cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 
 cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin
