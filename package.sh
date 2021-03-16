@@ -34,14 +34,14 @@ find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/
 
 cd ${DIR}/build/pi-hole
 find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
-find . -name "*.sh" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
-find . -name "*.sh" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
-find . -name "*.sh" -exec sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
-find . -name "*.sh" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
-find . -name "*.sh" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
-find . -name "*.sh" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
-find . -name "*.sh" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
-find . -name "*.sh" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
+find . -regex "\(.*.sh\|.*pihole)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
