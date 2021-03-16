@@ -13,9 +13,9 @@ make -j4
 make install
 
 cd ${DIR}/build/FTL
-sed -i 's#/var/tmp#/var/snap/pihole/common/var/tmp#g' src/database/sqlite3.c
-sed -i 's#/usr/tmp#/var/snap/pihole/common/usr/tmp#g' src/database/sqlite3.c
-sed -i 's#/var/run#/var/snap/pihole/common/var/run#g' src/dnsmasq/config.h
+sed -i 's#/var/tmp#/var/snap/pihole/current/temp#g' src/database/sqlite3.c
+sed -i 's#/usr/tmp#/var/snap/pihole/current/temp#g' src/database/sqlite3.c
+sed -i 's#/var/run#/var/snap/pihole/current/run#g' src/dnsmasq/config.h
 sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' src/config.c
 sed -i 's#/var/log#/var/snap/pihole/common/log#g' src/config.c
 export CFLAGS=-I${BUILD_DIR}/include

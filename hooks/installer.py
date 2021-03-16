@@ -30,14 +30,9 @@ class Installer:
         linux.useradd(USER_NAME, home_folder=home_folder)
         
         fs.makepath(join(self.app_data_dir, 'log'))
-        fs.makepath(join(self.app_data_dir, 'nginx'))
-        fs.makepath(join(self.app_data_dir, 'temp'))
-        fs.makepath(join(self.app_data_dir, 'usr'))
-        fs.makepath(join(self.app_data_dir, 'usr', 'tmp'))
-        fs.makepath(join(self.app_data_dir, 'var'))
-        fs.makepath(join(self.app_data_dir, 'var', 'tmp'))
-        fs.makepath(join(self.app_data_dir, 'var', 'run'))
-      
+        fs.makepath(join(self.snap_data_dir, 'nginx'))
+        fs.makepath(join(self.snap_data_dir, 'temp'))
+        fs.makepath(join(self.snap_data_dir, 'run'))
         storage.init_storage(APP_NAME, USER_NAME)
 
         templates_path = join(self.app_dir, 'config.templates')
@@ -64,8 +59,8 @@ class Installer:
             f.write(gravity_log)
 
     def refresh(self):
-        #self.install_config()
-        pass
+        if not isfile('/var/snap/pihole/current/config/pihole/setupVars.conf'):
+            self.install_config()
 
     def configure(self):
         self.prepare_storage()
