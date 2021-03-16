@@ -28,10 +28,6 @@ def test_index(selenium):
     selenium.screenshot('index')
 
 
-#def test_login_wrong(selenium):
-#    _test_login(selenium, "wrong", "wrong", "wrong")
-
-
 def test_login_good(selenium, device_user, device_password):
     _test_login(selenium, "good", device_user, device_password)
 
@@ -70,4 +66,9 @@ def test_settings_ftl(selenium):
     cache_size = int(selenium.find_by_id("cache-size").text)
     selenium.screenshot('settings-ftl')
     assert cache_size > 0
+
+
+def test_status(selenium):
+    status = int(selenium.find_by_id("status").text)
+    assert 'Active' in status, status
 

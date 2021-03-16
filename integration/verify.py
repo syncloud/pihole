@@ -68,8 +68,8 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
     wait_for_installer(device_session, device_host)
 
 
-#def test_index(app_domain):
-#    wait_for_rest(requests.session(), 'https://{0}/'.format(app_domain), 200, 500)
+def test_cli_status_web(device):
+    device.run_ssh('snap run pihole.cli status web')
 
 
 #def test_api(app_domain):

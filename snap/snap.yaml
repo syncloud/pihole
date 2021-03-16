@@ -29,7 +29,7 @@ apps:
     restart-condition: always
     start-timeout: 600s
 
-  pihole:
+  cli:
     command: bin/pihole
 
   sqlite:
