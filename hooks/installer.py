@@ -1,8 +1,8 @@
 import logging
 import os
-import shutil
 from os.path import join, isfile
 from subprocess import check_output
+
 from syncloudlib import fs, linux, gen, logger
 from syncloudlib.application import paths, storage, urls
 
@@ -56,7 +56,6 @@ class Installer:
         gen.generate_files(templates_path, config_path, variables)
         fs.chownpath(self.snap_data_dir, USER_NAME, recursive=True)
         fs.chownpath(self.app_data_dir, USER_NAME, recursive=True)
-        
 
     def install(self):
         self.install_config()
@@ -66,7 +65,8 @@ class Installer:
 
     def refresh(self):
         #self.install_config()
-        
+        pass
+
     def configure(self):
         self.prepare_storage()
         install_file = join(self.app_data_dir, 'installed')
@@ -79,5 +79,5 @@ class Installer:
         self.prepare_storage()
         
     def prepare_storage(self):
-        app_storage_dir = storage.init_storage(APP_NAME, USER_NAME)
+        storage.init_storage(APP_NAME, USER_NAME)
 
