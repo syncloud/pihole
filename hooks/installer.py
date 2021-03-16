@@ -60,7 +60,7 @@ class Installer:
 
     def refresh(self):
         if not isfile('/var/snap/pihole/current/config/pihole/setupVars.conf'):
-            self.install_config()
+            self.install()
 
     def configure(self):
         self.prepare_storage()
