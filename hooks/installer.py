@@ -23,6 +23,7 @@ class Installer:
         self.app_dir = paths.get_app_dir(APP_NAME)
         self.app_data_dir = paths.get_data_dir(APP_NAME)
         self.snap_data_dir = os.environ['SNAP_DATA']
+        self.config_path = join(self.snap_data_dir, 'config')
 
     def install_config(self):
 
@@ -36,7 +37,6 @@ class Installer:
         storage.init_storage(APP_NAME, USER_NAME)
 
         templates_path = join(self.app_dir, 'config.templates')
-        config_path = join(self.snap_data_dir, 'config')
 
         variables = {
             'app': APP_NAME,
@@ -48,7 +48,7 @@ class Installer:
             'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
-        gen.generate_files(templates_path, config_path, variables)
+        gen.generate_files(templates_path, self.config_path, variables)
         fs.chownpath(self.snap_data_dir, USER_NAME, recursive=True)
         fs.chownpath(self.app_data_dir, USER_NAME, recursive=True)
 
@@ -59,7 +59,7 @@ class Installer:
             f.write(gravity_log)
 
     def refresh(self):
-        if not isfile('/var/snap/pihole/current/config/pihole/setupVars.conf'):
+        if not isfile(join(self.config_path, 'pihole/setupVars.conf')):
             self.install()
 
     def configure(self):
