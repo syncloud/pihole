@@ -54,11 +54,9 @@ class Installer:
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
         gen.generate_files(templates_path, config_path, variables)
-        gen.generate_files(join(self.app_dir, 'etc'), join(os.environ['SNAP_COMMON'], 'etc'), variables)
         fs.chownpath(self.snap_data_dir, USER_NAME, recursive=True)
         fs.chownpath(self.app_data_dir, USER_NAME, recursive=True)
         
-        #shutil.copytree(join(self.app_dir, 'etc'), join(os.environ['SNAP_COMMON'], 'etc'))
 
     def install(self):
         self.install_config()
@@ -67,7 +65,7 @@ class Installer:
             f.write(gravity_log)
 
     def refresh(self):
-        self.install_config()
+        #self.install_config()
         
     def configure(self):
         self.prepare_storage()
