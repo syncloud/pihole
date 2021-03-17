@@ -45,7 +45,11 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig#/snap/pihole/current/bin
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
-sed -i 's#lsof -Pni:53#snap services pihole.ftl | tail -1 | grep active#g' pihole
+sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
+sed -i 's#IPv4\.\*UDP#udp #g' pihole
+sed -i 's#IPv4\.\*TCP#tcp #g' pihole
+sed -i 's#IPv6\.\*UDP#udp6#g' pihole
+sed -i 's#IPv6\.\*TCP#tcp6#g' pihole
 
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
