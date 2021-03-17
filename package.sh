@@ -44,6 +44,7 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 sed -i 's#lsof -Pni:53#snap services pihole.ftl | tail -1 | grep active#g' pihole
+sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' pihole
 
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
