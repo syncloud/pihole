@@ -69,6 +69,6 @@ def test_settings_ftl(selenium):
 
 
 def test_status(selenium):
-    status = int(selenium.find_by_id("status").text)
+    status = selenium.find_by_id("status").text
     assert 'Active' in status, status
 

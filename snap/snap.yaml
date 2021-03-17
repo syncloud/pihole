@@ -20,7 +20,7 @@ apps:
     start-timeout: 600s
     stop-command: bin/service.nginx.sh stop
   php-fpm:
-    user: pihole
+#    user: pihole
     command: bin/service.php-fpm.sh
     daemon: forking
     plugs:
