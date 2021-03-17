@@ -49,6 +49,8 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig#/snap/pihole/current/bin
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#service pihole-FTL restart#snap restart pihole.ftl#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pkill -HUP pihole-FTL#snap restart pihole.ftl#g' {} +
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#IPv4\.\*UDP#udp #g' pihole
 sed -i 's#IPv4\.\*TCP#tcp #g' pihole
@@ -58,6 +60,7 @@ sed -i 's#IPv6\.\*TCP#tcp6#g' pihole
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
+cp -r "automated install" ${BUILD_DIR}
 cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
 cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
 

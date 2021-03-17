@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 from os.path import join, isfile
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 
 from syncloudlib import fs, linux, gen, logger
 from syncloudlib.application import paths, storage, urls
@@ -62,9 +62,13 @@ class Installer:
         self.run_gravity()
 
     def run_gravity(self):
-        gravity_log = check_output([join(self.snap, 'bin/gravity.sh')])
-        with open(join(self.snap_common, 'log', 'pihole.log'), 'w') as f:
-            f.write(gravity_log)
+        try:
+            gravity_log = check_output([join(self.snap, 'bin/gravity.sh')])
+            with open(join(self.snap_common, 'log', 'pihole.log'), 'w') as f:
+                f.write(gravity_log)
+        except CalledProcessError as e:
+            print(e.output)
+            raise e
 
     def configure(self):
         self.prepare_storage()
