@@ -28,7 +28,7 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
         device.run_ssh('journalctl > {0}/journalctl.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/log/syslog {0}/syslog.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/log/messages {0}/messages.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/snap/pihole/current/config/pihole/setupVars.conf {0}/setupVars.conf.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('cp /var/snap/pihole/current/setupVars.conf {0}/setupVars.conf.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la /snap > {0}/snap.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/app.ls.log'.format(app_dir, TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/data.ls.log'.format(data_dir, TMP_DIR), throw=False)
@@ -70,6 +70,11 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
 
 def test_cli_status_web(device):
     device.run_ssh('snap run pihole.cli status web')
+
+
+def test_cli_admin_setdns(device):
+    output = device.run_ssh('snap run pihole.cli -a setdns')
+    assert 'Failed' not in output
 
 
 #def test_api(app_domain):

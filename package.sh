@@ -28,6 +28,7 @@ mv ${DIR}/build/lib ${BUILD_DIR}
 mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
 
 cd ${BUILD_DIR}/web
+find . -name "*.php" -exec sed -i 's#/etc/pihole/dns-servers.conf#/var/snap/pihole/current/config/pihole/dns-servers.conf#g' {} +
 find . -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 find . -name "*.php" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} +
 find . -name "*.php" -exec sed -i 's#sudo pihole#snap run pihole.cli#g' {} +
@@ -36,8 +37,11 @@ find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/
 cd ${DIR}/build/pi-hole
 find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pihole/current/config#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityDBfile=.*"#gravityDBfile="/var/snap/pihole/current/gravity.db"#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityTEMPfile=.*"#gravityTEMPfile="/var/snap/pihole/current/gravity_temp.db"#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir=.*"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
@@ -54,6 +58,8 @@ sed -i 's#IPv6\.\*TCP#tcp6#g' pihole
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
+cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
+cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
 
 cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin
 
