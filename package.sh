@@ -36,7 +36,7 @@ find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/
 
 cd ${DIR}/build/pi-hole
 find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole/setupVars.conf#/etc/pihole/setupVars.conf#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pihole/current/config#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
