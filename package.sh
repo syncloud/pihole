@@ -41,6 +41,7 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pih
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityDBfile=.*"#gravityDBfile="/var/snap/pihole/current/gravity.db"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityTEMPfile=.*"#gravityTEMPfile="/var/snap/pihole/current/gravity_temp.db"#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#setupVars=.*"#setupVars="/var/snap/pihole/current/setupVars.conf"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir=.*"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
