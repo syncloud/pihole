@@ -33,6 +33,7 @@ find . -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config
 find . -name "*.php" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} +
 find . -name "*.php" -exec sed -i 's#sudo pihole#snap run pihole.cli#g' {} +
 find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -name "*.php" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
 
 cd ${DIR}/build/pi-hole
 find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
