@@ -37,25 +37,26 @@ find . -name "*.php" -exec sed -i 's#sudo pihole#snap run pihole.cli#g' {} +
 find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 
 cd ${DIR}/build/pi-hole
-find . -name "*.sql" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
+find . -name "*.sql" -exec sed -i 's#/etc/pihole/gravity.db#/var/snap/pihole/current/gravity.db#g' {} +
 
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pihole/current/config#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityDBfile=.*"#gravityDBfile="/var/snap/pihole/current/gravity.db"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#gravityTEMPfile=.*"#gravityTEMPfile="/var/snap/pihole/current/gravity_temp.db"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#setupVars=.*"#setupVars="/var/snap/pihole/current/setupVars.conf"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir=.*"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#service pihole-FTL restart#snap restart pihole.ftl#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pkill -HUP pihole-FTL#snap restart pihole.ftl#g' {} +
+
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pihole/current/config#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' {} +
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#IPv4\.\*UDP#udp #g' pihole
 sed -i 's#IPv4\.\*TCP#tcp #g' pihole
