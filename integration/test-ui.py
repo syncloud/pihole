@@ -43,11 +43,11 @@ def _test_login(selenium, mode, device_user, device_password):
     selenium.screenshot('login-submitted-' + mode)
 
 
-
 def test_main(selenium):
-    blocked_size = int(selenium.find_by_id("domains_being_blocked").text)
+    blocked_size = int(selenium.find_by_id("domains_being_blocked").text.replace(',', ''))
     selenium.screenshot('main')
     assert blocked_size > 0
+
 
 def test_whitelist(selenium):
     selenium.find_by_xpath("//span[text()='Whitelist']").click()
