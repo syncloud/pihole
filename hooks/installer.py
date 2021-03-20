@@ -54,12 +54,14 @@ class Installer:
 
     def install(self):
         self.install_config()
-        shutil.copy(join(self.config_path, 'pihole/setupVars.conf.dist'), join(self.snap_data, 'setupVars.conf'))
+        config_file = join(self.snap_data, 'setupVars.conf')
+        config_file_dist = join(self.config_path, 'pihole/setupVars.conf.dist')
+        if not isfile(config_file): 
+            shutil.copy(config_file_dist, config_file)
         self.run_gravity()
 
     def refresh(self):
-        self.install_config()
-        self.run_gravity()
+        self.install()
 
     def run_gravity(self):
         try:
