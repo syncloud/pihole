@@ -45,7 +45,7 @@ class Installer:
             'snap_data': self.snap_data,
             'snap_common': self.snap_common,
             'domain': urls.get_app_domain_name(APP_NAME),
-            'ipv4': check_output(['/snap/platform/current/bin/cli', 'ipv4'])
+            'ipv4': check_output(['snap', 'run', 'platform.cli', 'ipv4'])
             #'ipv6': check_output(['/snap/platform/current/bin/cli', 'ipv6'])
         }
         gen.generate_files(templates_path, self.config_path, variables)
