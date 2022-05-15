@@ -9,9 +9,11 @@ WEB_VERSION=5.4
 ARCH=$(uname -m)
 DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download/1
 
-rm -rf ${DIR}/build
-BUILD_DIR=${DIR}/build
-mkdir -p ${BUILD_DIR}
+apt update
+apt -y install wget
+
+BUILD_DIR=${DIR}/build/snap
+mkdir -p $BUILD_DIR
 cd ${DIR}/build
 
 wget --progress=dot:giga ${DOWNLOAD_URL}/bind9-${ARCH}.tar.gz
@@ -19,13 +21,6 @@ tar xf bind9-${ARCH}.tar.gz
 
 wget --progress=dot:giga ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
 tar xf nginx-${ARCH}.tar.gz
-
-wget --progress=dot:giga ${DOWNLOAD_URL}/php7-${ARCH}.tar.gz
-tar xf php7-${ARCH}.tar.gz
-
-wget --progress=dot:giga ${DOWNLOAD_URL}/python-${ARCH}.tar.gz
-tar xf python-${ARCH}.tar.gz
-./python/bin/pip install -r ${DIR}/requirements.txt
 
 wget --progress=dot:giga ${DOWNLOAD_URL}/sqlite-${ARCH}.tar.gz
 tar xf sqlite-${ARCH}.tar.gz
