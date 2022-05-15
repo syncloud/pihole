@@ -16,7 +16,7 @@ BUILD_DIR=${DIR}/build/app
 mkdir -p ${BUILD_DIR}
 
 cp -r ${DIR}/bin ${BUILD_DIR}
-cp -r ${DIR}/config ${BUILD_DIR}/config.templates
+cp -r ${DIR}/config ${BUILD_DIR}
 cp -r ${DIR}/hooks ${BUILD_DIR}
 
 mv ${DIR}/build/bind9 ${BUILD_DIR}
@@ -67,8 +67,8 @@ cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 cp -r "automated install" ${BUILD_DIR}
-cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
-cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
+#cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
+#cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
 
 cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin
 

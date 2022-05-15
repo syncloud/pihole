@@ -37,7 +37,7 @@ class Installer:
         fs.makepath(join(self.snap_data, 'run'))
         storage.init_storage(APP_NAME, USER_NAME)
 
-        templates_path = join(self.snap, 'config.templates')
+        templates_path = join(self.snap, 'config')
 
         variables = {
             'app': APP_NAME,
