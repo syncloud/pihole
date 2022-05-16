@@ -3,14 +3,13 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${DIR}
 
-if [[ -z "$2" ]]; then
-    echo "usage $0 app version"
+if [[ -z "$1" ]]; then
+    echo "usage $0 version"
     exit 1
 fi
 
-NAME=$1
 ARCH=$(uname -m)
-VERSION=$2
+VERSION=$1
 
 BUILD_DIR=${DIR}/build/sbap
 mkdir -p ${BUILD_DIR}
