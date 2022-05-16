@@ -64,14 +64,32 @@ local build(arch, test_ui) = [{
                 "./build-ftl.sh"
             ]
         },
-        {
-            name: "package",
-            image: "syncloud/build-deps-" + arch,
-            commands: [
-                "VERSION=$(cat version)",
-                "./package.sh " + name + " $VERSION"
-            ]
-        },
+    {
+        name: "build",
+        image: "debian:buster-slim",
+        commands: [
+            "./build.sh " + version
+        ],
+        volumes: [
+            {
+                name: "docker",
+                path: "/usr/bin/docker"
+            },
+            {
+               name: "docker.sock",
+               path: "/var/run/docker.sock"
+            }
+        ]
+    },
+
+            {
+        name: "package",
+        image: "debian:buster-slim",
+        commands: [
+            "VERSION=$(cat version)",
+            "./package.sh " + name + " $VERSION "
+        ]
+    }
     ] + ( if arch == "amd64" then [
     {
         name: "test-integration-jessie",
