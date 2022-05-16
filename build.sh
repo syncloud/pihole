@@ -3,13 +3,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${DIR}
 
-if [[ -z "$1" ]]; then
-    echo "usage $0 version"
-    exit 1
-fi
-
 ARCH=$(uname -m)
-VERSION=$1
 
 BUILD_DIR=${DIR}/build/sbap
 mkdir -p ${BUILD_DIR}
