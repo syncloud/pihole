@@ -74,6 +74,17 @@ def test_settings_ftl(selenium):
     assert cache_size > 0
 
 
+def test_local_dns(selenium, device):
+    selenium.find_by_xpath("//span[text()='Local DNS']").click()
+    selenium.find_by_xpath("//span[text()='DNS Records']").click()
+    selenium.find_by_id("domain").send_keys('test.com')
+    selenium.find_by_id("ip").send_keys('1.1.1.1')
+    selenium.find_by_id("btnAdd").click()
+    selenium.screenshot('local-dns')
+    output = device.run_ssh('/snap/pihole/current/bind9/bin/dig.sh test.com @localhost')
+    assert '1.1.1.1' in output
+
+
 def test_status(selenium):
     status = selenium.find_by_id("status").text
     assert 'Active' in status, status

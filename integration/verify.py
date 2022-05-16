@@ -50,22 +50,19 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup, device, device_host, app, log_dir, domain):
-    shutil.rmtree(log_dir, ignore_errors=True)
-    os.mkdir(log_dir)
+def test_start(module_setup, device, device_host, app, domain):
     add_host_alias(app, device_host, domain)
-    print(check_output('date', shell=True))
-    device.run_ssh('date', retries=20)
+    device.run_ssh('date', retries=100)
+    device.run_ssh('mkdir {0}'.format(TMP_DIR))
 
 
 def test_activate_device(device):
-    response = device.activate()
+    response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
 def test_install(device_session, app_archive_path, device_host, app_domain, device_password):
     local_install(device_host, device_password, app_archive_path)
-    wait_for_installer(device_session, device_host)
 
 
 def test_cli_status_web(device):
