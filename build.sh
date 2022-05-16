@@ -5,12 +5,13 @@ cd ${DIR}
 
 ARCH=$(uname -m)
 
-BUILD_DIR=${DIR}/build/sbap
+BUILD_DIR=${DIR}/build/snap
 mkdir -p ${BUILD_DIR}
 
 cp -r ${DIR}/bin ${BUILD_DIR}
 cp -r ${DIR}/config ${BUILD_DIR}
 cp -r ${DIR}/hooks ${BUILD_DIR}
+cp -r ${DIR}/meta ${BUILD_DIR}
 
 mv ${DIR}/build/bind9 ${BUILD_DIR}
 mv ${DIR}/build/nginx ${BUILD_DIR}
