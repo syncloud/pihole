@@ -24,4 +24,11 @@ export CMAKE_PREFIX_PATH=${BUILD_DIR}/lib
 ldd pihole-FTL
 mv pihole-FTL pihole-FTL.bin
 cp $DIR/pihole-FTL .
-
+cp /lib/*/libm.so* ${BUILD_DIR}/lib
+cp /lib/*/librt.so* ${BUILD_DIR}/lib
+cp /usr/local/*/libgcc_s.so* ${BUILD_DIR}/lib
+cp /lib/*/libpthread.so* ${BUILD_DIR}/lib
+cp /lib/*/libc.so* ${BUILD_DIR}/lib
+cp /lib/*-linux*/ld-*.so ${BUILD_DIR}/lib/ld.so
+export LD_LIBRARY_PATH=${BUILD_DIR}/lib
+ldd pihole-FTL.bin
