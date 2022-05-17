@@ -17,4 +17,4 @@ tar xf sqlite.tar
 rm -rf sqlite.tar
 cp ${DIR}/sqlite.sh ${BUILD_DIR}/bin/
 ls -la ${BUILD_DIR}/bin
-${BUILD_DIR}/bin/sqlite.sh --help
+${BUILD_DIR}/bin/sqlite.sh -version
