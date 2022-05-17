@@ -9,7 +9,6 @@ BUILD_DIR=${DIR}/../build/snap/sqlite
 docker ps -a -q --filter ancestor=sqlite:syncloud --format="{{.ID}}" | xargs docker stop | xargs docker rm || true
 docker rmi sqlite:syncloud || true
 docker build -t sqlite:syncloud .
-docker run sqlite:syncloud sqlite --help
 docker create --name=sqlite sqlite:syncloud
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
