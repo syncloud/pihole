@@ -61,7 +61,7 @@ local build(arch, test_ui) = [{
             name: "build ftl",
             image: "gcc:10",
             commands: [
-                "./build-ftl.sh"
+                "./ftl/build.sh"
             ]
         },
     {
