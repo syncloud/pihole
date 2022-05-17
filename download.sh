@@ -7,7 +7,7 @@ FTL_VERSION=5.7
 PIHOLE_VERSION=5.2.4
 WEB_VERSION=5.4
 ARCH=$(uname -m)
-DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download/1
+DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download
 
 apt update
 apt -y install wget
@@ -16,13 +16,13 @@ BUILD_DIR=${DIR}/build/snap
 mkdir -p $BUILD_DIR
 cd ${DIR}/build
 
-wget --progress=dot:giga ${DOWNLOAD_URL}/bind9-${ARCH}.tar.gz
+wget --progress=dot:giga ${DOWNLOAD_URL}/bind9/bind9-${ARCH}.tar.gz
 tar xf bind9-${ARCH}.tar.gz
 
-wget --progress=dot:giga ${DOWNLOAD_URL}/nginx-${ARCH}.tar.gz
+wget --progress=dot:giga ${DOWNLOAD_URL}/nginx/nginx-${ARCH}.tar.gz
 tar xf nginx-${ARCH}.tar.gz
 
-wget --progress=dot:giga ${DOWNLOAD_URL}/sqlite-${ARCH}.tar.gz
+wget --progress=dot:giga ${DOWNLOAD_URL}/1/sqlite-${ARCH}.tar.gz
 tar xf sqlite-${ARCH}.tar.gz
 
 #wget https://github.com/pi-hole/AdminLTE/archive/v${WEB_VERSION}.tar.gz
