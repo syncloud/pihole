@@ -17,6 +17,23 @@ local build(arch, test_ui) = [{
             ]
         },
         {
+            name: "package sqlite",
+            image: "debian:buster-slim",
+            commands: [
+                "./sqlite/build.sh"
+            ],
+            volumes: [
+                {
+                    name: "docker",
+                    path: "/usr/bin/docker"
+                },
+                {
+                    name: "docker.sock",
+                    path: "/var/run/docker.sock"
+                }
+            ]
+        },
+        {
             name: "package python",
             image: "debian:buster-slim",
             commands: [

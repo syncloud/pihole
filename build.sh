@@ -16,7 +16,7 @@ cp -r ${DIR}/meta ${BUILD_DIR}
 mv ${DIR}/build/bind9 ${BUILD_DIR}
 mv ${DIR}/build/nginx ${BUILD_DIR}
 mv ${DIR}/build/sqlite ${BUILD_DIR}
-mv ${DIR}/build/lib ${BUILD_DIR}
+#mv ${DIR}/build/lib ${BUILD_DIR}
 mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
 mv ${DIR}/build/FTL ${BUILD_DIR}
 
@@ -39,7 +39,7 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#setupVars=.*"#setupVars="/va
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir=.*"#piholeDir="/var/snap/pihole/current/config/pihole"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/bin/sqlite.sh#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig#/snap/pihole/current/bind9/bin/dig.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#service pihole-FTL restart#snap restart pihole.ftl#g' {} +
