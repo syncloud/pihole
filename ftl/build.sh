@@ -37,3 +37,5 @@ cp /lib/*-linux*/ld-*.so ${BUILD_DIR}/lib/ld.so
 
 export LD_LIBRARY_PATH=${BUILD_DIR}/lib
 ldd ${BUILD_DIR}/bin/pihole-FTL.bin
+
+${BUILD_DIR}/bin/pihole-FTL --help
