@@ -18,6 +18,7 @@ mv ${DIR}/build/nginx ${BUILD_DIR}
 mv ${DIR}/build/sqlite ${BUILD_DIR}
 mv ${DIR}/build/lib ${BUILD_DIR}
 mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
+mv ${DIR}/build/FTL ${BUILD_DIR}
 
 cd ${BUILD_DIR}/web
 find . -name "*.php" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
@@ -62,4 +63,4 @@ cp -r "automated install" ${BUILD_DIR}
 #cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
 #cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
 
-cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin
+#cp ${DIR}/build/FTL/pihole-FTL ${BUILD_DIR}/bin

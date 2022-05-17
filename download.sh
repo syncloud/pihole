@@ -39,8 +39,8 @@ mv pi-hole-${PIHOLE_VERSION} pi-hole
 
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
-mv nettle-${NETTLE_VERSION} nettle
+mv nettle-${NETTLE_VERSION} nettle-src
 
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/v${FTL_VERSION}.tar.gz
 tar xf v${FTL_VERSION}.tar.gz
-mv FTL-${FTL_VERSION} FTL
+mv FTL-${FTL_VERSION} FTL-src
