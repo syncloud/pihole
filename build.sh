@@ -25,6 +25,7 @@ find . -name "*.php" -exec sed -i 's#/etc/pihole/dns-servers.conf#/var/snap/piho
 find . -name "*.php" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 find . -name "*.php" -exec sed -i 's#/var/log#/var/snap/pihole/common/log#g' {} +
 find . -name "*.php" -exec sed -i 's#sudo pihole#snap run pihole.cli#g' {} +
+find . -name "*.php" -exec sed -i 's#pidof pihole-FTL#systemctl show --property MainPID --value snap.pihole.ftl#g' {} +
 find . -name "*.js" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' {} +
 
 cd ${DIR}/build/pi-hole
