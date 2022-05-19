@@ -35,6 +35,7 @@ class Installer:
         fs.makepath(join(self.snap_data, 'nginx'))
         fs.makepath(join(self.snap_data, 'temp'))
         fs.makepath(join(self.snap_data, 'run'))
+        fs.makepath(join(self.snap_data, 'misc'))
         storage.init_storage(APP_NAME, USER_NAME)
 
         templates_path = join(self.snap, 'config')
