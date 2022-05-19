@@ -1,4 +1,5 @@
 import pytest
+import time
 from os.path import dirname, join
 
 from syncloudlib.integration.hosts import add_host_alias
@@ -10,7 +11,7 @@ TMP_DIR = '/tmp/syncloud/ui'
 @pytest.fixture(scope="session")
 def module_setup(request, device, artifact_dir, ui_mode):
     def module_teardown():
-        device.activated()
+        
         device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
         device.run_ssh('cp /var/log/syslog {0}/syslog.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
@@ -19,7 +20,8 @@ def module_setup(request, device, artifact_dir, ui_mode):
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup, app, domain, device_host):
+def test_start(module_setup, app, domain, device_host, device):
+    device.activated()
     add_host_alias(app, device_host, domain)
 
 
@@ -80,6 +82,7 @@ def test_local_dns(selenium, device):
     selenium.find_by_id("domain").send_keys('test.com')
     selenium.find_by_id("ip").send_keys('1.1.1.1')
     selenium.find_by_id("btnAdd").click()
+    time.sleep(5)
     selenium.screenshot('local-dns')
     output = device.run_ssh('/snap/pihole/current/bind9/bin/dig.sh test.com @localhost')
     assert '1.1.1.1' in output
