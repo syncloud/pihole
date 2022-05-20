@@ -85,6 +85,6 @@ def test_local_dns(selenium, device):
     selenium.find_by_id("btnAdd").click()
     time.sleep(5)
     selenium.screenshot('local-dns')
-    output = device.run_ssh('/snap/pihole/current/bind9/bin/dig.sh test1234.com @localhost')
+    output = device.run_ssh('/snap/pihole/current/bind9/bin/dig.sh test1234.com @127.0.0.1')
     assert '1.1.1.1' in output
 
