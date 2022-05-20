@@ -78,7 +78,7 @@ def test_settings_ftl(selenium):
     assert cache_size > 0
 
 
-def test_local_dns(selenium, device):
+def test_local_dns(selenium, device, device_host):
     selenium.find_by_xpath("//span[text()='Local DNS']").click()
     selenium.find_by_xpath("//span[text()='DNS Records']").click()
     selenium.find_by_id("domain").send_keys('test1234.com')
