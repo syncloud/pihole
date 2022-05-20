@@ -49,6 +49,8 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/dnsmasq.d#/var/snap/pih
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/usr/local/bin#/snap/pihole/current/bin#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#grep -q "pihole"#grep -q $(systemctl show --property MainPID --value snap.pihole.ftl)#g' {} +
+
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#IPv4\.\*UDP#udp #g' pihole
 sed -i 's#IPv4\.\*TCP#tcp #g' pihole

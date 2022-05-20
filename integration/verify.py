@@ -66,12 +66,11 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
 
 
 def test_cli_status_web(device):
-    device.run_ssh('snap run pihole.cli status web')
+    assert "-1" not in device.run_ssh('snap run pihole.cli status web')
 
 
 def test_cli_admin_setdns(device):
-    output = device.run_ssh('snap run pihole.cli -a setdns')
-    assert 'Failed' not in output
+    assert 'Failed' not in device.run_ssh('snap run pihole.cli -a setdns')
 
 
 #def test_api(app_domain):
