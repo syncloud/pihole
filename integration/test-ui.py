@@ -89,3 +89,8 @@ def test_local_dns(selenium, device, device_host):
     #output = check_output('dig test1234.com @{0}'.format(device_host), shell=True)
     #assert '1.1.1.1' in output
 
+
+def test_teardown(driver):
+    driver.quit()
+
+
