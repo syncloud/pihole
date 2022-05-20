@@ -1,6 +1,7 @@
 import pytest
 import time
 from os.path import dirname, join
+from subprocess import check_output
 
 from syncloudlib.integration.hosts import add_host_alias
 
@@ -85,6 +86,6 @@ def test_local_dns(selenium, device):
     selenium.find_by_id("btnAdd").click()
     time.sleep(5)
     selenium.screenshot('local-dns')
-    output = device.run_ssh('/snap/pihole/current/bind9/bin/dig.sh test1234.com @127.0.0.1')
+    output = check_output('dig test1234.com @{0}'.format(device_host), shell=True)
     assert '1.1.1.1' in output
 
