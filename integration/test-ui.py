@@ -54,7 +54,10 @@ def test_main(selenium):
     assert blocked_size > 0
 
 
-def test_whitelist(selenium):
+def test_whitelist(selenium, ui_mode):
+    if ui_mode == "mobile":
+        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
+
     selenium.find_by_xpath("//span[text()='Whitelist']").click()
     selenium.screenshot('whitelist')
     selenium.find_by_id("new_domain").send_keys('test.com')
@@ -63,24 +66,28 @@ def test_whitelist(selenium):
     selenium.screenshot('whitelist-test')
 
 
-def test_blacklist_exact(selenium):
+def test_blacklist_exact(selenium, ui_mode):
+    if ui_mode == "mobile":
+        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
     selenium.find_by_xpath("//span[text()='Blacklist']").click()
     selenium.screenshot('blacklist')
 
 
-def test_settings_networking(selenium):
+def test_settings(selenium, ui_mode):
+   if ui_mode == "mobile":
+        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
     selenium.find_by_xpath("//span[text()='Settings']").click()
-    selenium.screenshot('settings-networking')
-
-
-def test_settings_ftl(selenium):
+    selenium.screenshot('settings')
     cache_size = int(selenium.find_by_id("cache-size").text)
     selenium.find_by_xpath('//span[@id="status" and contains(text(), "Active")]')
     selenium.screenshot('settings-ftl')
     assert cache_size > 0
 
 
-def test_local_dns(selenium, device, device_host):
+def test_local_dns(selenium, device, device_host, ui_mode):
+    if ui_mode == "mobile":
+        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
+
     selenium.find_by_xpath("//span[text()='Local DNS']").click()
     selenium.find_by_xpath("//span[text()='DNS Records']").click()
     selenium.find_by_id("domain").send_keys('test1234.com')
