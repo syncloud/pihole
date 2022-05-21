@@ -74,7 +74,7 @@ def test_blacklist_exact(selenium, ui_mode):
 
 
 def test_settings(selenium, ui_mode):
-   if ui_mode == "mobile":
+    if ui_mode == "mobile":
         selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
     selenium.find_by_xpath("//span[text()='Settings']").click()
     selenium.screenshot('settings')
