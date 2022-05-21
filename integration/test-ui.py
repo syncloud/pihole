@@ -5,6 +5,7 @@ from subprocess import check_output
 from selenium.webdriver.support.ui import WebDriverWait
 from syncloudlib.integration.hosts import add_host_alias
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud/ui'
