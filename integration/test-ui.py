@@ -2,7 +2,7 @@ import pytest
 import time
 from os.path import dirname, join
 from subprocess import check_output
-
+from selenium.webdriver.support.ui import WebDriverWait
 from syncloudlib.integration.hosts import add_host_alias
 
 DIR = dirname(__file__)
