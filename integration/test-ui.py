@@ -63,6 +63,7 @@ def test_whitelist(selenium, ui_mode):
     selenium.find_by_id("new_domain").send_keys('test-{0}.com'.format(ui_mode))
     selenium.find_by_id("add2white").click()
     selenium.find_by_xpath("//code[text()='test-{0}.com']".format(ui_mode))
+    wait_for_notification(selenium)
     selenium.screenshot('whitelist-test')
 
 
@@ -102,4 +103,8 @@ def test_local_dns(selenium, device, device_host, ui_mode):
 def test_teardown(driver):
     driver.quit()
 
+
+def wait_for_notification(selenium):
+    wait_driver = WebDriverWait(selenium.driver, 120)
+    wait_driver.until(EC.invisibility_of_element_located((By.XPATH, '//span[@data-notify="message"]')))
 
