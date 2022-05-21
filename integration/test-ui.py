@@ -60,9 +60,9 @@ def test_whitelist(selenium, ui_mode):
 
     selenium.find_by_xpath("//span[text()='Whitelist']").click()
     selenium.screenshot('whitelist')
-    selenium.find_by_id("new_domain").send_keys('test.com')
+    selenium.find_by_id("new_domain").send_keys('test-{0}.com'.format(ui_mode))
     selenium.find_by_id("add2white").click()
-    selenium.find_by_xpath("//code[text()='test.com']")
+    selenium.find_by_xpath("//code[text()='test-{0}.com']".format(ui_mode))
     selenium.screenshot('whitelist-test')
 
 
@@ -90,12 +90,12 @@ def test_local_dns(selenium, device, device_host, ui_mode):
 
     selenium.find_by_xpath("//span[text()='Local DNS']").click()
     selenium.find_by_xpath("//span[text()='DNS Records']").click()
-    selenium.find_by_id("domain").send_keys('test1234.com')
+    selenium.find_by_id("domain").send_keys('test-local-{0}.com'.format(ui_mode))
     selenium.find_by_id("ip").send_keys('1.1.1.1')
     selenium.find_by_id("btnAdd").click()
     #time.sleep(5)
     selenium.screenshot('local-dns')
-    #output = check_output('dig test1234.com @{0}'.format(device_host), shell=True)
+    #output = check_output('dig test-local-{0}.com @{0}'.format(device_host, ui_mode)), shell=True)
     #assert '1.1.1.1' in output
 
 
