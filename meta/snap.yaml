@@ -33,7 +33,7 @@ apps:
     command: bin/pihole
 
   sqlite:
-    command: bin/sqlite.sh
+    command: sqlite/bin/sqlite.sh
 
 confinement: strict
 description: PiHole
