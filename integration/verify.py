@@ -29,7 +29,7 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
         device.run_ssh('cp /var/log/syslog {0}/syslog.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/log/messages {0}/messages.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/pihole/current/setupVars.conf {0}/setupVars.conf.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('ls -la /snap > {0}/snap.ls.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -la /snap/pihole/current/ > {0}/snap.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/app.ls.log'.format(app_dir, TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/data.ls.log'.format(data_dir, TMP_DIR), throw=False)
         device.run_ssh('ls -la /var/snap/pihole/current/config/pihole > {0}/snap.data.config.pihole.ls.log'.format(TMP_DIR), throw=False)
@@ -50,31 +50,27 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
     request.addfinalizer(module_teardown)
 
 
-def test_start(module_setup, device, device_host, app, log_dir, domain):
-    shutil.rmtree(log_dir, ignore_errors=True)
-    os.mkdir(log_dir)
+def test_start(module_setup, device, device_host, app, domain):
     add_host_alias(app, device_host, domain)
-    print(check_output('date', shell=True))
-    device.run_ssh('date', retries=20)
+    device.run_ssh('date', retries=100)
+    device.run_ssh('mkdir {0}'.format(TMP_DIR))
 
 
 def test_activate_device(device):
-    response = device.activate()
+    response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
 def test_install(device_session, app_archive_path, device_host, app_domain, device_password):
     local_install(device_host, device_password, app_archive_path)
-    wait_for_installer(device_session, device_host)
 
 
 def test_cli_status_web(device):
-    device.run_ssh('snap run pihole.cli status web')
+    assert "-1" not in device.run_ssh('snap run pihole.cli status web')
 
 
 def test_cli_admin_setdns(device):
-    output = device.run_ssh('snap run pihole.cli -a setdns')
-    assert 'Failed' not in output
+    assert 'Failed' not in device.run_ssh('snap run pihole.cli -a setdns')
 
 
 #def test_api(app_domain):

@@ -35,9 +35,10 @@ class Installer:
         fs.makepath(join(self.snap_data, 'nginx'))
         fs.makepath(join(self.snap_data, 'temp'))
         fs.makepath(join(self.snap_data, 'run'))
+        fs.makepath(join(self.snap_data, 'misc'))
         storage.init_storage(APP_NAME, USER_NAME)
 
-        templates_path = join(self.snap, 'config.templates')
+        templates_path = join(self.snap, 'config')
 
         variables = {
             'app': APP_NAME,
@@ -67,7 +68,7 @@ class Installer:
         try:
             gravity_log = check_output([join(self.snap, 'bin/gravity.sh')])
             with open(join(self.snap_common, 'log', 'pihole.log'), 'w') as f:
-                f.write(gravity_log)
+                f.write(str(gravity_log))
         except CalledProcessError as e:
             print(e.output)
             raise e
