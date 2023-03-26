@@ -7,7 +7,7 @@ from subprocess import check_output
 import pytest
 import requests
 from syncloudlib.integration.hosts import add_host_alias
-from syncloudlib.integration.installer import local_install, wait_for_installer
+from syncloudlib.integration.installer import local_install
 from syncloudlib.http import wait_for_rest
 
 DIR = dirname(__file__)
@@ -71,6 +71,10 @@ def test_cli_status_web(device):
 
 def test_cli_admin_setdns(device):
     assert 'Failed' not in device.run_ssh('snap run pihole.cli -a setdns')
+
+
+def test_index(app_domain):
+    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
 
 
 #def test_api(app_domain):
