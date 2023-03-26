@@ -94,18 +94,7 @@ local build(arch, test_ui, dind) = [{
             "VERSION=$(cat version)",
             "./package.sh " + name + " $VERSION "
         ]
-    }
-    ] + ( if arch == "amd64" then [
-    {
-        name: "test-integration-jessie",
-        image: "python:3.8-slim-buster",
-        commands: [
-          "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
-          "cd integration",
-          "./deps.sh",
-          "py.test -x -s verify.py --distro=jessie --domain=jessie.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".jessie.com --app=" + name
-        ]
-    }] else []) + [
+    },
     {
         name: "test-integration-buster",
         image: "python:3.8-slim-buster",
