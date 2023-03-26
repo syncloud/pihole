@@ -22,6 +22,6 @@ mkdir ${BUILD_DIR}/lib
 cp $DIR/build/lib/*-linux*/ld-*.so ${BUILD_DIR}/lib/ld.so
 cp $DIR/build/lib/*-linux*/libc.so* ${BUILD_DIR}/lib
 mkdir ${BUILD_DIR}/bin
-cp $DIR/build/bin/nc ${BUILD_DIR}/bin
+cp $DIR/build/bin/nc.traditional ${BUILD_DIR}/bin
 cp ${DIR}/nc.sh ${BUILD_DIR}/bin
 ${BUILD_DIR}/bin/nc.sh -h
