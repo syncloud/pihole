@@ -31,35 +31,27 @@ local build(arch, test_ui, dind) = [{
         },
         {
             name: "package python",
-            image: "debian:buster-slim",
+            image: "docker:" + dind,
             commands: [
                 "./python/build.sh"
             ],
             volumes: [
                 {
-                    name: "docker",
-                    path: "/usr/bin/docker"
-                },
-                {
-                    name: "docker.sock",
-                    path: "/var/run/docker.sock"
+                    name: "dockersock",
+                    path: "/var/run"
                 }
             ]
         },
         {
             name: "package php",
-            image: "debian:buster-slim",
+            image: "docker:" + dind,
             commands: [
                 "./php/build.sh"
             ],
             volumes: [
-                {
-                    name: "docker",
-                    path: "/usr/bin/docker"
-                },
-                {
-                    name: "docker.sock",
-                    path: "/var/run/docker.sock"
+	        {
+		    name: "dockersock",
+                    path: "/var/run"
                 }
             ]
         },
