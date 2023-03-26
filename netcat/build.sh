@@ -6,6 +6,7 @@ cd ${DIR}
 BUILD_DIR=${DIR}/../build/snap/netcat
 while ! docker version ; do
   echo "waiting for docker"
+  sleep 1
 done
 docker build -t netcat .
 docker create --name=netcat netcat
