@@ -2,9 +2,9 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-NETTLE_VERSION=3.6
-FTL_VERSION=5.7
-PIHOLE_VERSION=5.2.4
+NETTLE_VERSION=3.8
+FTL_VERSION=5.22
+PIHOLE_VERSION=5.16.2
 WEB_VERSION=5.4
 ARCH=$(uname -m)
 DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download
