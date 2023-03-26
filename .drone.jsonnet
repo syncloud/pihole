@@ -75,16 +75,6 @@ local build(arch, test_ui, dind) = [{
         commands: [
             "./build.sh"
         ],
-        volumes: [
-            {
-                name: "docker",
-                path: "/usr/bin/docker"
-            },
-            {
-               name: "docker.sock",
-               path: "/var/run/docker.sock"
-            }
-        ]
     },
 
             {
