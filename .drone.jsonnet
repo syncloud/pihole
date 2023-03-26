@@ -99,7 +99,7 @@ local build(arch, test_ui, dind) = [{
         ]
     },
     {
-        name: "test-integration-buster",
+        name: "test-integration",
         image: "python:3.8-slim-buster",
         commands: [
           "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
@@ -126,24 +126,21 @@ local build(arch, test_ui, dind) = [{
                 path: "/videos"
             }
         ]
-    }] + [
+    },
     {
-        name: "test-ui-" + mode + "-" + distro,
+        name: "test-ui",
         image: "python:3.8-slim-buster",
         commands: [
           "cd integration",
           "./deps.sh",
-          "py.test -x -s test-ui.py --distro="+distro+" --ui-mode="+mode+" --domain="+distro+".com --device-host=" + name + "."+distro+".com --app=" + name + " --browser=" + browser
+          "py.test -x -s test-ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser
         ],
         volumes: [{
             name: "shm",
             path: "/dev/shm"
         }]
     }
-        for mode in ["desktop"]
-        for distro in ["buster"] 
-    ] else [] ) +
-   ( if arch == "amd64" then [
+    ] else [] ) + [
     {
         name: "test-upgrade",
         image: "python:3.8-slim-buster",
@@ -158,7 +155,7 @@ local build(arch, test_ui, dind) = [{
             name: "videos",
             path: "/videos"
         }]
-    } ] else [] ) + [
+    },
     {
         name: "upload",
         image: "debian:buster-slim",
