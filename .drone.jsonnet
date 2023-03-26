@@ -17,6 +17,19 @@ local build(arch, test_ui, dind) = [{
             ]
         },
         {
+            name: "package netcat",
+            image: "docker:" + dind,
+            commands: [
+                "./netcat/build.sh"
+            ],
+            volumes: [
+               {
+                    name: "dockersock",
+                    path: "/var/run"
+                }
+            ]
+        },
+        {
             name: "package sqlite",
             image: "docker:" + dind,
             commands: [
