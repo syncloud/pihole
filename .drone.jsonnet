@@ -234,7 +234,7 @@ local build(arch, test_ui, dind) = [{
         "pull_request"
       ]
     },
-    services:
+    services: [
        {
             name: "docker",
             image: "docker:" + dind,
