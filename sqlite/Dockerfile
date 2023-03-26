@@ -1,1 +1,0 @@
-FROM keinos/sqlite3:3.38.5
