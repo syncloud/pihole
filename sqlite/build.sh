@@ -2,8 +2,6 @@
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
 cd ${DIR}
-apt update
-apt install -y libltdl7 libnss3
 
 BUILD_DIR=${DIR}/../build/snap/sqlite
 docker create --name=sqlite keinos/sqlite3:3.38.5
