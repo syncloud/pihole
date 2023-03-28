@@ -40,7 +40,7 @@ def test_login_good(selenium, device_user, device_password, ui_mode):
 def _test_login(selenium, mode, device_user, device_password, ui_mode):
     if ui_mode == "mobile":
         selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
-    selenium.find_by_xpath("//span[text()='Login']").click()
+    # selenium.find_by_xpath("//span[text()='Login']").click()
     username = selenium.find_by_xpath("//input[@name='username']")
     username.send_keys(device_user)
     password = selenium.find_by_xpath("//input[@name='pw']")
