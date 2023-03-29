@@ -60,15 +60,10 @@ def test_domains(selenium, ui_mode):
     selenium.find_by_xpath("//code[text()='test-whitelist-{0}.com']".format(ui_mode))
     wait_for_notification(selenium)
     selenium.find_by_id("new_domain").send_keys('test-blacklist-{0}.com'.format(ui_mode))
-    selenium.find_by_id("add2white").click()
+    selenium.find_by_id("add2black").click()
     selenium.find_by_xpath("//code[text()='test-blacklist-{0}.com']".format(ui_mode))
     wait_for_notification(selenium)
     selenium.screenshot('domains-test')
-
-
-#def test_blacklist_exact(selenium, ui_mode):
-#    selenium.find_by_xpath("//span[text()='Blacklist']").click()
-#    selenium.screenshot('blacklist')
 
 
 def test_settings(selenium, ui_mode):
