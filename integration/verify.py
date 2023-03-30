@@ -7,7 +7,7 @@ from subprocess import check_output
 import pytest
 import requests
 from syncloudlib.integration.hosts import add_host_alias
-from syncloudlib.integration.installer import local_install, wait_for_installer
+from syncloudlib.integration.installer import local_install
 from syncloudlib.http import wait_for_rest
 
 DIR = dirname(__file__)
@@ -26,8 +26,6 @@ def module_setup(request, device, data_dir, platform_data_dir, app_dir, artifact
         device.run_ssh('ps auxfw > {0}/ps.log'.format(TMP_DIR), throw=False)
         device.run_ssh('netstat -nlp > {0}/netstat.log'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl > {0}/journalctl.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/log/syslog {0}/syslog.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/log/messages {0}/messages.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/pihole/current/setupVars.conf {0}/setupVars.conf.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la /snap/pihole/current/ > {0}/snap.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ls -la {0}/ > {1}/app.ls.log'.format(app_dir, TMP_DIR), throw=False)
@@ -71,6 +69,10 @@ def test_cli_status_web(device):
 
 def test_cli_admin_setdns(device):
     assert 'Failed' not in device.run_ssh('snap run pihole.cli -a setdns')
+
+
+def test_index(app_domain):
+    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
 
 
 #def test_api(app_domain):

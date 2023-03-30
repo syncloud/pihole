@@ -1,15 +1,10 @@
-#!/bin/bash -ex
+#!/bin/sh -ex
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+DIR=$( cd "$( dirname "$0" )" && pwd )
 cd ${DIR}
-apt update
-apt install -y libltdl7 libnss3
 
 BUILD_DIR=${DIR}/../build/snap/python
-docker ps -a -q --filter ancestor=python:syncloud --format="{{.ID}}" | xargs docker stop | xargs docker rm || true
-docker rmi python:syncloud || true
 docker build -t python:syncloud .
-docker run python:syncloud python --help
 docker create --name=python python:syncloud
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
