@@ -17,7 +17,6 @@ def module_setup(request, device, artifact_dir, ui_mode):
         
         device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
-        device.run_ssh('cp /var/log/syslog {0}/syslog.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
 
         device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir, 'log'))
     request.addfinalizer(module_teardown)
@@ -38,9 +37,6 @@ def test_login_good(selenium, device_user, device_password, ui_mode):
 
 
 def _test_login(selenium, mode, device_user, device_password, ui_mode):
-    if ui_mode == "mobile":
-        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
-    selenium.find_by_xpath("//span[text()='Login']").click()
     username = selenium.find_by_xpath("//input[@name='username']")
     username.send_keys(device_user)
     password = selenium.find_by_xpath("//input[@name='pw']")
@@ -56,29 +52,21 @@ def test_main(selenium):
     assert blocked_size > 0
 
 
-def test_whitelist(selenium, ui_mode):
-    if ui_mode == "mobile":
-        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
-
-    selenium.find_by_xpath("//span[text()='Whitelist']").click()
-    selenium.screenshot('whitelist')
-    selenium.find_by_id("new_domain").send_keys('test-{0}.com'.format(ui_mode))
+def test_domains(selenium, ui_mode):
+    selenium.find_by_xpath("//span[text()='Domains']").click()
+    selenium.screenshot('domains')
+    selenium.find_by_id("new_domain").send_keys('test-whitelist-{0}.com'.format(ui_mode))
     selenium.find_by_id("add2white").click()
-    selenium.find_by_xpath("//code[text()='test-{0}.com']".format(ui_mode))
+    selenium.find_by_xpath("//code[text()='test-whitelist-{0}.com']".format(ui_mode))
     wait_for_notification(selenium)
-    selenium.screenshot('whitelist-test')
-
-
-def test_blacklist_exact(selenium, ui_mode):
-    if ui_mode == "mobile":
-        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
-    selenium.find_by_xpath("//span[text()='Blacklist']").click()
-    selenium.screenshot('blacklist')
+    selenium.find_by_id("new_domain").send_keys('test-blacklist-{0}.com'.format(ui_mode))
+    selenium.find_by_id("add2black").click()
+    selenium.find_by_xpath("//code[text()='test-blacklist-{0}.com']".format(ui_mode))
+    wait_for_notification(selenium)
+    selenium.screenshot('domains-test')
 
 
 def test_settings(selenium, ui_mode):
-    if ui_mode == "mobile":
-        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
     selenium.find_by_xpath("//span[text()='Settings']").click()
     selenium.screenshot('settings')
     cache_size = int(selenium.find_by_id("cache-size").text)
@@ -88,11 +76,8 @@ def test_settings(selenium, ui_mode):
 
 
 def test_local_dns(selenium, device, device_host, ui_mode):
-    if ui_mode == "mobile":
-        selenium.find_by_xpath("//a[@data-toggle='push-menu']").click()
-
-    selenium.find_by_xpath("//span[text()='Local DNS']").click()
-    selenium.find_by_xpath("//span[text()='DNS Records']").click()
+    selenium.find_by_xpath("//a[contains(.,'Local DNS')]").click()
+    selenium.find_by_xpath("//a[contains(.,'DNS Records')]").click()
     selenium.find_by_id("domain").send_keys('test-local-{0}.com'.format(ui_mode))
     selenium.find_by_id("ip").send_keys('1.1.1.1')
     selenium.find_by_id("btnAdd").click()
@@ -109,4 +94,3 @@ def test_teardown(driver):
 def wait_for_notification(selenium):
     wait_driver = WebDriverWait(selenium.driver, 120)
     wait_driver.until(EC.invisibility_of_element_located((By.XPATH, '//span[@data-notify="message"]')))
-

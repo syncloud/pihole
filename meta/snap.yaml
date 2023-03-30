@@ -11,14 +11,13 @@ apps:
     before: [nginx]
   nginx:
     user: pihole
-    command: bin/service.nginx.sh start
+    command: bin/service.nginx.sh
     daemon: simple
     plugs:
     - network
     - network-bind
     restart-condition: always
     start-timeout: 600s
-    stop-command: bin/service.nginx.sh stop
   php-fpm:
 #    user: pihole
     command: bin/service.php-fpm.sh
