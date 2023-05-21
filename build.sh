@@ -63,7 +63,7 @@ cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 cp -r "automated install" ${BUILD_DIR}
-cd ${BUILD_DIR}/advanved/Scripts
+cd ${BUILD_DIR}/advanced/Scripts
 ln -s /snap/pihole/current/bin/gravity.sh gravity.sh
 #cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
 #cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
