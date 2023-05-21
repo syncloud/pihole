@@ -58,14 +58,12 @@ sed -i 's#IPv4\.\*TCP#tcp #g' pihole
 sed -i 's#IPv6\.\*UDP#udp6#g' pihole
 sed -i 's#IPv6\.\*TCP#tcp6#g' pihole
 
-#sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 cp -r "automated install" ${BUILD_DIR}
-cd ${BUILD_DIR}/advanced/Scripts
-ls -la
-#ln -s /snap/pihole/current/bin/gravity.sh gravity.sh
+cp gravity.sh ${BUILD_DIR}/advanced/Scripts
 #cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
 #cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
-
