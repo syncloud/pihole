@@ -90,7 +90,7 @@ def test_local_dns(selenium, device, device_host, ui_mode):
 def test_adlists(selenium, device, device_host, ui_mode):
     selenium.find_by_xpath("//a[contains(.,'Adlists')]").click()
     selenium.find_by_xpath("//a[contains(.,'online')]").click()
-    selenium.find_by_xpath("//a[contains(.,'Update')]").click()
+    selenium.find_by_id("gravityBtn").click()
     selenium.find_by_xpath("//a[contains(.,'Done')]").click()
     
 
