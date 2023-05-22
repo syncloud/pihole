@@ -91,8 +91,9 @@ def test_adlists(selenium, device, device_host, ui_mode):
     selenium.find_by_xpath("//a[contains(.,'Adlists')]").click()
     selenium.find_by_xpath("//a[contains(.,'online')]").click()
     selenium.find_by_id("gravityBtn").click()
-    selenium.find_by_xpath("//a[contains(.,'Done')]").click()
-    
+    selenium.find_by_xpath("//pre[contains(.,'Creating new gravity databases')]")
+    selenium.screenshot('gravity-update')
+
 
 def test_teardown(driver):
     driver.quit()
