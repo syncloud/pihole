@@ -40,6 +40,7 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pihole-FTL sqlite3#/snap/pih
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#nc 127.0.0.1#/snap/pihole/current/netcat/bin/nc.sh 127.0.0.1#g' {} +
 #find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig +#/snap/pihole/current/bind9/bin/dig.sh +#g' {} +
+
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#service pihole-FTL restart#snap restart pihole.ftl#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pkill -HUP pihole-FTL#snap restart pihole.ftl#g' {} +
@@ -57,10 +58,12 @@ sed -i 's#IPv4\.\*TCP#tcp #g' pihole
 sed -i 's#IPv6\.\*UDP#udp6#g' pihole
 sed -i 's#IPv6\.\*TCP#tcp6#g' pihole
 
+sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+
 cp gravity.sh ${BUILD_DIR}/bin
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
 cp -r "automated install" ${BUILD_DIR}
+cp gravity.sh ${BUILD_DIR}/advanced/Scripts
 #cp advanced/dnsmasq.conf.original ${BUILD_DIR}/config.templates/dnsmasq.conf
 #cp advanced/01-pihole.conf ${BUILD_DIR}/config.templates/01-pihole.conf
-
