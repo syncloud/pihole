@@ -66,7 +66,7 @@ class Installer:
 
     def run_gravity(self):
         try:
-            gravity_log = check_output([join(self.snap, 'bin/gravity.sh')])
+            gravity_log = check_output(['snap', 'run', 'pihole.cli', '-g'])
             with open(join(self.snap_common, 'log', 'pihole.log'), 'w') as f:
                 f.write(str(gravity_log))
         except CalledProcessError as e:

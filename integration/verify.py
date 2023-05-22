@@ -71,6 +71,10 @@ def test_cli_admin_setdns(device):
     assert 'Failed' not in device.run_ssh('snap run pihole.cli -a setdns')
 
 
+def test_cli_gravity(device):
+    device.run_ssh('snap run pihole.cli -g')
+
+
 def test_index(app_domain):
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
 
