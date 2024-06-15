@@ -299,7 +299,7 @@ local build(arch, test_ui, dind) = [{
                 }
             ]
         }
-    ,
+    ],
     volumes: [
         {
             name: "dbus",
