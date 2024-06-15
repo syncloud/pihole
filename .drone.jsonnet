@@ -1,5 +1,10 @@
 local name = "pihole";
 local browser = "firefox";
+local platform = '22.02';
+local selenium = '4.21.0-20240517';
+local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
+
+
 local build(arch, test_ui, dind) = [{
     kind: "pipeline",
     name: arch,
@@ -108,39 +113,61 @@ local build(arch, test_ui, dind) = [{
           "py.test -x -s verify.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name
         ]
     }] + ( if test_ui then [
-    {
-        name: "selenium-video",
-        image: "selenium/video:ffmpeg-4.3.1-20220208",
-        detach: true,
-        environment: {
-            "DISPLAY_CONTAINER_NAME": "selenium",
-             FILE_NAME: "video.mkv"
-        },
-        volumes: [
-            {
+{
+            name: "selenium",
+            image: "selenium/standalone-" + browser + ":" + selenium,
+            detach: true,
+            environment: {
+                SE_NODE_SESSION_TIMEOUT: "999999",
+                START_XVFB: "true"
+            },
+               volumes: [{
                 name: "shm",
                 path: "/dev/shm"
-            },
-           {
-                name: "videos",
-                path: "/videos"
-            }
-        ]
-    },
-    {
-        name: "test-ui",
-        image: "python:3.8-slim-buster",
-        commands: [
-          "cd integration",
-          "./deps.sh",
-          "py.test -x -s test-ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser
-        ],
-        volumes: [{
-            name: "shm",
-            path: "/dev/shm"
-        }]
-    }
-    ] else [] ) + [
+            }],
+            commands: [
+                "cat /etc/hosts",
+                "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | sudo tee -a /etc/hosts",
+                "cat /etc/hosts",
+                "/opt/bin/entry_point.sh"
+            ]
+         },
+     {
+           name: 'selenium-video',
+           image: 'selenium/video:ffmpeg-6.1.1-20240517',
+           detach: true,
+           environment: {
+             DISPLAY_CONTAINER_NAME: 'selenium',
+             FILE_NAME: 'video.mkv',
+           },
+           volumes: [
+             {
+               name: 'shm',
+               path: '/dev/shm',
+             },
+             {
+               name: 'videos',
+               path: '/videos',
+             },
+           ],
+         },
+         {
+           name: 'test-ui',
+           image: 'python:3.9-slim-buster',
+           commands: [
+             'cd test',
+             "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",       
+             './deps.sh',
+             'py.test -x -s ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=' + name + '.buster.com --app=' + name + ' --browser-height=2000 --browser=' + browser,
+           ],
+           volumes: [{
+             name: 'videos',
+             path: '/videos',
+           }],
+         },
+
+       ] else []) + [
+
     {
         name: "test-upgrade",
         image: "python:3.8-slim-buster",
@@ -156,29 +183,58 @@ local build(arch, test_ui, dind) = [{
             path: "/videos"
         }]
     },
-    {
-        name: "upload",
-        image: "debian:buster-slim",
-        environment: {
-            AWS_ACCESS_KEY_ID: {
-                from_secret: "AWS_ACCESS_KEY_ID"
-            },
-            AWS_SECRET_ACCESS_KEY: {
-                from_secret: "AWS_SECRET_ACCESS_KEY"
-            }
+        {
+      name: 'upload',
+      image: 'debian:buster-slim',
+      environment: {
+        AWS_ACCESS_KEY_ID: {
+          from_secret: 'AWS_ACCESS_KEY_ID',
         },
-        commands: [
-            "PACKAGE=$(cat package.name)",
-            "apt update && apt install -y wget",
-            "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch + " -O release --progress=dot:giga",
-            "chmod +x release",
-            "./release publish -f $PACKAGE -b $DRONE_BRANCH"
-        ],
-        when: {
-            branch: ["stable", "master"]
-        }
+        AWS_SECRET_ACCESS_KEY: {
+          from_secret: 'AWS_SECRET_ACCESS_KEY',
+        },
+        SYNCLOUD_TOKEN: {
+          from_secret: 'SYNCLOUD_TOKEN',
+        },
+      },
+      commands: [
+        'PACKAGE=$(cat package.name)',
+        'apt update && apt install -y wget',
+        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
+        'chmod +x release',
+        './release publish -f $PACKAGE -b $DRONE_BRANCH',
+      ],
+      when: {
+        branch: ['stable', 'master'],
+        event: ['push'],
+      },
     },
     {
+      name: 'promote',
+      image: 'debian:buster-slim',
+      environment: {
+        AWS_ACCESS_KEY_ID: {
+          from_secret: 'AWS_ACCESS_KEY_ID',
+        },
+        AWS_SECRET_ACCESS_KEY: {
+          from_secret: 'AWS_SECRET_ACCESS_KEY',
+        },
+        SYNCLOUD_TOKEN: {
+          from_secret: 'SYNCLOUD_TOKEN',
+        },
+      },
+      commands: [
+        'apt update && apt install -y wget',
+        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
+        'chmod +x release',
+        './release promote -n ' + name + ' -a $(dpkg --print-architecture)',
+      ],
+      when: {
+        branch: ['stable'],
+        event: ['push'],
+      },
+    },
+   {
         name: "artifact",
         image: "appleboy/drone-scp:1.6.4",
         settings: {
@@ -205,7 +261,8 @@ local build(arch, test_ui, dind) = [{
             ]
         },
         when: {
-          status: [ "failure", "success" ]
+          status: [ "failure", "success" ],
+          event: ['push'],
         }
     }
     ],
@@ -242,20 +299,7 @@ local build(arch, test_ui, dind) = [{
                 }
             ]
         }
-    ] + ( if test_ui then [
-        {
-            name: "selenium",
-            image: "selenium/standalone-" + browser + ":4.1.2-20220208",
-            environment: {
-                SE_NODE_SESSION_TIMEOUT: "999999",
-                START_XVFB: "true"
-            },
-            volumes: [{
-                name: "shm",
-                path: "/dev/shm"
-            }]
-        }
-    ] else [] ),
+    ,
     volumes: [
         {
             name: "dbus",
@@ -282,42 +326,7 @@ local build(arch, test_ui, dind) = [{
             temp: {}
         },
     ]
-},
-
-{
-     kind: "pipeline",
-     type: "docker",
-     name: "promote-" + arch,
-     platform: {
-         os: "linux",
-         arch: arch
-     },
-     steps: [
-     {
-             name: "promote",
-             image: "debian:buster-slim",
-             environment: {
-                 AWS_ACCESS_KEY_ID: {
-                     from_secret: "AWS_ACCESS_KEY_ID"
-                 },
-                 AWS_SECRET_ACCESS_KEY: {
-                     from_secret: "AWS_SECRET_ACCESS_KEY"
-                 }
-             },
-             commands: [
-               "apt update && apt install -y wget",
-               "wget https://github.com/syncloud/snapd/releases/download/1/syncloud-release-" + arch + " -O release --progress=dot:giga",
-               "chmod +x release",
-               "./release promote -n " + name + " -a $(dpkg --print-architecture)"
-             ]
-       }
-      ],
-      trigger: {
-       event: [
-         "promote"
-       ]
-     }
- }];
+}];
 
 build("amd64", true, "20.10.21-dind") +
 build("arm64", false, "19.03.8-dind") +

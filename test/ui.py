@@ -75,6 +75,13 @@ def test_settings(selenium, ui_mode):
     assert cache_size > 0
 
 
+def test_settings_dns(selenium, ui_mode):
+    selenium.find_by_xpath("//a[text()='DNS']").click()
+    selenium.find_by_xpath("//h3[text()='Upstream DNS Servers']")
+    selenium.screenshot('settings-dns')
+    
+
+
 def test_local_dns(selenium, device, device_host, ui_mode):
     selenium.find_by_xpath("//a[contains(.,'Local DNS')]").click()
     selenium.find_by_xpath("//a[contains(.,'DNS Records')]").click()
