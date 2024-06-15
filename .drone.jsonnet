@@ -103,16 +103,18 @@ local build(arch, test_ui, dind) = [{
             "./package.sh " + name + " $VERSION "
         ]
     },
-    {
-        name: "test-integration",
-        image: "python:3.8-slim-buster",
-        commands: [
-          "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
-          "cd integration",
-          "./deps.sh",
-          "py.test -x -s verify.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name
-        ]
-    }] + ( if test_ui then [
+        {
+      name: 'test',
+      image: 'python:3.9-slim-buster',
+      commands: [
+        'APP_ARCHIVE_PATH=$(realpath $(cat package.name))',
+        'cd test',
+        './deps.sh',
+        "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",  
+        'py.test -x -s test.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=' + name + '.buster.com --app=' + name + ' --arch=' + arch,
+      ],
+    },
+] + ( if test_ui then [
 {
             name: "selenium",
             image: "selenium/standalone-" + browser + ":" + selenium,
