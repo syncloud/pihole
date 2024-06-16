@@ -78,7 +78,7 @@ def test_settings_dns(selenium, ui_mode):
     selenium.find_by(By.XPATH, "//a[text()='DNS']").click()
     selenium.find_by(By.XPATH, "//h1[text()='Upstream DNS Servers']")
     selenium.click_by(By.XPATH, "//div[@id='dns']//button[text()='Save']")
-    assert not selenium.present_by(By.XPATH, "//div[@id='alError']")
+    assert not selenium.exists_by(By.XPATH, "//div[@id='alError']")
     selenium.screenshot('settings-dns')
     
 
@@ -109,3 +109,4 @@ def test_teardown(driver):
 def wait_for_notification(selenium):
     wait_driver = WebDriverWait(selenium.driver, 120)
     wait_driver.until(EC.invisibility_of_element_located((By.XPATH, '//span[@data-notify="message"]')))
+
