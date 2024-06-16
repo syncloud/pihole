@@ -1,11 +1,10 @@
-import pytest
-import time
 from os.path import dirname, join
-from subprocess import check_output
+
+import pytest
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from syncloudlib.integration.hosts import add_host_alias
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud/ui'
@@ -37,12 +36,12 @@ def test_login_good(selenium, device_user, device_password, ui_mode):
 
 
 def _test_login(selenium, mode, device_user, device_password, ui_mode):
-    username = selenium.find_by_xpath("//input[@name='username']")
+    username = selenium.find_by(By.XPATH, "//input[@name='username']")
     username.send_keys(device_user)
-    password = selenium.find_by_xpath("//input[@name='pw']")
+    password = selenium.find_by(By.XPATH, "//input[@name='pw']")
     password.send_keys(device_password)
     selenium.screenshot('login-' + mode)
-    selenium.find_by_xpath("//button[contains(text(),'Log in')]").click()
+    selenium.find_by(By.XPATH, "//button[contains(text(),'Log in')]").click()
     selenium.screenshot('login-submitted-' + mode)
 
 
@@ -53,40 +52,39 @@ def test_main(selenium):
 
 
 def test_domains(selenium, ui_mode):
-    selenium.find_by_xpath("//span[text()='Domains']").click()
+    selenium.find_by(By.XPATH, "//span[text()='Domains']").click()
     selenium.screenshot('domains')
     selenium.find_by_id("new_domain").send_keys('test-whitelist-{0}.com'.format(ui_mode))
     selenium.find_by_id("add2white").click()
-    selenium.find_by_xpath("//code[text()='test-whitelist-{0}.com']".format(ui_mode))
+    selenium.find_by(By.XPATH, "//code[text()='test-whitelist-{0}.com']".format(ui_mode))
     wait_for_notification(selenium)
     selenium.find_by_id("new_domain").send_keys('test-blacklist-{0}.com'.format(ui_mode))
     selenium.find_by_id("add2black").click()
-    selenium.find_by_xpath("//code[text()='test-blacklist-{0}.com']".format(ui_mode))
+    selenium.find_by(By.XPATH, "//code[text()='test-blacklist-{0}.com']".format(ui_mode))
     wait_for_notification(selenium)
     selenium.screenshot('domains-test')
 
 
 def test_settings(selenium, ui_mode):
-    selenium.find_by_xpath("//span[text()='Settings']").click()
+    selenium.find_by(By.XPATH, "//span[text()='Settings']").click()
     selenium.screenshot('settings')
     cache_size = int(selenium.find_by_id("cache-size").text)
-    selenium.find_by_xpath('//span[@id="status" and contains(text(), "Active")]')
+    selenium.find_by(By.XPATH, '//span[@id="status" and contains(text(), "Active")]')
     selenium.screenshot('settings-ftl')
     assert cache_size > 0
 
 
 def test_settings_dns(selenium, ui_mode):
-    selenium.find_by_xpath("//a[text()='DNS']").click()
-    selenium.find_by_xpath("//h1[text()='Upstream DNS Servers']")
-    selenium.click_by("//button[text()='Save']")
-    selenium.find_by_xpath("//p[text()='syntax error']")
+    selenium.find_by(By.XPATH, "//a[text()='DNS']").click()
+    selenium.find_by(By.XPATH, "//h1[text()='Upstream DNS Servers']")
+    selenium.click_by(By.XPATH, "//button[text()='Save']")
+    selenium.find_by(By.XPATH, "//p[text()='syntax error']")
     selenium.screenshot('settings-dns')
     
 
-
 def test_local_dns(selenium, device, device_host, ui_mode):
-    selenium.find_by_xpath("//a[contains(.,'Local DNS')]").click()
-    selenium.find_by_xpath("//a[contains(.,'DNS Records')]").click()
+    selenium.find_by(By.XPATH, "//a[contains(.,'Local DNS')]").click()
+    selenium.find_by(By.XPATH, "//a[contains(.,'DNS Records')]").click()
     selenium.find_by_id("domain").send_keys('test-local-{0}.com'.format(ui_mode))
     selenium.find_by_id("ip").send_keys('1.1.1.1')
     selenium.find_by_id("btnAdd").click()
@@ -97,10 +95,10 @@ def test_local_dns(selenium, device, device_host, ui_mode):
 
 
 def test_adlists(selenium, device, device_host, ui_mode):
-    selenium.find_by_xpath("//a[contains(.,'Adlists')]").click()
-    selenium.find_by_xpath("//a[contains(.,'online')]").click()
+    selenium.find_by(By.XPATH, "//a[contains(.,'Adlists')]").click()
+    selenium.find_by(By.XPATH, "//a[contains(.,'online')]").click()
     selenium.find_by_id("gravityBtn").click()
-    selenium.find_by_xpath("//pre[contains(.,'Creating new gravity databases')]")
+    selenium.find_by(By.XPATH, "//pre[contains(.,'Creating new gravity databases')]")
     selenium.screenshot('gravity-update')
 
 
