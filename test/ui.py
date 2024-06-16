@@ -78,7 +78,7 @@ def test_settings_dns(selenium, ui_mode):
     selenium.find_by(By.XPATH, "//a[text()='DNS']").click()
     selenium.find_by(By.XPATH, "//h1[text()='Upstream DNS Servers']")
     selenium.click_by(By.XPATH, "//div[@id='dns']//button[text()='Save']")
-    selenium.find_by(By.XPATH, "//p[text()='syntax error']")
+    assert not selenium.present_by(By.XPATH, "//div[@id='alError']")
     selenium.screenshot('settings-dns')
     
 
