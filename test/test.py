@@ -1,14 +1,12 @@
 import os
-import shutil
-import json
 from os.path import dirname, join
 from subprocess import check_output
 
 import pytest
 import requests
+from syncloudlib.http import wait_for_rest
 from syncloudlib.integration.hosts import add_host_alias
 from syncloudlib.integration.installer import local_install
-from syncloudlib.http import wait_for_rest
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
