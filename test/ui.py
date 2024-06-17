@@ -78,7 +78,10 @@ def test_settings_dns(selenium, ui_mode):
     selenium.find_by(By.XPATH, "//a[text()='DNS']").click()
     selenium.find_by(By.XPATH, "//h1[text()='Upstream DNS Servers']")
     selenium.click_by(By.XPATH, "//div[@id='dns']//button[text()='Save']")
-    assert not selenium.exists_by(By.XPATH, "//div[@id='alError']")
+    error = selenium.exists_by(By.XPATH, "//div[@id='alError']")
+    if error:
+        selenium.screenshot("exception")
+    assert not error
     selenium.screenshot('settings-dns')
     
 
@@ -100,10 +103,6 @@ def test_adlists(selenium, device, device_host, ui_mode):
     selenium.find_by_id("gravityBtn").click()
     selenium.find_by(By.XPATH, "//pre[contains(.,'Creating new gravity databases')]")
     selenium.screenshot('gravity-update')
-
-
-def test_teardown(driver):
-    driver.quit()
 
 
 def wait_for_notification(selenium):
