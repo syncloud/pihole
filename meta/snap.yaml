@@ -35,7 +35,7 @@ apps:
     command: sqlite/bin/sqlite.sh
 
 confinement: strict
-description: PiHole
+description: Network-wide Ad Blocking
 grade: stable
 name: pihole
-summary: PiHole
+summary: Pi-hole
