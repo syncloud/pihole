@@ -70,59 +70,24 @@ local build(arch, test_ui, dind) = [{
       ],
     },
 ] + ( if test_ui then [
-{
-            name: "selenium",
-            image: "selenium/standalone-" + browser + ":" + selenium,
-            detach: true,
-            environment: {
-                SE_NODE_SESSION_TIMEOUT: "999999",
-                START_XVFB: "true"
-            },
-               volumes: [{
-                name: "shm",
-                path: "/dev/shm"
-            }],
-            commands: [
-                "cat /etc/hosts",
-                "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | sudo tee -a /etc/hosts",
-                "cat /etc/hosts",
-                "/opt/bin/entry_point.sh"
-            ]
-         },
-     {
-           name: 'selenium-video',
-           image: 'selenium/video:ffmpeg-6.1.1-20240517',
-           detach: true,
-           environment: {
-             DISPLAY_CONTAINER_NAME: 'selenium',
-             FILE_NAME: 'video.mkv',
-           },
-           volumes: [
-             {
-               name: 'shm',
-               path: '/dev/shm',
-             },
-             {
-               name: 'videos',
-               path: '/videos',
-             },
-           ],
-         },
          {
-           name: 'test-ui',
-           image: 'python:3.11-slim-bookworm',
+           name: 'e2e',
+           image: 'mcr.microsoft.com/playwright:v1.48.2-jammy',
+           environment: {
+             PLAYWRIGHT_FULL_DOMAIN: 'buster.com',
+             PLAYWRIGHT_APP_DOMAIN: name + '.buster.com',
+             PLAYWRIGHT_DEVICE_HOST: name + '.buster.com',
+             PLAYWRIGHT_DEVICE_USER: 'user',
+             PLAYWRIGHT_DEVICE_PASSWORD: 'Password1',
+             PLAYWRIGHT_ARTIFACT_DIR: '/drone/src/artifact/e2e',
+           },
            commands: [
-             'cd test',
-             "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",       
-             './deps.sh',
-             'py.test -x -s ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=' + name + '.buster.com --app=' + name + ' --browser-height=3000 --browser=' + browser,
+             'apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl',
+             'cd test/e2e',
+             'npm install --no-audit --no-fund',
+             'npx playwright test --project=desktop',
            ],
-           volumes: [{
-             name: 'videos',
-             path: '/videos',
-           }],
          },
-
        ] else []) + [
 
     {
