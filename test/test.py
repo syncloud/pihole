@@ -1,4 +1,5 @@
 import os
+import time
 from os.path import dirname, join
 from subprocess import check_output
 
@@ -76,8 +77,17 @@ def test_cli_gravity(device):
     device.run_ssh('snap run pihole.cli -g')
 
 
-def test_index(app_domain):
-    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
+def test_web_requires_auth(app_domain):
+    session = requests.session()
+    last = None
+    for _ in range(60):
+        r = session.get("https://{0}/".format(app_domain), verify=False, allow_redirects=False, timeout=10)
+        last = r.status_code
+        if r.status_code in (301, 302, 303):
+            assert 'auth.' in r.headers.get('Location', ''), r.headers.get('Location')
+            return
+        time.sleep(2)
+    assert False, "expected redirect to Authelia portal, last status {0}".format(last)
 
 
 #def test_api(app_domain):

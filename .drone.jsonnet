@@ -81,6 +81,7 @@ local build(arch, test_ui, dind) = [{
            },
            commands: [
              'apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl',
+             "getent hosts " + name + ".buster.com | sed 's/" + name + ".buster.com/auth.buster.com/g' | tee -a /etc/hosts",
              'cd test/e2e',
              'npm install --no-audit --no-fund',
              'npx playwright test --project=desktop',

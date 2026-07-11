@@ -19,10 +19,12 @@ const (
 )
 
 type Variables struct {
-	App       string
-	AppDir    string
-	DataDir   string
-	CommonDir string
+	App             string
+	AppDir          string
+	DataDir         string
+	CommonDir       string
+	AuthUrl         string
+	AuthLocalSocket string
 }
 
 type Installer struct {
@@ -80,11 +82,17 @@ func (i *Installer) UpdateConfigs() error {
 }
 
 func (i *Installer) GenerateConfig() error {
+	authUrl, err := i.platformClient.GetAppUrl("auth")
+	if err != nil {
+		return err
+	}
 	variables := Variables{
-		App:       App,
-		AppDir:    AppDir,
-		DataDir:   DataDir,
-		CommonDir: CommonDir,
+		App:             App,
+		AppDir:          AppDir,
+		DataDir:         DataDir,
+		CommonDir:       CommonDir,
+		AuthUrl:         authUrl,
+		AuthLocalSocket: i.platformClient.GetAuthLocalSocket(),
 	}
 	return config.Generate(
 		path.Join(AppDir, "config"),
