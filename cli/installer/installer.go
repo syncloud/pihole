@@ -41,6 +41,14 @@ func New(logger *zap.Logger) *Installer {
 	}
 }
 
+func (i *Installer) Install() error {
+	return i.UpdateConfigs()
+}
+
+func (i *Installer) Configure() error {
+	return i.StorageChange()
+}
+
 func (i *Installer) StorageChange() error {
 	storageDir, err := i.platformClient.InitStorage(App, App)
 	if err != nil {

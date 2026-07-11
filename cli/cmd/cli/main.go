@@ -27,6 +27,8 @@ func main() {
 		SilenceUsage: true,
 	}
 
+	cmd.AddCommand(command("install", func(i *installer.Installer) error { return i.Install() }))
+	cmd.AddCommand(command("configure", func(i *installer.Installer) error { return i.Configure() }))
 	cmd.AddCommand(command("storage-change", func(i *installer.Installer) error { return i.StorageChange() }))
 	cmd.AddCommand(command("access-change", func(i *installer.Installer) error { return i.AccessChange() }))
 	cmd.AddCommand(command("backup-pre-stop", func(i *installer.Installer) error { return i.BackupPreStop() }))
