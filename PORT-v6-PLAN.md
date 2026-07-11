@@ -1,181 +1,135 @@
-# Pi-hole snap: v5 → v6 re-port plan
+# Pi-hole snap: v5 → v6 re-port
 
-Branch: `v6-port`. Status: **plan only, no code changes yet.**
+Branch: `v6-port`. Status: **in progress, driven through Drone CI.**
 
 ## Why this is a re-port, not a rebase
 
-We are a full major version behind, and v6 is a rewrite — the files our fork
-patches no longer exist.
+A full major version behind, and v6 is a rewrite — the files our fork patches no
+longer exist.
 
-| Component | Ours (vendored) | Upstream latest |
+| Component | v5 (was) | v6 target |
 |---|---|---|
 | pi-hole core | 5.16.2 | 6.4.3 |
-| FTL | 5.22 | 6.7 |
-| web (`cyberb/AdminLTE`) | 5.x fork (2023-04) | 6.6 |
+| FTL | 5.22 (built from source) | 6.7 (prebuilt binary) |
+| web | `cyberb/AdminLTE` fork | `pi-hole/web` v6.6 (served by FTL) |
 
-`cyberb/AdminLTE` is **6 ahead / 2134 behind** upstream. Our entire LDAP patch is
-~36 lines in `login.php` + `scripts/pi-hole/php/password.php`. **Both files are
-deleted in v6** — the PHP AdminLTE is gone, replaced by `*.lp` Lua pages served by
-FTL's embedded web server hitting a REST API. There is nothing to rebase onto.
+`cyberb/AdminLTE` was 6 ahead / 2134 behind upstream; the whole LDAP patch was
+~36 lines in `login.php` + `password.php`, and **both files are deleted in v6**
+(PHP AdminLTE replaced by `*.lp` Lua pages served by FTL's embedded web server).
+Nothing to rebase onto.
 
 ## What v6 changes architecturally
 
-- **One binary.** `pihole-FTL` now does DNS + DHCP + **embedded web server** +
-  **REST API** + bundled `sqlite3`. No PHP, no separate web daemon required.
-- **One config surface.** `/etc/pihole/pihole.toml` (TOML) replaces
-  `setupVars.conf`, `pihole-FTL.conf`, and the `dnsmasq.d/*.conf` files.
-- **Env overrides.** Every key is settable via `FTLCONF_<section>_<key>` env vars
-  (e.g. `FTLCONF_dns_upstreams`, `FTLCONF_webserver_port`,
-  `FTLCONF_webserver_api_password`, `FTLCONF_dns_listeningMode`,
-  `FTLCONF_misc_dnsmasq_lines`). Precedence: env > toml.
-- **Foreground mode.** Runs as `pihole-FTL no-daemon` (`-f`) — a natural fit for a
-  snap `daemon: simple`.
+- **One binary.** `pihole-FTL` does DNS + DHCP + embedded web server + REST API +
+  bundled `sqlite3`. No PHP, no separate web daemon.
+- **One config surface.** `pihole.toml`, plus per-key `FTLCONF_<section>_<key>` env
+  overrides (precedence env > toml). Replaces `setupVars.conf`, `pihole-FTL.conf`,
+  `dnsmasq.d/*.conf`.
+- **Foreground mode.** `pihole-FTL -f` — fits a snap `daemon: simple`.
 
-This is the direct answer to "is it more configurable now": **yes** — almost
-everything we currently achieve with `sed` becomes a `pihole.toml` key or an env
-var.
+Almost everything the v5 packaging did with `sed` is now an env var.
 
-## Your three requirements, mapped to v6
+## FTL: prebuilt binary, no source build
 
-### 1. LDAP / SSO  ← the only genuinely new work
-The old approach (patch PHP `verifyPassword` to `ldap_bind`) is dead. Options, in
-order of effort:
+We **download the official static `pihole-FTL-<arch>` v6.7 binary** from
+`github.com/pi-hole/FTL/releases` (sha1-verified, `--version` smoke-checked) — it's
+`static-pie` linked, so no libc/link concerns. The v5 packaging only built from
+source to patch hardcoded paths into the C (`src/config.c`, `dnsmasq/config.h`);
+in v6 those are all `FTLCONF_`/`pihole.toml` settings, so there is nothing to
+patch. **Gone:** `ftl/build.sh`, the `pihole-FTL` ld.so wrapper, nettle, cmake, the
+`gcc` CI step, and the path-patching seds.
 
-- **(A) Reverse-proxy gating (lowest effort, recommended to start).** Disable
-  pihole's own auth (`FTLCONF_webserver_api_password=""`), bind FTL's web to the
-  platform `web.socket`, and let the platform reverse proxy + Authelia gate access.
-  Zero pihole code changes. (Porting guide calls forward-auth "old", but for a wrap
-  where we run no backend of our own it's pragmatic and safe because the socket is
-  never exposed directly.)
-- **(B) Small Go OIDC proxy (the "proper" paperless pattern).** A tiny Go binary on
-  `web.socket` doing the auth-code+PKCE flow (`RegisterOIDCClient`, `go-oidc`),
-  proxying to FTL on an internal socket after auth. More work, cleaner sessions.
-- **(C) Platform LDAP.** The porting guide says use LDAP only when the *upstream*
-  app has native LDAP support. v6 pihole does **not** (that's why upstream refused
-  our patch), and patching FTL's C/Lua auth is far harder than the old PHP one-liner.
-  Not recommended.
+## The three requirements, as implemented
 
-Decision needed before implementation — default to **(A)**.
+### 1. LDAP / SSO → **Auth A**
+The PHP `ldap_bind` patch is dead (no PHP). We run FTL's web with **empty
+`FTLCONF_webserver_api_password`** (no pihole login) and gate access at the
+platform reverse proxy. nginx binds the platform `web.socket` and proxies to FTL.
+**Still to wire:** register/verify the Authelia OIDC/forward-auth in the `configure`
+hook (`platformClient.RegisterOIDCClient`) so the proxy actually enforces auth.
 
-### 2. No log files — everything to stdout
-v6 still writes `/var/log/pihole/FTL.log` by default. To go stdout-only:
-- Point the FTL log at stdout via config (`files.log.ftl` → `/dev/stdout`, or the
-  Docker image's `TAIL_FTL_LOG` tail-to-stdout approach), **and**
-- keep dnsmasq query logging off / async as today.
-Since the daemon runs in foreground under snapd, stdout is captured by journald —
-no files under `$SNAP_DATA`/`$SNAP_COMMON`. Verify exact key name for log
-redirection during implementation.
+### 2. No log files → stdout
+`FTLCONF_files_log_ftl=/dev/stdout`; nginx `error_log stderr` / `access_log
+/dev/stdout`. Daemons run foreground under snapd → journald. No log files under
+`$SNAP_DATA`/`$SNAP_COMMON`.
 
 ### 3. Only TCP port 53
-- DNS: `FTLCONF_dns_port=53` (unchanged).
-- The old extra port **4711 (telnet API) is gone** in v6.
-- The embedded web server is the only other listener: set
-  `FTLCONF_webserver_port` to bind the **`web.socket` unix socket** (verify FTL's
-  unix-socket bind syntax) so it opens **zero extra TCP ports** and satisfies the
-  platform `web.socket` contract at the same time. Fallback if FTL can't bind a
-  unix socket: bind `127.0.0.1:<port>` and front it with a thin nginx on
-  `web.socket` (still no externally-reachable extra port).
+- DNS on 53 (default).
+- v5's extra port **4711 (telnet API) is gone** in v6.
+- FTL web bound to **`127.0.0.1:8080`** (localhost only, not on any real
+  interface); nginx on `web.socket` proxies to it. **Open:** if FTL's
+  `webserver.port` accepts a unix socket, drop the localhost TCP entirely and bind
+  the socket directly — to verify.
 
-## Gravity scheduling — still needed, FTL does NOT do it
+## Gravity scheduling — implemented (FTL does NOT schedule it)
 
-v6 does **not** run gravity on an internal schedule. Upstream still ships
-`advanced/Templates/pihole.cron` → `/etc/cron.d/pihole`:
-- weekly gravity: `59 1 * * 7 pihole updateGravity`
-- daily flush (logrotate): `00 00 * * * pihole flush once quiet`
-- `@reboot` logrotate; daily `pihole updatechecker`
+v6 still relies on external scheduling (upstream ships `pihole.cron`); host cron
+doesn't apply to a confined snap, and the v5 snap had **no** gravity schedule at
+all. Implemented `gravity/` — a Go oneshot (`gravity/main.go`) that runs
+`$SNAP/bin/pihole -g` (overridable via `GRAVITY_COMMAND`), streams output to
+stdout, and on failure logs `update FAILED …` + exits non-zero (`snap logs
+pihole.gravity`). Wired as a snap-native weekly timer (`daemon: oneshot`,
+`timer: sun,03:00`), built by `gravity/build.sh` (`build gravity` CI step).
 
-Host cron does not apply to a confined snap. Our current v5 snap has **no**
-gravity schedule at all (only `hooks/installer.py` on install/refresh), so adlists
-never auto-refresh today.
+## Python hooks → Go CLI — implemented
 
-**Implemented** (`gravity/`): a small Go oneshot (`gravity/main.go`) that runs
-`$SNAP/bin/pihole -g` (overridable via `GRAVITY_COMMAND`), streams its output to
-stdout, and on failure logs `update FAILED …` and exits non-zero so snapd records
-the failed run (`snap logs pihole.gravity`). Wired as a snap-native timer:
-```yaml
-gravity:
-  command: bin/gravity
-  daemon: oneshot
-  timer: sun,03:00
-  plugs: [network]
-```
-Built by `gravity/build.sh` (CI step `build gravity`, `golang:1.22`), copied into
-the snap by `build.sh`. Tests pass locally; binary builds static (`CGO_ENABLED=0`).
+Per the porting guide, `cli/` (module `hooks`, Cobra + `syncloud/golib`, mirroring
+owncast/paperless/bitwarden):
+- `installer`: `Install/Configure/StorageChange/AccessChange/UpdateConfigs/
+  PostRefresh` + backup-restore; `config.Generate` for templated configs;
+  `RunGravity` via `snap run pihole.cli -g` (best-effort).
+- `meta/hooks/install|configure` and `hooks/storage-change` now `exec
+  $SNAP/bin/cli …`; `snap.yaml` adds `storage-change`/`access-change` apps.
+- **Dropped the python component entirely** (dir + CI step + bundled runtime).
+- `cli` app stays `bin/pihole` so `snap run pihole.cli -g` and the surviving v5
+  seds still resolve.
 
-Confinement note: this works because v6 gravity reloads FTL over the FTL API/unix
-socket, so the confined oneshot needs no `snap restart`. Under v5 the sed-rewritten
-`snap restart pihole.ftl` inside gravity would fail from a confined daemon — another
-reason this belongs with the v6 port.
+## Component inventory (actual)
 
-The `flush`/logrotate crons target the query log file — with the stdout-only goal
-they mostly disappear. `updatechecker` is irrelevant for a snap (updates come via
-snapd refresh).
-
-## Component inventory: keep / drop / replace
-
-| v5 snap part | v6 |
+| v5 part | v6 |
 |---|---|
-| `php-fpm` | **drop** (no PHP) |
-| `nginx` | **drop if** FTL binds `web.socket` directly; else keep as thin socket proxy |
-| `cyberb/AdminLTE` (web) | **replace** with `pi-hole/web` v6 static/`.lp` assets, served by FTL |
-| `sqlite` helper | **drop** — use bundled `pihole-FTL sqlite3` |
-| `netcat` helper | likely **drop** (v6 status checks moved into FTL) |
-| `bind9` (for `dig.sh`) | re-check; fewer scripts shell out to `dig` in v6 |
-| `FTL` | **bump 5.22 → 6.7**, now also the web/API server |
+| `php-fpm` | **dropped** (no PHP) |
+| `sqlite` helper | **dropped** — FTL bundles `pihole-FTL sqlite3` |
+| `netcat` helper | **dropped** — v6 status checks in FTL (also broke on bookworm libc) |
+| `python` hooks runtime | **dropped** — replaced by Go `cli/` |
+| `nginx` | **kept** — binds `web.socket`, proxies to FTL |
+| `FTL` from-source | **replaced** with prebuilt v6.7 static binary |
+| `cyberb/AdminLTE` (web) | **to do** — swap to `pi-hole/web` v6.6 |
+| `bind9` (for `dig.sh`) | kept for now; re-check need under v6 |
 
-## The 34 `sed` rules → where they go in v6
+## CI modernization — done
 
-Most disappear. Categories:
-- **Path rewrites** (`/etc/pihole`, `/var/log`, `setupVars`, `gravity.db`,
-  `piholeDir`, …): replaced by `pihole.toml` paths / env, or by installing under the
-  snap layout and pointing config at it. ~20 seds gone.
-- **Process control** (`service pihole-FTL restart` → `snap restart`,
-  `pidof`/`killall`, `grep -q pihole`): mostly gone — single foreground daemon,
-  config reload via API/signal.
-- **Port check** (`lsof`→`netstat`, IPv4/IPv6 UDP/TCP munging in `pihole`): v6
-  `pihole status` uses FTL directly; drop.
-- **Tool shims** (`dig`, `nc`, `sqlite3`, `pihole-FTL sqlite3`): only keep shims for
-  tools still shelled out to after the FTL bump.
+The pipeline was pinned to **EOL Debian buster** (apt repos 404). Bumped build
+images to `bookworm-slim` and test runners to `python:3.11-slim-bookworm`.
+`test`/`test-ui` still target real `*.buster.com` devices + `platform-buster` — the
+device-distro layer is the next thing to modernize.
 
-Target: from **34 seds** down to a handful (or zero) plus a config layer.
+## Remaining work
 
-## Port sequence
+1. **Core + web to v6.** `download.sh` still pulls pihole core 5.16.2 and the
+   cyberb AdminLTE fork; bump core → 6.4.3 and web → `pi-hole/web` v6.6, then strip
+   the remaining v5 seds in `build.sh`.
+2. **FTL runtime under confinement.** Verify `pihole-FTL -f` starts on the device —
+   the hardcoded `/run/pihole-FTL.pid` and the `/etc/pihole`/`/var/log/pihole`
+   `layout:` binds are the likely friction; the `test` step is the signal.
+3. **Auth A wiring.** Register the OIDC/forward-auth client in `configure` so the
+   proxy enforces access.
+4. **web.socket direct-bind** for FTL if supported (kill the localhost TCP port).
+5. **Device test distro** buster → bookworm (needs a bookworm test device/platform).
+6. **Data migration** v5 → v6 (FTL auto-migrates `setupVars.conf` → `pihole.toml`
+   on first run; confirm from the snap layout).
 
-1. `download.sh`: bump `FTL_VERSION=6.7`, `PIHOLE_VERSION=6.4.3`,
-   `WEB_VERSION=6.6`; switch web source from `cyberb/AdminLTE` to `pi-hole/web`
-   v6.6 (our fork is obsolete). Rebuild 3rdparty artifacts (nettle/FTL) for v6.
-2. Drop `php-fpm` + (tentatively) `nginx` from `meta/snap.yaml`; make `ftl` the
-   foreground daemon that also serves web/API.
-3. Add a generated `pihole.toml` (or an `FTLCONF_*` env block in the service
-   wrapper) covering: `dns.upstreams`, `dns.port=53`, `dns.listeningMode`,
-   `webserver.port`→socket, `webserver.api.password`, log→stdout, DB path under
-   `$SNAP_DATA`.
-4. Strip `build.sh` seds down to only what survives; delete config files now owned
-   by `pihole.toml` (`01-pihole.conf`, `pihole-FTL.conf`, `dnsmasq.conf`,
-   `setupVars.conf.dist`).
-5. Wire auth: implement option (A) (or (B)) for OIDC/SSO; drop the dead PHP LDAP
-   patch entirely.
-6. Update `hooks/installer.py`: config generation on install/refresh, keep
-   `run_gravity`, register OIDC client if going with (A)/(B).
-7. Update `test/` (UI + integration) for the v6 web (`data-testid`, socket URL) and
-   the CI `bookworm + buster` matrix.
+## CI cycle log
 
-## Open questions to resolve during implementation
+- #558 buster apt EOL → #559 bookworm bump → #560 drop netcat/sqlite (bookworm
+  libc) → #561 python dind race fixed → **v6 FTL snap builds + packages** →
+  #562 python→Go cli migration.
 
-- Auth: confirm **(A)** vs **(B)**.
-- Does FTL v6's `webserver.port` accept a unix-socket bind? (decides nginx keep/drop)
-- Exact key to redirect the FTL log to stdout without re-enabling per-query logs.
-- Are 3rdparty v6 build artifacts (FTL 6.7, nettle) already published under
-  `syncloud/3rdparty`, or do they need rebuilding for arm/amd?
-- Data migration: existing users' `gravity.db` / settings v5 → v6 (v6 auto-migrates
-  `setupVars.conf`→`pihole.toml` on first run; confirm it works from the snap layout).
+## Aside: the v5 field bug
 
-## Note on the current v5 field bug
-
-Separately, the weekly Android-DNS-drop report
+The weekly Android-DNS-drop report
 (<https://syncloud.discourse.group/t/pi-hole-once-a-week-stops-android-devices/661>)
-looks like FTL entering a hung-but-alive state over ~a week of uptime (likely
-`/dev/shm` shared-memory degradation), which snapd's `restart-condition: always`
-can't catch. The v6 port may incidentally fix it, but a v5 stopgap (DNS watchdog
-that `snap restart pihole.ftl` on a failed `dig @127.0.0.1`) is worth shipping
-regardless. Needs the user's `pihole-FTL.log` to confirm root cause.
+looks like FTL going hung-but-alive over ~a week of uptime (likely `/dev/shm`
+degradation) that snapd's `restart-condition: always` can't catch. v6 may fix it
+incidentally; a v5 stopgap watchdog (`dig @127.0.0.1` → `snap restart pihole.ftl`)
+is worth shipping regardless. Needs the user's `pihole-FTL.log` to confirm.
