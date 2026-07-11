@@ -245,6 +245,7 @@ local build(arch, test_ui, dind) = [{
             name: name + ".buster.com",
             image: "syncloud/platform-buster-" + arch + ":" + platform,
             privileged: true,
+            entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
             volumes: [
                 {
                     name: "dbus",
