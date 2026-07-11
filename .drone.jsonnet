@@ -1,5 +1,6 @@
 local name = "pihole";
 local platform = '26.04.10';
+local nginx = '1.24.0';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 
 
@@ -38,6 +39,13 @@ local build(arch, test_ui, dind) = [{
             image: "golang:1.22",
             commands: [
                 "./cli/build.sh"
+            ]
+        },
+        {
+            name: "nginx",
+            image: "nginx:" + nginx,
+            commands: [
+                "./nginx/build.sh"
             ]
         },
     {

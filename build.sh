@@ -11,7 +11,6 @@ cp -r ${DIR}/config ${BUILD_DIR}
 cp -r ${DIR}/meta ${BUILD_DIR}
 
 mv ${DIR}/build/bind9 ${BUILD_DIR}
-mv ${DIR}/build/nginx ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/web
 mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web/admin
 mv ${DIR}/build/FTL ${BUILD_DIR}

@@ -26,9 +26,6 @@ cd ${DIR}/build
 wget --progress=dot:giga ${DOWNLOAD_URL}/bind9/bind9-${ARCH}.tar.gz
 tar xf bind9-${ARCH}.tar.gz
 
-wget --progress=dot:giga ${DOWNLOAD_URL}/nginx/nginx-${ARCH}.tar.gz
-tar xf nginx-${ARCH}.tar.gz
-
 #wget --progress=dot:giga ${DOWNLOAD_URL}/1/sqlite-${ARCH}.tar.gz
 #tar xf sqlite-${ARCH}.tar.gz
 
