@@ -28,6 +28,12 @@ apps:
   cli:
     command: bin/pihole
 
+  storage-change:
+    command: bin/cli storage-change
+
+  access-change:
+    command: bin/cli access-change
+
 confinement: strict
 description: Network-wide Ad Blocking
 grade: stable

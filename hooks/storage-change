@@ -1,5 +1,2 @@
-#!/snap/notes/current/python/bin/python
-
-from installer import Installer
-
-Installer().prepare_storage()
+#!/bin/sh -e
+exec $SNAP/bin/cli storage-change

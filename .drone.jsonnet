@@ -22,19 +22,6 @@ local build(arch, test_ui, dind) = [{
             ]
         },
         {
-            name: "package python",
-            image: "docker:" + dind,
-            commands: [
-                "./python/build.sh"
-            ],
-            volumes: [
-                {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
-        {
             name: "download",
             image: "debian:bookworm-slim",
             commands: [
@@ -46,6 +33,13 @@ local build(arch, test_ui, dind) = [{
             image: "golang:1.22",
             commands: [
                 "./gravity/build.sh"
+            ]
+        },
+        {
+            name: "build cli",
+            image: "golang:1.22",
+            commands: [
+                "./cli/build.sh"
             ]
         },
     {

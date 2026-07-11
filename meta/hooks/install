@@ -1,6 +1,2 @@
-#!/snap/pihole/current/python/bin/python
-
-import os, sys
-sys.path.append(os.path.join(os.environ['SNAP'], 'hooks'))
-import installer
-installer.Installer().install()
+#!/bin/sh -e
+exec $SNAP/bin/cli install

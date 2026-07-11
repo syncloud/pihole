@@ -17,6 +17,7 @@ mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
 mv ${DIR}/build/FTL ${BUILD_DIR}
 
 cp ${DIR}/build/gravity/gravity ${BUILD_DIR}/bin/gravity
+cp ${DIR}/build/cli/cli ${BUILD_DIR}/bin/cli
 
 cd ${BUILD_DIR}/web
 find . -name "*.php" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
