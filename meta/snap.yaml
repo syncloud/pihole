@@ -40,8 +40,3 @@ description: Network-wide Ad Blocking
 grade: stable
 name: pihole
 summary: Pi-hole
-layout:
-  /etc/pihole:
-    bind: $SNAP_DATA/etc/pihole
-  /var/log/pihole:
-    bind: $SNAP_COMMON/log/pihole

@@ -4,6 +4,9 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
 rm -rf /dev/shm/FTL*
 
 mkdir -p ${SNAP_DATA}/etc/pihole ${SNAP_COMMON}/log/pihole
+rm -rf /etc/pihole /var/log/pihole
+ln -s ${SNAP_DATA}/etc/pihole /etc/pihole
+ln -s ${SNAP_COMMON}/log/pihole /var/log/pihole
 
 export FTLCONF_files_log_ftl=/dev/stdout
 export FTLCONF_webserver_api_password=
