@@ -16,7 +16,7 @@ local build(arch, test_ui, dind) = [{
     steps: [
         {
             name: "version",
-            image: "debian:buster-slim",
+            image: "debian:bookworm-slim",
             commands: [
                 "echo $DRONE_BUILD_NUMBER > version"
             ]
@@ -61,21 +61,8 @@ local build(arch, test_ui, dind) = [{
             ]
         },
         {
-            name: "package php",
-            image: "docker:" + dind,
-            commands: [
-                "./php/build.sh"
-            ],
-            volumes: [
-	        {
-		    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
-        {
             name: "download",
-            image: "debian:buster-slim",
+            image: "debian:bookworm-slim",
             commands: [
                 "./download.sh"
             ]
@@ -89,7 +76,7 @@ local build(arch, test_ui, dind) = [{
         },
     {
         name: "build",
-        image: "debian:buster-slim",
+        image: "debian:bookworm-slim",
         commands: [
             "./build.sh"
         ],
@@ -97,7 +84,7 @@ local build(arch, test_ui, dind) = [{
 
             {
         name: "package",
-        image: "debian:buster-slim",
+        image: "debian:bookworm-slim",
         commands: [
             "VERSION=$(cat version)",
             "./package.sh " + name + " $VERSION "
@@ -105,7 +92,7 @@ local build(arch, test_ui, dind) = [{
     },
         {
       name: 'test',
-      image: 'python:3.9-slim-buster',
+      image: 'python:3.11-slim-bookworm',
       commands: [
         'APP_ARCHIVE_PATH=$(realpath $(cat package.name))',
         'cd test',
@@ -155,7 +142,7 @@ local build(arch, test_ui, dind) = [{
          },
          {
            name: 'test-ui',
-           image: 'python:3.9-slim-buster',
+           image: 'python:3.11-slim-bookworm',
            commands: [
              'cd test',
              "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",       
@@ -172,7 +159,7 @@ local build(arch, test_ui, dind) = [{
 
     {
         name: "test-upgrade",
-        image: "python:3.9-slim-buster",
+        image: "python:3.11-slim-bookworm",
         commands: [
           "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
           "cd test",
@@ -187,7 +174,7 @@ local build(arch, test_ui, dind) = [{
     },
         {
       name: 'upload',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       environment: {
         AWS_ACCESS_KEY_ID: {
           from_secret: 'AWS_ACCESS_KEY_ID',
@@ -213,7 +200,7 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'promote',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       environment: {
         AWS_ACCESS_KEY_ID: {
           from_secret: 'AWS_ACCESS_KEY_ID',
