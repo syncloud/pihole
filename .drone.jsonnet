@@ -1,7 +1,5 @@
 local name = "pihole";
-local browser = "firefox";
 local platform = '26.04.10';
-local selenium = '4.21.0-20240517';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 
 
@@ -97,7 +95,7 @@ local build(arch, test_ui, dind) = [{
           "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
           "cd test",
           "./deps.sh",
-          "py.test -x -s upgrade.py --distro=buster --ui-mode=desktop --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser
+          "py.test -x -s upgrade.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name
         ],
         privileged: true,
         volumes: [{
