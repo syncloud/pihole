@@ -11,5 +11,6 @@ export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
 
 $DIR/FTL/bin/pihole-FTL --config webserver.port '127.0.0.1:8080' >/dev/null 2>&1 || true
+$DIR/FTL/bin/pihole-FTL --config webserver.paths.webroot '/snap/pihole/current/web' >/dev/null 2>&1 || true
 
 exec $DIR/FTL/bin/pihole-FTL -f
