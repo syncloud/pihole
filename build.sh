@@ -39,7 +39,6 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeDir=.*"#piholeDir="/va
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pihole-FTL sqlite3#/snap/pihole/current/FTL/bin/pihole-FTL sqlite3#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#nc 127.0.0.1#/snap/pihole/current/netcat/bin/nc.sh 127.0.0.1#g' {} +
 #find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig +#/snap/pihole/current/bind9/bin/dig.sh +#g' {} +
 

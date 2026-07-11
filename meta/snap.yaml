@@ -28,9 +28,6 @@ apps:
   cli:
     command: bin/pihole
 
-  sqlite:
-    command: sqlite/bin/sqlite.sh
-
 confinement: strict
 description: Network-wide Ad Blocking
 grade: stable
