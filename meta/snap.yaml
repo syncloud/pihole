@@ -1,9 +1,9 @@
 apps:
   ftl:
-    #user: pihole
     command: bin/service.ftl.sh
     daemon: simple
     start-timeout: 600s
+    restart-delay: 10s
     plugs:
     - network
     - network-bind
@@ -17,6 +17,7 @@ apps:
     - network
     - network-bind
     restart-condition: always
+    restart-delay: 10s
     start-timeout: 600s
   gravity:
     command: bin/gravity

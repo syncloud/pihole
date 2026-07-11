@@ -8,7 +8,6 @@ mkdir -p ${BUILD_DIR}
 
 cp -r ${DIR}/bin ${BUILD_DIR}
 cp -r ${DIR}/config ${BUILD_DIR}
-cp -r ${DIR}/hooks ${BUILD_DIR}
 cp -r ${DIR}/meta ${BUILD_DIR}
 
 mv ${DIR}/build/bind9 ${BUILD_DIR}
