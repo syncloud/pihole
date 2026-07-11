@@ -32,13 +32,10 @@ cd ${DIR}/build/pi-hole
 
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#piholeGitDir=.*#piholeGitDir="/snap/pihole/current"#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#PIHOLE_COMMAND=.*#PIHOLE_COMMAND=true#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pihole-FTL sqlite3#/snap/pihole/current/FTL/bin/pihole-FTL sqlite3#g' {} +
-#find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#sqlite3#/snap/pihole/current/sqlite/bin/sqlite.sh#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig +#/snap/pihole/current/bind9/bin/dig.sh +#g' {} +
 
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#killall -q#pkill -f#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#service pihole-FTL restart#snap restart pihole.ftl#g' {} +
-find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pkill -HUP pihole-FTL#snap restart pihole.ftl#g' {} +
+find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#pihole-FTL#/snap/pihole/current/FTL/bin/pihole-FTL#g' {} +
 
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/.pihole#/snap/pihole/current#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/opt/pihole#/snap/pihole/current/advanced/Scripts#g' {} +
