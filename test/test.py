@@ -81,7 +81,7 @@ def test_web_requires_auth(app_domain):
     session = requests.session()
     last = None
     for _ in range(60):
-        r = session.get("https://{0}/".format(app_domain), verify=False, allow_redirects=False, timeout=10)
+        r = session.get("https://{0}/admin/".format(app_domain), verify=False, allow_redirects=False, timeout=10)
         last = r.status_code
         if r.status_code in (301, 302, 303):
             assert 'auth.' in r.headers.get('Location', ''), r.headers.get('Location')
