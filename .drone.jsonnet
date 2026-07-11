@@ -81,10 +81,10 @@ local build(arch, test_ui, dind) = [{
             ]
         },
         {
-            name: "build ftl",
-            image: "gcc:10",
+            name: "build gravity",
+            image: "golang:1.22",
             commands: [
-                "./ftl/build.sh"
+                "./gravity/build.sh"
             ]
         },
     {

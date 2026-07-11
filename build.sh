@@ -16,6 +16,8 @@ mv ${DIR}/build/nginx ${BUILD_DIR}
 mv ${DIR}/build/AdminLTE ${BUILD_DIR}/web
 mv ${DIR}/build/FTL ${BUILD_DIR}
 
+cp ${DIR}/build/gravity/gravity ${BUILD_DIR}/bin/gravity
+
 cd ${BUILD_DIR}/web
 find . -name "*.php" -exec sed -i 's#/etc/pihole/setupVars.conf#/var/snap/pihole/current/setupVars.conf#g' {} +
 find . -name "*.php" -exec sed -i 's#/etc/pihole/dns-servers.conf#/var/snap/pihole/current/config/pihole/dns-servers.conf#g' {} +

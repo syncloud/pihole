@@ -28,6 +28,13 @@ apps:
     restart-condition: always
     start-timeout: 600s
 
+  gravity:
+    command: bin/gravity
+    daemon: oneshot
+    timer: sun,03:00
+    plugs:
+    - network
+
   cli:
     command: bin/pihole
 
@@ -39,3 +46,8 @@ description: Network-wide Ad Blocking
 grade: stable
 name: pihole
 summary: Pi-hole
+layout:
+  /etc/pihole:
+    bind: $SNAP_DATA/etc/pihole
+  /var/log/pihole:
+    bind: $SNAP_COMMON/log/pihole
