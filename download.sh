@@ -3,8 +3,8 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 FTL_VERSION=v6.7
-PIHOLE_VERSION=5.16.2
-WEB_VERSION=5.4
+PIHOLE_VERSION=6.4.3
+WEB_VERSION=6.6
 ARCH=$(uname -m)
 DOWNLOAD_URL=https://github.com/syncloud/3rdparty/releases/download
 
@@ -36,9 +36,9 @@ tar xf nginx-${ARCH}.tar.gz
 #tar xf v${WEB_VERSION}.tar.gz
 #mv AdminLTE-${WEB_VERSION} AdminLTE
 
-wget https://github.com/cyberb/AdminLTE/archive/master.tar.gz
-tar xf master.tar.gz
-mv AdminLTE-master AdminLTE
+wget https://github.com/pi-hole/web/archive/v${WEB_VERSION}.tar.gz
+tar xf v${WEB_VERSION}.tar.gz
+mv web-${WEB_VERSION} AdminLTE
 
 wget https://github.com/pi-hole/pi-hole/archive/v${PIHOLE_VERSION}.tar.gz
 tar xf v${PIHOLE_VERSION}.tar.gz
