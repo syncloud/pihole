@@ -1,4 +1,4 @@
 #!/bin/bash
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-. ${DIR}/bin/setup-paths.sh
+mkdir -p ${SNAP_DATA}/etc/pihole ${SNAP_COMMON}/log/pihole
 exec ${DIR}/bin/pihole "$@"

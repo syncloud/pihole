@@ -14,32 +14,35 @@ local build(arch, test_ui, dind) = [{
     },
     steps: [
         {
-            name: "download",
+            name: "web",
             image: "debian:bookworm-slim",
-            commands: [
-                "./download.sh"
-            ]
+            commands: [ "./web/build.sh" ]
         },
         {
-            name: "build gravity",
-            image: "golang:1.22",
-            commands: [
-                "./gravity/build.sh"
-            ]
+            name: "core",
+            image: "debian:bookworm-slim",
+            commands: [ "./core/build.sh" ]
+        },
+        {
+            name: "ftl",
+            image: "debian:bookworm-slim",
+            commands: [ "./ftl/build.sh" ]
+        },
+        {
+            name: "bind9",
+            image: "docker:" + dind,
+            commands: [ "./bind9/build.sh" ],
+            volumes: [ { name: "dockersock", path: "/var/run" } ]
         },
         {
             name: "build cli",
             image: "golang:1.22",
-            commands: [
-                "./cli/build.sh"
-            ]
+            commands: [ "./cli/build.sh" ]
         },
         {
             name: "nginx",
             image: "nginx:" + nginx,
-            commands: [
-                "./nginx/build.sh"
-            ]
+            commands: [ "./nginx/build.sh" ]
         },
     {
         name: "build",

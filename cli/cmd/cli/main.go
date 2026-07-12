@@ -17,24 +17,6 @@ func main() {
 	}
 
 	cmd.AddCommand(&cobra.Command{
-		Use: "install",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := log.Logger(zap.DebugLevel)
-			logger.Info("install")
-			return installer.New(logger).Install()
-		},
-	})
-
-	cmd.AddCommand(&cobra.Command{
-		Use: "configure",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := log.Logger(zap.DebugLevel)
-			logger.Info("configure")
-			return installer.New(logger).Configure()
-		},
-	})
-
-	cmd.AddCommand(&cobra.Command{
 		Use: "storage-change",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := log.Logger(zap.DebugLevel)

@@ -2,7 +2,6 @@ package installer
 
 import (
 	"fmt"
-	"os"
 	"path"
 
 	"github.com/syncloud/golib/config"
@@ -28,18 +27,16 @@ type Variables struct {
 }
 
 type Installer struct {
-	newVersionFile     string
-	currentVersionFile string
-	platformClient     *platform.Client
-	logger             *zap.Logger
+	platformClient *platform.Client
+	cron           *Cron
+	logger         *zap.Logger
 }
 
 func New(logger *zap.Logger) *Installer {
 	return &Installer{
-		newVersionFile:     path.Join(AppDir, "version"),
-		currentVersionFile: path.Join(DataDir, "version"),
-		platformClient:     platform.New(),
-		logger:             logger,
+		platformClient: platform.New(),
+		cron:           NewCron("root", logger),
+		logger:         logger,
 	}
 }
 
@@ -78,6 +75,9 @@ func (i *Installer) UpdateConfigs() error {
 	if err := i.GenerateConfig(); err != nil {
 		return fmt.Errorf("generate config: %w", err)
 	}
+	if err := i.cron.Create(); err != nil {
+		return err
+	}
 	return i.FixPermissions()
 }
 
@@ -106,14 +106,7 @@ func (i *Installer) PreRefresh() error {
 }
 
 func (i *Installer) PostRefresh() error {
-	if err := i.UpdateConfigs(); err != nil {
-		return err
-	}
-	return i.ClearVersion()
-}
-
-func (i *Installer) ClearVersion() error {
-	return os.RemoveAll(i.currentVersionFile)
+	return i.UpdateConfigs()
 }
 
 func (i *Installer) FixPermissions() error {

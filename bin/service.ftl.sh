@@ -3,16 +3,15 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
 rm -rf /dev/shm/FTL*
 
-. ${DIR}/bin/setup-paths.sh
+mkdir -p ${SNAP_DATA}/etc/pihole ${SNAP_COMMON}/log/pihole
+rm -f ${SNAP_COMMON}/ftl.socket
 
 export FTLCONF_files_log_ftl=/dev/stdout
 export FTLCONF_webserver_api_password=
 export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
 
-# FTL's webserver only binds IP:port (CivetWeb, no unix socket) — keep it on
-# loopback so 53 stays the only externally-reachable port; nginx fronts it on web.socket
-$DIR/FTL/bin/pihole-FTL --config webserver.port '127.0.0.1:8080' >/dev/null 2>&1 || true
-$DIR/FTL/bin/pihole-FTL --config webserver.paths.webroot '/snap/pihole/current/web' >/dev/null 2>&1 || true
+# CivetWeb unix socket (patched-in USE_X_DOM_SOCKET) — no TCP port, nginx fronts web.socket
+$DIR/FTL/bin/pihole-FTL --config webserver.port "x${SNAP_COMMON}/ftl.socket" >/dev/null 2>&1 || true
 
 exec $DIR/FTL/bin/pihole-FTL -f
