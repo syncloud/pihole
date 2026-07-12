@@ -7,6 +7,8 @@ mkdir -p ${SNAP_DATA}/etc/pihole ${SNAP_COMMON}/log/pihole
 rm -f ${SNAP_COMMON}/ftl.socket
 
 export FTLCONF_files_log_ftl=/dev/stdout
+export FTLCONF_files_log_dnsmasq=-
+export FTLCONF_files_log_webserver=/dev/stdout
 export FTLCONF_webserver_api_password=
 export FTLCONF_webserver_paths_webroot=${DIR}/web
 export FTLCONF_webserver_paths_webhome=/admin/
