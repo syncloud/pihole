@@ -10,30 +10,74 @@ import (
 	"hooks/log"
 )
 
-func command(use string, run func(*installer.Installer) error) *cobra.Command {
-	return &cobra.Command{
-		Use: use,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := log.Logger(zap.DebugLevel)
-			logger.Info(use)
-			return run(installer.New(logger))
-		},
-	}
-}
-
 func main() {
 	var cmd = &cobra.Command{
 		Use:          "cli",
 		SilenceUsage: true,
 	}
 
-	cmd.AddCommand(command("install", func(i *installer.Installer) error { return i.Install() }))
-	cmd.AddCommand(command("configure", func(i *installer.Installer) error { return i.Configure() }))
-	cmd.AddCommand(command("storage-change", func(i *installer.Installer) error { return i.StorageChange() }))
-	cmd.AddCommand(command("access-change", func(i *installer.Installer) error { return i.AccessChange() }))
-	cmd.AddCommand(command("backup-pre-stop", func(i *installer.Installer) error { return i.BackupPreStop() }))
-	cmd.AddCommand(command("restore-pre-start", func(i *installer.Installer) error { return i.RestorePreStart() }))
-	cmd.AddCommand(command("restore-post-start", func(i *installer.Installer) error { return i.RestorePostStart() }))
+	cmd.AddCommand(&cobra.Command{
+		Use: "install",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("install")
+			return installer.New(logger).Install()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "configure",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("configure")
+			return installer.New(logger).Configure()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "storage-change",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("storage-change")
+			return installer.New(logger).StorageChange()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "access-change",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("access-change")
+			return installer.New(logger).AccessChange()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "backup-pre-stop",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("backup-pre-stop")
+			return installer.New(logger).BackupPreStop()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "restore-pre-start",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("restore-pre-start")
+			return installer.New(logger).RestorePreStart()
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use: "restore-post-start",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("restore-post-start")
+			return installer.New(logger).RestorePostStart()
+		},
+	})
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Print(err)
