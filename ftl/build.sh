@@ -16,9 +16,11 @@ cd ${DIR}/../build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
-./configure --prefix=/usr --libdir=/usr/lib
+MULTIARCH=$(gcc -print-multiarch)
+./configure --prefix=/usr --libdir=/usr/lib/${MULTIARCH}
 make -j$(nproc)
 make install
+ldconfig
 cd ${DIR}/../build
 
 wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
