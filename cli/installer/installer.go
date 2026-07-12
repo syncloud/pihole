@@ -28,14 +28,12 @@ type Variables struct {
 
 type Installer struct {
 	platformClient *platform.Client
-	cron           *Cron
 	logger         *zap.Logger
 }
 
 func New(logger *zap.Logger) *Installer {
 	return &Installer{
 		platformClient: platform.New(),
-		cron:           NewCron("root", logger),
 		logger:         logger,
 	}
 }
@@ -73,9 +71,6 @@ func (i *Installer) UpdateConfigs() error {
 	}
 	if err := i.GenerateConfig(); err != nil {
 		return fmt.Errorf("generate config: %w", err)
-	}
-	if err := i.cron.Create(); err != nil {
-		return err
 	}
 	return i.FixPermissions()
 }

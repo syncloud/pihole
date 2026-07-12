@@ -24,7 +24,13 @@ apps:
     command: bin/pihole.sh
 
   cron:
-    command: bin/gravity.sh
+    command: bin/cli cron
+    daemon: simple
+    restart-condition: always
+    restart-delay: 10s
+    after: [ftl]
+    plugs:
+    - network
 
   storage-change:
     command: bin/cli storage-change
