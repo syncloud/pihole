@@ -17,7 +17,7 @@ docker export bind9 -o app.tar
 tar xf app.tar
 rm -rf app.tar
 
-mkdir -p ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}/bin
 cp -r usr ${BUILD_DIR}
 cp -r lib ${BUILD_DIR}
 cp -r ${DIR}/bin/* ${BUILD_DIR}/bin
