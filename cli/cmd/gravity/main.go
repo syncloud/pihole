@@ -10,7 +10,7 @@ import (
 	"hooks/log"
 )
 
-const interval = time.Hour
+const interval = 7 * 24 * time.Hour
 
 func main() {
 	logger := log.Logger(zap.DebugLevel)
