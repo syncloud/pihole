@@ -16,7 +16,7 @@ cd ${DIR}/../build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
-./configure --prefix=/opt/nettle --libdir=/opt/nettle/lib
+./configure --prefix=/usr --libdir=/usr/lib
 make -j$(nproc)
 make install
 cd ${DIR}/../build
@@ -35,7 +35,6 @@ grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
 # enable CivetWeb unix-domain-socket listening ("x<path>" port syntax)
 sed -i 's/TIMER_RESOLUTION=1000/TIMER_RESOLUTION=1000\n    USE_X_DOM_SOCKET/' src/webserver/civetweb/CMakeLists.txt
 
-export CMAKE_PREFIX_PATH=/opt/nettle
 bash build.sh
 mv pihole-FTL ${BUILD_DIR}/bin/pihole-FTL.bin
 
