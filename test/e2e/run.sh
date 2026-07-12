@@ -3,8 +3,7 @@ DIR=$(cd "$(dirname "$0")" && pwd)
 cd "$DIR"
 
 ARTIFACT_SUBDIR=$1
-SPEC=$2
-PROJECT=${3:-desktop}
+PROJECT=$2
 
 export PLAYWRIGHT_FULL_DOMAIN=buster.com
 export PLAYWRIGHT_APP_DOMAIN=pihole.buster.com
@@ -21,4 +20,4 @@ getent hosts $PLAYWRIGHT_APP_DOMAIN | sed "s/$PLAYWRIGHT_APP_DOMAIN/auth.$PLAYWR
 apt-get update -qq
 apt-get install -y -qq sshpass openssh-client curl
 npm install --no-audit --no-fund
-npx playwright test --project="${PROJECT}" ${SPEC}
+npx playwright test --project="${PROJECT}"

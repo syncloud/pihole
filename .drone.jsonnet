@@ -88,7 +88,7 @@ local build(arch, test_ui) = [{
             name: 'e2e',
             image: 'mcr.microsoft.com/playwright:v1.48.2-jammy',
             commands: [
-                './test/e2e/run.sh e2e specs/01-smoke.spec.ts desktop',
+                './test/e2e/run.sh e2e desktop',
             ],
         },
     ] else []) + [
