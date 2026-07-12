@@ -14,13 +14,6 @@ local build(arch, test_ui, dind) = [{
     },
     steps: [
         {
-            name: "version",
-            image: "debian:bookworm-slim",
-            commands: [
-                "echo $DRONE_BUILD_NUMBER > version"
-            ]
-        },
-        {
             name: "download",
             image: "debian:bookworm-slim",
             commands: [
@@ -60,8 +53,7 @@ local build(arch, test_ui, dind) = [{
         name: "package",
         image: "debian:bookworm-slim",
         commands: [
-            "VERSION=$(cat version)",
-            "./package.sh " + name + " $VERSION "
+            "./package.sh " + name + " $DRONE_BUILD_NUMBER"
         ]
     },
         {
