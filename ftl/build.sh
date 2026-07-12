@@ -4,7 +4,7 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 FTL_VERSION=v6.7
 
 apt-get update
-apt-get install -y wget build-essential cmake git m4 nettle-dev libgmp-dev libidn11-dev libreadline-dev xxd
+apt-get install -y wget build-essential cmake git m4 nettle-dev libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
 
 BUILD_DIR=${DIR}/../build/snap/FTL
 mkdir -p ${BUILD_DIR}/bin
