@@ -1,7 +1,7 @@
 local name = "pihole";
 local platform = '26.04.10';
 local nginx = '1.24.0';
-local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
+local store_publisher = 'stable-303';
 
 
 local build(arch, test_ui, dind) = [{
@@ -60,31 +60,15 @@ local build(arch, test_ui, dind) = [{
       name: 'test',
       image: 'python:3.11-slim-bookworm',
       commands: [
-        'APP_ARCHIVE_PATH=$(realpath $(cat package.name))',
-        'cd test',
-        './deps.sh',
-        "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",  
-        'py.test -x -s test.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=' + name + '.buster.com --app=' + name + ' --arch=' + arch,
+        './test/ci-test.sh buster ' + arch,
       ],
     },
 ] + ( if test_ui then [
          {
            name: 'e2e',
            image: 'mcr.microsoft.com/playwright:v1.48.2-jammy',
-           environment: {
-             PLAYWRIGHT_FULL_DOMAIN: 'buster.com',
-             PLAYWRIGHT_APP_DOMAIN: name + '.buster.com',
-             PLAYWRIGHT_DEVICE_HOST: name + '.buster.com',
-             PLAYWRIGHT_DEVICE_USER: 'user',
-             PLAYWRIGHT_DEVICE_PASSWORD: 'Password1',
-             PLAYWRIGHT_ARTIFACT_DIR: '/drone/src/artifact/e2e',
-           },
            commands: [
-             'apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl',
-             "getent hosts " + name + ".buster.com | sed 's/" + name + ".buster.com/auth.buster.com/g' | tee -a /etc/hosts",
-             'cd test/e2e',
-             'npm install --no-audit --no-fund',
-             'npx playwright test --project=desktop',
+             './test/e2e/run.sh e2e specs/01-smoke.spec.ts desktop',
            ],
          },
        ] else []) + [
@@ -93,10 +77,7 @@ local build(arch, test_ui, dind) = [{
         name: "test-upgrade",
         image: "python:3.11-slim-bookworm",
         commands: [
-          "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
-          "cd test",
-          "./deps.sh",
-          "py.test -x -s upgrade.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name
+          "./test/ci-upgrade.sh buster " + arch,
         ],
         privileged: true,
         volumes: [{
@@ -104,54 +85,15 @@ local build(arch, test_ui, dind) = [{
             path: "/videos"
         }]
     },
-        {
-      name: 'upload',
-      image: 'debian:bookworm-slim',
-      environment: {
-        AWS_ACCESS_KEY_ID: {
-          from_secret: 'AWS_ACCESS_KEY_ID',
-        },
-        AWS_SECRET_ACCESS_KEY: {
-          from_secret: 'AWS_SECRET_ACCESS_KEY',
-        },
-        SYNCLOUD_TOKEN: {
-          from_secret: 'SYNCLOUD_TOKEN',
-        },
-      },
-      commands: [
-        'PACKAGE=$(cat package.name)',
-        'apt update && apt install -y wget',
-        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
-        'chmod +x release',
-        './release publish -f $PACKAGE -b $DRONE_BRANCH',
-      ],
-      when: {
-        branch: ['stable', 'master'],
-        event: ['push'],
-      },
-    },
     {
-      name: 'promote',
-      image: 'debian:bookworm-slim',
+      name: 'publish',
+      image: 'syncloud/store-publisher:' + store_publisher,
       environment: {
-        AWS_ACCESS_KEY_ID: {
-          from_secret: 'AWS_ACCESS_KEY_ID',
-        },
-        AWS_SECRET_ACCESS_KEY: {
-          from_secret: 'AWS_SECRET_ACCESS_KEY',
-        },
-        SYNCLOUD_TOKEN: {
-          from_secret: 'SYNCLOUD_TOKEN',
-        },
+        SYNCLOUD_TOKEN: { from_secret: 'SYNCLOUD_TOKEN' },
       },
-      commands: [
-        'apt update && apt install -y wget',
-        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
-        'chmod +x release',
-        './release promote -n ' + name + ' -a $(dpkg --print-architecture)',
-      ],
+      command: ['snap', '-c', '${DRONE_BRANCH}'],
       when: {
-        branch: ['stable'],
+        branch: ['master', 'stable'],
         event: ['push'],
       },
     },

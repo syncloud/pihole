@@ -8,7 +8,7 @@ func TestCommandDefault(t *testing.T) {
 	t.Setenv("GRAVITY_COMMAND", "")
 	t.Setenv("SNAP", "/snap/pihole/current")
 	name, args := command()
-	if name != "/snap/pihole/current/bin/service.cli.sh" {
+	if name != "/snap/pihole/current/bin/pihole.sh" {
 		t.Fatalf("unexpected name: %s", name)
 	}
 	if len(args) != 1 || args[0] != "-g" {

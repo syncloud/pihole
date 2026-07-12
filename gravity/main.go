@@ -14,7 +14,7 @@ func command() (string, []string) {
 		fields := strings.Fields(c)
 		return fields[0], fields[1:]
 	}
-	return filepath.Join(os.Getenv("SNAP"), "bin", "service.cli.sh"), []string{"-g"}
+	return filepath.Join(os.Getenv("SNAP"), "bin", "pihole.sh"), []string{"-g"}
 }
 
 func run(name string, args []string) error {

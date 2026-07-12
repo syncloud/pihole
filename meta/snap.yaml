@@ -27,7 +27,7 @@ apps:
     - network
 
   cli:
-    command: bin/service.cli.sh
+    command: bin/pihole.sh
 
   storage-change:
     command: bin/cli storage-change
