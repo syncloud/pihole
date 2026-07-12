@@ -72,11 +72,6 @@ local build(arch, test_ui) = [{
         for distro in distros
     ] + [
         {
-            name: "build",
-            image: "debian:bookworm-slim",
-            commands: [ "./build.sh" ],
-        },
-        {
             name: "package",
             image: "debian:bookworm-slim",
             commands: [ "./package.sh " + name + " $DRONE_BUILD_NUMBER" ]
