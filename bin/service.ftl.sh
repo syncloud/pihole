@@ -10,6 +10,8 @@ export FTLCONF_webserver_api_password=
 export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
 
+# FTL's webserver only binds IP:port (CivetWeb, no unix socket) — keep it on
+# loopback so 53 stays the only externally-reachable port; nginx fronts it on web.socket
 $DIR/FTL/bin/pihole-FTL --config webserver.port '127.0.0.1:8080' >/dev/null 2>&1 || true
 $DIR/FTL/bin/pihole-FTL --config webserver.paths.webroot '/snap/pihole/current/web' >/dev/null 2>&1 || true
 
