@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test'
 import { shoot } from '../helpers/screenshot'
 import { loginViaAuthelia } from '../helpers/auth'
 
-const username = process.env.PLAYWRIGHT_DEVICE_USER ?? 'user'
-const password = process.env.PLAYWRIGHT_DEVICE_PASSWORD ?? 'Password1'
+const username = process.env.PLAYWRIGHT_DEVICE_USER!
+const password = process.env.PLAYWRIGHT_DEVICE_PASSWORD!
 
 test.describe('pihole', () => {
   test('admin dashboard renders after authelia login', async ({ page, baseURL }, testInfo) => {
