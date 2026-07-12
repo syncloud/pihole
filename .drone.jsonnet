@@ -4,7 +4,7 @@ local nginx = '1.24.0';
 local store_publisher = 'stable-303';
 
 
-local build(arch, test_ui, dind) = [{
+local build(arch, test_ui) = [{
     kind: "pipeline",
     name: arch,
 
@@ -30,9 +30,8 @@ local build(arch, test_ui, dind) = [{
         },
         {
             name: "bind9",
-            image: "docker:" + dind,
-            commands: [ "./bind9/build.sh" ],
-            volumes: [ { name: "dockersock", path: "/var/run" } ]
+            image: "debian:bullseye-slim",
+            commands: [ "./bind9/build.sh" ]
         },
         {
             name: "build cli",
@@ -138,17 +137,6 @@ local build(arch, test_ui, dind) = [{
       ]
     },
     services: [
-       {
-            name: "docker",
-            image: "docker:" + dind,
-            privileged: true,
-            volumes: [
-                {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
         {
             name: name + ".buster.com",
             image: "syncloud/platform-buster-" + arch + ":" + platform,
@@ -187,13 +175,9 @@ local build(arch, test_ui, dind) = [{
             name: "videos",
             temp: {}
         },
-        {
-            name: "dockersock",
-            temp: {}
-        },
     ]
 }];
 
-build("amd64", true, "20.10.21-dind") +
-build("arm64", false, "19.03.8-dind") +
-build("arm", false, "19.03.8-dind")
+build("amd64", true) +
+build("arm64", false) +
+build("arm", false)
