@@ -23,8 +23,8 @@ apps:
   cli:
     command: bin/pihole.sh
 
-  cron:
-    command: bin/cli cron
+  gravity:
+    command: bin/gravity
     daemon: simple
     restart-condition: always
     restart-delay: 10s

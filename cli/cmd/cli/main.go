@@ -17,14 +17,6 @@ func main() {
 	}
 
 	cmd.AddCommand(&cobra.Command{
-		Use: "cron",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			logger := log.Logger(zap.DebugLevel)
-			return installer.GravityLoop(logger)
-		},
-	})
-
-	cmd.AddCommand(&cobra.Command{
 		Use: "storage-change",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := log.Logger(zap.DebugLevel)

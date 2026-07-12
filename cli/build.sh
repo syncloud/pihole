@@ -9,5 +9,6 @@ mkdir -p ${BIN_OUT} ${HOOKS_OUT}
 
 go vet ./...
 CGO_ENABLED=0 go build -ldflags "-s -w" -o ${BIN_OUT}/cli ./cmd/cli
+CGO_ENABLED=0 go build -ldflags "-s -w" -o ${BIN_OUT}/gravity ./cmd/gravity
 CGO_ENABLED=0 go build -ldflags "-s -w" -o ${HOOKS_OUT}/install ./cmd/install
 CGO_ENABLED=0 go build -ldflags "-s -w" -o ${HOOKS_OUT}/configure ./cmd/configure
