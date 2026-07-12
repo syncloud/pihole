@@ -8,6 +8,8 @@ rm -f ${SNAP_COMMON}/ftl.socket
 
 export FTLCONF_files_log_ftl=/dev/stdout
 export FTLCONF_webserver_api_password=
+export FTLCONF_webserver_paths_webroot=${DIR}/web
+export FTLCONF_webserver_paths_webhome=/admin/
 export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
 
