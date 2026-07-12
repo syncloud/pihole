@@ -8,15 +8,6 @@ local distros = ['bookworm', 'buster'];
 local platform_image(distro, arch) =
     "syncloud/platform-" + distro + "-" + arch + ":" + platform;
 
-local tool_test(tool, arch) = [
-    {
-        name: tool + " test " + distro,
-        image: platform_image(distro, arch),
-        commands: [ "./" + tool + "/test.sh" ],
-    }
-    for distro in distros
-];
-
 local build(arch, test_ui) = [{
     kind: "pipeline",
     name: arch,
@@ -41,13 +32,27 @@ local build(arch, test_ui) = [{
             image: "debian:bookworm-slim",
             commands: [ "./ftl/build.sh" ]
         },
-    ] + tool_test("ftl", arch) + [
+    ] + [
+        {
+            name: "ftl test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./ftl/test.sh" ],
+        }
+        for distro in distros
+    ] + [
         {
             name: "bind9",
             image: "debian:bullseye-slim",
             commands: [ "./bind9/build.sh" ]
         },
-    ] + tool_test("bind9", arch) + [
+    ] + [
+        {
+            name: "bind9 test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./bind9/test.sh" ],
+        }
+        for distro in distros
+    ] + [
         {
             name: "build cli",
             image: "golang:1.22",
@@ -58,7 +63,14 @@ local build(arch, test_ui) = [{
             image: "nginx:" + nginx,
             commands: [ "./nginx/build.sh" ]
         },
-    ] + tool_test("nginx", arch) + [
+    ] + [
+        {
+            name: "nginx test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./nginx/test.sh" ],
+        }
+        for distro in distros
+    ] + [
         {
             name: "build",
             image: "debian:bookworm-slim",
