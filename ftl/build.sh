@@ -16,7 +16,7 @@ cd ${DIR}/../build
 wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
-./configure --prefix=/opt/nettle
+./configure --prefix=/opt/nettle --libdir=/opt/nettle/lib
 make -j$(nproc)
 make install
 cd ${DIR}/../build
