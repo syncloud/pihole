@@ -2,6 +2,7 @@ package installer
 
 import (
 	"fmt"
+	"os"
 	"path"
 
 	"github.com/syncloud/golib/config"
@@ -72,6 +73,9 @@ func (i *Installer) UpdateConfigs() error {
 	if err := i.GenerateConfig(); err != nil {
 		return fmt.Errorf("generate config: %w", err)
 	}
+	if err := i.SeedToml(); err != nil {
+		return fmt.Errorf("seed toml: %w", err)
+	}
 	return i.FixPermissions()
 }
 
@@ -93,6 +97,18 @@ func (i *Installer) GenerateConfig() error {
 		path.Join(DataDir, "config"),
 		variables,
 	)
+}
+
+func (i *Installer) SeedToml() error {
+	toml := path.Join(DataDir, "etc", "pihole", "pihole.toml")
+	if _, err := os.Stat(toml); err == nil {
+		return nil
+	}
+	seed, err := os.ReadFile(path.Join(DataDir, "config", "pihole.toml"))
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(toml, seed, 0644)
 }
 
 func (i *Installer) PreRefresh() error {

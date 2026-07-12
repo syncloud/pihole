@@ -1,0 +1,2 @@
+[webserver]
+port = "x{{ .DataDir }}/ftl.socket"
