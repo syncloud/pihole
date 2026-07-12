@@ -15,7 +15,6 @@ tar xf v${VERSION}.tar.gz
 mv pi-hole-${VERSION} pi-hole
 cd pi-hole
 
-# paths -> snap layout (FTL is patched to the same paths, so no runtime symlinks)
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/etc/pihole#/var/snap/pihole/current/etc/pihole#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/var/log/pihole#/var/snap/pihole/common/log/pihole#g' {} +
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#/run/pihole-FTL.pid#/var/snap/pihole/common/ftl.pid#g' {} +

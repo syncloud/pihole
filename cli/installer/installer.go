@@ -68,7 +68,6 @@ func (i *Installer) UpdateConfigs() error {
 		path.Join(DataDir, "config"),
 		path.Join(DataDir, "nginx"),
 		path.Join(DataDir, "etc", "pihole"),
-		path.Join(CommonDir, "log", "pihole"),
 	); err != nil {
 		return err
 	}
