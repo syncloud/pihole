@@ -4,7 +4,6 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
 rm -rf /dev/shm/FTL*
 rm -f ${SNAP_DATA}/ftl.socket
 
-export FTLCONF_files_log_ftl=/dev/stdout
 export FTLCONF_files_log_dnsmasq=-
 export FTLCONF_files_log_webserver=/dev/stdout
 export FTLCONF_webserver_api_password=
@@ -12,6 +11,7 @@ export FTLCONF_webserver_paths_webroot=${DIR}/web
 export FTLCONF_webserver_paths_webhome=/admin/
 export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
+export FTLCONF_dns_queryLogging=false
 export FTLCONF_webserver_port="x${SNAP_DATA}/ftl.socket"
 
 exec $DIR/FTL/bin/pihole-FTL -f
