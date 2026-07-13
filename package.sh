@@ -12,6 +12,8 @@ NAME=$1
 VERSION=$2
 ARCH=$(dpkg --print-architecture)
 
+echo ${VERSION} > ${DIR}/version
+
 SNAP_DIR=${DIR}/build/snap
 
 apt update
