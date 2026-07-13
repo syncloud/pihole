@@ -34,6 +34,8 @@ grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
 
 sed -i 's/TIMER_RESOLUTION=1000/TIMER_RESOLUTION=1000\n    USE_X_DOM_SOCKET/' src/webserver/civetweb/CMakeLists.txt
 
+sed -i 's/== NULL || !get_server_ports())/== NULL || (get_server_ports(), false))/' src/webserver/webserver.c
+
 bash build.sh
 mv pihole-FTL ${BUILD_DIR}/bin/pihole-FTL.bin
 
