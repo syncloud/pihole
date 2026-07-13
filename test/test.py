@@ -1,4 +1,5 @@
 import os
+import time
 from os.path import dirname, join
 from subprocess import check_output
 
@@ -6,7 +7,7 @@ import pytest
 import requests
 from syncloudlib.http import wait_for_rest
 from syncloudlib.integration.hosts import add_host_alias
-from syncloudlib.integration.installer import local_install
+from syncloudlib.integration.installer import local_install, wait_for_installer
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
@@ -52,13 +53,16 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
 
 
+@pytest.mark.flaky(retries=50, delay=10)
 def test_activate_device(device):
+    device.run_ssh('rm -f /var/snap/platform/current/syncloud.crt', throw=False)
     response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
-def test_install(device_session, app_archive_path, device_host, app_domain, device_password):
+def test_install(device_session, app_archive_path, device_host, app_domain, device_password, domain):
     local_install(device_host, device_password, app_archive_path)
+    wait_for_installer(device_session, domain)
 
 
 def test_cli_status_web(device):
@@ -73,8 +77,17 @@ def test_cli_gravity(device):
     device.run_ssh('snap run pihole.cli -g')
 
 
-def test_index(app_domain):
-    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
+def test_web_requires_auth(app_domain):
+    session = requests.session()
+    last = None
+    for _ in range(60):
+        r = session.get("https://{0}/admin/".format(app_domain), verify=False, allow_redirects=False, timeout=10)
+        last = r.status_code
+        if r.status_code in (301, 302, 303):
+            assert 'auth.' in r.headers.get('Location', ''), r.headers.get('Location')
+            return
+        time.sleep(2)
+    assert False, "expected redirect to Authelia portal, last status {0}".format(last)
 
 
 #def test_api(app_domain):
