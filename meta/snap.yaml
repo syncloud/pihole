@@ -1,41 +1,54 @@
 apps:
   ftl:
-    #user: pihole
     command: bin/service.ftl.sh
     daemon: simple
     start-timeout: 600s
+    restart-delay: 10s
     plugs:
     - network
     - network-bind
     restart-condition: always
     before: [nginx]
+
   nginx:
-    user: pihole
     command: bin/service.nginx.sh
     daemon: simple
+    restart-condition: always
+    restart-delay: 10s
+    start-timeout: 600s
     plugs:
     - network
     - network-bind
-    restart-condition: always
-    start-timeout: 600s
-  php-fpm:
-#    user: pihole
-    command: bin/service.php-fpm.sh
-    daemon: forking
-    plugs:
-    - network
-    - network-bind
-    restart-condition: always
-    start-timeout: 600s
 
   cli:
-    command: bin/pihole
+    command: bin/pihole.sh
 
-  sqlite:
-    command: sqlite/bin/sqlite.sh
+  gravity:
+    command: bin/gravity
+    daemon: simple
+    restart-condition: always
+    restart-delay: 10s
+    after: [ftl]
+    plugs:
+    - network
+
+  storage-change:
+    command: bin/cli storage-change
+
+  access-change:
+    command: bin/cli access-change
+
+  backup-pre-stop:
+    command: bin/cli backup-pre-stop
+
+  restore-pre-start:
+    command: bin/cli restore-pre-start
+
+  restore-post-start:
+    command: bin/cli restore-post-start
 
 confinement: strict
-description: PiHole
+description: Network-wide Ad Blocking
 grade: stable
 name: pihole
-summary: PiHole
+summary: Pi-hole

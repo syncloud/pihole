@@ -1,11 +1,14 @@
 local name = "pihole";
-local browser = "firefox";
-local platform = '22.02';
-local selenium = '4.21.0-20240517';
-local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
+local platform = '26.04.10';
+local nginx = '1.24.0';
+local store_publisher = 'stable-303';
+local distro_default = 'buster';
+local distros = ['bookworm', 'buster'];
 
+local platform_image(distro, arch) =
+    "syncloud/platform-" + distro + "-" + arch + ":" + platform;
 
-local build(arch, test_ui, dind) = [{
+local build(arch, test_ui) = [{
     kind: "pipeline",
     name: arch,
 
@@ -15,281 +18,145 @@ local build(arch, test_ui, dind) = [{
     },
     steps: [
         {
-            name: "version",
-            image: "debian:buster-slim",
-            commands: [
-                "echo $DRONE_BUILD_NUMBER > version"
-            ]
+            name: "web",
+            image: "debian:bookworm-slim",
+            commands: [ "./web/build.sh" ]
         },
         {
-            name: "package netcat",
-            image: "docker:" + dind,
-            commands: [
-                "./netcat/build.sh"
-            ],
-            volumes: [
-               {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
+            name: "core",
+            image: "debian:bookworm-slim",
+            commands: [ "./core/build.sh" ]
         },
         {
-            name: "package sqlite",
-            image: "docker:" + dind,
-            commands: [
-                "./sqlite/build.sh"
-            ],
-            volumes: [
-               {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
+            name: "ftl",
+            image: "debian:bookworm-slim",
+            commands: [ "./ftl/build.sh" ]
         },
+    ] + [
         {
-            name: "package python",
-            image: "docker:" + dind,
-            commands: [
-                "./python/build.sh"
-            ],
-            volumes: [
-                {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
-        {
-            name: "package php",
-            image: "docker:" + dind,
-            commands: [
-                "./php/build.sh"
-            ],
-            volumes: [
-	        {
-		    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
-        {
-            name: "download",
-            image: "debian:buster-slim",
-            commands: [
-                "./download.sh"
-            ]
-        },
-        {
-            name: "build ftl",
-            image: "gcc:10",
-            commands: [
-                "./ftl/build.sh"
-            ]
-        },
-    {
-        name: "build",
-        image: "debian:buster-slim",
-        commands: [
-            "./build.sh"
-        ],
-    },
-
-            {
-        name: "package",
-        image: "debian:buster-slim",
-        commands: [
-            "VERSION=$(cat version)",
-            "./package.sh " + name + " $VERSION "
-        ]
-    },
-        {
-      name: 'test',
-      image: 'python:3.9-slim-buster',
-      commands: [
-        'APP_ARCHIVE_PATH=$(realpath $(cat package.name))',
-        'cd test',
-        './deps.sh',
-        "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",  
-        'py.test -x -s test.py --distro=buster --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=' + name + '.buster.com --app=' + name + ' --arch=' + arch,
-      ],
-    },
-] + ( if test_ui then [
-{
-            name: "selenium",
-            image: "selenium/standalone-" + browser + ":" + selenium,
-            detach: true,
-            environment: {
-                SE_NODE_SESSION_TIMEOUT: "999999",
-                START_XVFB: "true"
-            },
-               volumes: [{
-                name: "shm",
-                path: "/dev/shm"
-            }],
-            commands: [
-                "cat /etc/hosts",
-                "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | sudo tee -a /etc/hosts",
-                "cat /etc/hosts",
-                "/opt/bin/entry_point.sh"
-            ]
-         },
-     {
-           name: 'selenium-video',
-           image: 'selenium/video:ffmpeg-6.1.1-20240517',
-           detach: true,
-           environment: {
-             DISPLAY_CONTAINER_NAME: 'selenium',
-             FILE_NAME: 'video.mkv',
-           },
-           volumes: [
-             {
-               name: 'shm',
-               path: '/dev/shm',
-             },
-             {
-               name: 'videos',
-               path: '/videos',
-             },
-           ],
-         },
-         {
-           name: 'test-ui',
-           image: 'python:3.9-slim-buster',
-           commands: [
-             'cd test',
-             "getent hosts " + name + ".buster.com | sed 's/" + name +".buster.com/auth.buster.com/g' | tee -a /etc/hosts",       
-             './deps.sh',
-             'py.test -x -s ui.py --distro=buster --ui-mode=desktop --domain=buster.com --device-host=' + name + '.buster.com --app=' + name + ' --browser-height=3000 --browser=' + browser,
-           ],
-           volumes: [{
-             name: 'videos',
-             path: '/videos',
-           }],
-         },
-
-       ] else []) + [
-
-    {
-        name: "test-upgrade",
-        image: "python:3.9-slim-buster",
-        commands: [
-          "APP_ARCHIVE_PATH=$(realpath $(cat package.name))",
-          "cd test",
-          "./deps.sh",
-          "py.test -x -s upgrade.py --distro=buster --ui-mode=desktop --domain=buster.com --app-archive-path=$APP_ARCHIVE_PATH --device-host=" + name + ".buster.com --app=" + name + " --browser=" + browser
-        ],
-        privileged: true,
-        volumes: [{
-            name: "videos",
-            path: "/videos"
-        }]
-    },
-        {
-      name: 'upload',
-      image: 'debian:buster-slim',
-      environment: {
-        AWS_ACCESS_KEY_ID: {
-          from_secret: 'AWS_ACCESS_KEY_ID',
-        },
-        AWS_SECRET_ACCESS_KEY: {
-          from_secret: 'AWS_SECRET_ACCESS_KEY',
-        },
-        SYNCLOUD_TOKEN: {
-          from_secret: 'SYNCLOUD_TOKEN',
-        },
-      },
-      commands: [
-        'PACKAGE=$(cat package.name)',
-        'apt update && apt install -y wget',
-        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
-        'chmod +x release',
-        './release publish -f $PACKAGE -b $DRONE_BRANCH',
-      ],
-      when: {
-        branch: ['stable', 'master'],
-        event: ['push'],
-      },
-    },
-    {
-      name: 'promote',
-      image: 'debian:buster-slim',
-      environment: {
-        AWS_ACCESS_KEY_ID: {
-          from_secret: 'AWS_ACCESS_KEY_ID',
-        },
-        AWS_SECRET_ACCESS_KEY: {
-          from_secret: 'AWS_SECRET_ACCESS_KEY',
-        },
-        SYNCLOUD_TOKEN: {
-          from_secret: 'SYNCLOUD_TOKEN',
-        },
-      },
-      commands: [
-        'apt update && apt install -y wget',
-        'wget ' + deployer + '-' + arch + ' -O release --progress=dot:giga',
-        'chmod +x release',
-        './release promote -n ' + name + ' -a $(dpkg --print-architecture)',
-      ],
-      when: {
-        branch: ['stable'],
-        event: ['push'],
-      },
-    },
-   {
-        name: "artifact",
-        image: "appleboy/drone-scp:1.6.4",
-        settings: {
-            host: {
-                from_secret: "artifact_host"
-            },
-            username: "artifact",
-            key: {
-                from_secret: "artifact_key"
-            },
-            timeout: "2m",
-            command_timeout: "2m",
-            target: "/home/artifact/repo/" + name + "/${DRONE_BUILD_NUMBER}-" + arch,
-            source: [
-                "artifact/*"
-            ],
-            privileged: true,
-            strip_components: 1,
-            volumes: [
-               {
-                    name: "videos",
-                    path: "/drone/src/artifact/videos"
-                }
-            ]
-        },
-        when: {
-          status: [ "failure", "success" ],
-          event: ['push'],
+            name: "ftl test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./ftl/test.sh" ],
         }
-    }
+        for distro in distros
+    ] + [
+        {
+            name: "bind9",
+            image: "debian:bullseye-slim",
+            commands: [ "./bind9/build.sh" ]
+        },
+    ] + [
+        {
+            name: "bind9 test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./bind9/test.sh" ],
+        }
+        for distro in distros
+    ] + [
+        {
+            name: "build cli",
+            image: "golang:1.22",
+            commands: [ "./cli/build.sh" ]
+        },
+        {
+            name: "nginx",
+            image: "nginx:" + nginx,
+            commands: [ "./nginx/build.sh" ]
+        },
+    ] + [
+        {
+            name: "nginx test " + distro,
+            image: platform_image(distro, arch),
+            commands: [ "./nginx/test.sh" ],
+        }
+        for distro in distros
+    ] + [
+        {
+            name: "package",
+            image: "debian:bookworm-slim",
+            commands: [ "./package.sh " + name + " $DRONE_BUILD_NUMBER" ]
+        },
+    ] + [
+        {
+            name: "test " + distro,
+            image: "python:3.11-slim-bookworm",
+            commands: [ "./test/ci-test.sh " + distro + " " + arch ],
+        }
+        for distro in distros
+    ] + ( if test_ui then [
+        {
+            name: 'e2e',
+            image: 'mcr.microsoft.com/playwright:v1.48.2-jammy',
+            commands: [
+                './test/e2e/run.sh e2e desktop',
+            ],
+        },
+    ] else []) + [
+        {
+            name: "test-upgrade",
+            image: "python:3.11-slim-bookworm",
+            commands: [ "./test/ci-upgrade.sh " + distro_default + " " + arch ],
+            privileged: true,
+            volumes: [{
+                name: "videos",
+                path: "/videos"
+            }]
+        },
+        {
+            name: 'publish',
+            image: 'syncloud/store-publisher:' + store_publisher,
+            environment: {
+                SYNCLOUD_TOKEN: { from_secret: 'SYNCLOUD_TOKEN' },
+            },
+            command: ['snap', '-c', '${DRONE_BRANCH}'],
+            when: {
+                branch: ['master', 'stable'],
+                event: ['push'],
+            },
+        },
+        {
+            name: "artifact",
+            image: "appleboy/drone-scp:1.6.4",
+            settings: {
+                host: {
+                    from_secret: "artifact_host"
+                },
+                username: "artifact",
+                key: {
+                    from_secret: "artifact_key"
+                },
+                timeout: "2m",
+                command_timeout: "2m",
+                target: "/home/artifact/repo/" + name + "/${DRONE_BUILD_NUMBER}-" + arch,
+                source: [
+                    "artifact/*"
+                ],
+                privileged: true,
+                strip_components: 1,
+                volumes: [
+                   {
+                        name: "videos",
+                        path: "/drone/src/artifact/videos"
+                    }
+                ]
+            },
+            when: {
+                status: [ "failure", "success" ],
+                event: ['push'],
+            }
+        }
     ],
     trigger: {
-      event: [
-        "push",
-        "pull_request"
-      ]
+        event: [
+            "push"
+        ]
     },
     services: [
-       {
-            name: "docker",
-            image: "docker:" + dind,
-            privileged: true,
-            volumes: [
-                {
-                    name: "dockersock",
-                    path: "/var/run"
-                }
-            ]
-        },
         {
-            name: name + ".buster.com",
-            image: "syncloud/platform-buster-" + arch + ":22.01",
+            name: name + "." + distro + ".com",
+            image: platform_image(distro, arch),
             privileged: true,
+            entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
             volumes: [
                 {
                     name: "dbus",
@@ -301,6 +168,7 @@ local build(arch, test_ui, dind) = [{
                 }
             ]
         }
+        for distro in distros
     ],
     volumes: [
         {
@@ -323,13 +191,9 @@ local build(arch, test_ui, dind) = [{
             name: "videos",
             temp: {}
         },
-        {
-            name: "dockersock",
-            temp: {}
-        },
     ]
 }];
 
-build("amd64", true, "20.10.21-dind") +
-build("arm64", false, "19.03.8-dind") +
-build("arm", false, "19.03.8-dind")
+build("amd64", true) +
+build("arm64", false) +
+build("arm", false)

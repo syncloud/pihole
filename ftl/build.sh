@@ -1,43 +1,54 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+DIR=$( cd "$( dirname "$0" )" && pwd )
+FTL_VERSION=v6.7
+NETTLE_VERSION=3.9
 
 apt-get update
-apt-get install -y libgmp-dev m4 libidn11-dev libreadline-dev xxd cmake
+apt-get install -y wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
 
-BUILD_DIR=${DIR}/../build/FTL
-mkdir -p $BUILD_DIR
+BUILD_DIR=${DIR}/../build/snap/FTL
+mkdir -p ${BUILD_DIR}/bin ${BUILD_DIR}/lib
 
-cd ${DIR}/../build/nettle-src
-./configure --help
-./configure --prefix=${BUILD_DIR}
-make -j4
+cd ${DIR}/../build
+
+wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
+tar xf nettle-${NETTLE_VERSION}.tar.gz
+cd nettle-${NETTLE_VERSION}
+MULTIARCH=$(gcc -print-multiarch)
+./configure --prefix=/usr --libdir=/usr/lib/${MULTIARCH}
+make -j$(nproc)
 make install
+ldconfig
+cd ${DIR}/../build
 
-cd ${DIR}/../build/FTL-src
-sed -i 's#/var/tmp#/var/snap/pihole/current/temp#g' src/database/sqlite3.c
-sed -i 's#/usr/tmp#/var/snap/pihole/current/temp#g' src/database/sqlite3.c
-sed -i 's#/var/run#/var/snap/pihole/current/run#g' src/dnsmasq/config.h
-sed -i 's#/var/lib/misc#/var/snap/pihole/current/misc#g' src/dnsmasq/config.h
-sed -i 's#/etc/dnsmasq.conf#/var/snap/pihole/current/config/dnsmasq.conf#g' src/dnsmasq/config.h
-sed -i 's#/etc/pihole#/var/snap/pihole/current/config/pihole#g' src/config.c
-sed -i 's#/var/log#/var/snap/pihole/common/log#g' src/config.c
-export CFLAGS=-I${BUILD_DIR}/include
-export CMAKE_PREFIX_PATH=${BUILD_DIR}/lib
-./build.sh
-ldd pihole-FTL
-mkdir -p ${BUILD_DIR}/bin
+wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
+tar xf ${FTL_VERSION}.tar.gz
+mv FTL-* FTL-src
+cd FTL-src
+
+grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
+  -e 's#/etc/pihole#/var/snap/pihole/current/etc/pihole#g' \
+  -e 's#/var/log/pihole#/var/snap/pihole/common/log/pihole#g' \
+  -e 's#/run/pihole-FTL.pid#/var/snap/pihole/common/ftl.pid#g'
+
+sed -i 's/TIMER_RESOLUTION=1000/TIMER_RESOLUTION=1000\n    USE_X_DOM_SOCKET/' src/webserver/civetweb/CMakeLists.txt
+
+sed -i 's/== NULL || !get_server_ports())/== NULL || (get_server_ports(), false))/' src/webserver/webserver.c
+
+bash build.sh
 mv pihole-FTL ${BUILD_DIR}/bin/pihole-FTL.bin
-cp $DIR/pihole-FTL ${BUILD_DIR}/bin
 
-cp /lib/*/libm.so* ${BUILD_DIR}/lib
-cp /lib/*/librt.so* ${BUILD_DIR}/lib
-cp /usr/local/*/libgcc_s.so* ${BUILD_DIR}/lib
-cp /lib/*/libpthread.so* ${BUILD_DIR}/lib
-cp /lib/*/libc.so* ${BUILD_DIR}/lib
-cp /lib/*-linux*/ld-*.so ${BUILD_DIR}/lib/ld.so
+for lib in $(ldd ${BUILD_DIR}/bin/pihole-FTL.bin | grep '=>' | awk '{print $3}'); do
+  cp -L ${lib} ${BUILD_DIR}/lib/
+done
+cp -L $(ldd ${BUILD_DIR}/bin/pihole-FTL.bin | grep 'ld-linux' | awk '{print $1}') ${BUILD_DIR}/lib/ld.so
 
-export LD_LIBRARY_PATH=${BUILD_DIR}/lib
-ldd ${BUILD_DIR}/bin/pihole-FTL.bin
+cat > ${BUILD_DIR}/bin/pihole-FTL <<'EOF'
+#!/bin/bash
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
+exec ${DIR}/lib/ld.so --library-path ${DIR}/lib ${DIR}/bin/pihole-FTL.bin "$@"
+EOF
+chmod +x ${BUILD_DIR}/bin/pihole-FTL
 
-${BUILD_DIR}/bin/pihole-FTL --help
+${BUILD_DIR}/bin/pihole-FTL --version
