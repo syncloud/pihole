@@ -1,7 +1,7 @@
 local name = "pihole";
 local platform = '26.04.10';
 local nginx = '1.24.0';
-local store_publisher = 'stable-303';
+local store_publisher = 'stable-346';
 local distro_default = 'buster';
 local distros = ['bookworm', 'buster'];
 
