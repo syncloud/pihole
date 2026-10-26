@@ -5,8 +5,7 @@ cd ${DIR}
 
 BUILD_DIR=${DIR}/../build/snap/bind9
 
-apt-get update
-apt-get install -y dnsutils
+${DIR}/../apt.sh dnsutils
 
 mkdir -p ${BUILD_DIR}/bin
 cp -r /usr ${BUILD_DIR}
