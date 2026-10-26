@@ -29,13 +29,40 @@ type Variables struct {
 
 type Installer struct {
 	platformClient *platform.Client
+	gravity        *Gravity
+	leftovers      *Leftovers
 	logger         *zap.Logger
 }
 
 func New(logger *zap.Logger) *Installer {
 	return &Installer{
 		platformClient: platform.New(),
-		logger:         logger,
+		gravity: &Gravity{
+			Ftl:            path.Join(AppDir, "FTL", "bin", "pihole-FTL"),
+			Db:             path.Join(DataDir, "etc", "pihole", "gravity.db"),
+			LegacyDb:       path.Join(DataDir, "gravity.db"),
+			AdlistsFile:    path.Join(DataDir, "etc", "pihole", "adlists.list"),
+			DefaultAdlists: path.Join(AppDir, "config", "pihole", "adlists.list"),
+			Runner:         NewExecutor(logger),
+		},
+		leftovers: &Leftovers{
+			Patterns: []string{
+				path.Join(CommonDir, "pihole-FTL.db"),
+				path.Join(CommonDir, "log", "pihole-FTL.log"),
+				path.Join(CommonDir, "log", "pihole.log"),
+				path.Join(CommonDir, "ftl.sock"),
+				path.Join(CommonDir, "installed"),
+				path.Join(DataDir, "gravity_old.db"),
+				path.Join(DataDir, "setupVars.conf"),
+				path.Join(DataDir, "config", "pihole", "dns-servers.conf"),
+				path.Join(DataDir, "config", "pihole", "local.list"),
+				path.Join(DataDir, "config", "pihole", "pihole-FTL.conf"),
+				path.Join(DataDir, "config", "pihole", "setupVars.conf.dist"),
+				path.Join(DataDir, "config", "pihole", "list.*.domains*"),
+			},
+			Logger: logger,
+		},
+		logger: logger,
 	}
 }
 
@@ -44,7 +71,16 @@ func (i *Installer) Install() error {
 }
 
 func (i *Installer) Configure() error {
-	return i.StorageChange()
+	if err := i.StorageChange(); err != nil {
+		return err
+	}
+	if err := i.gravity.Seed(); err != nil {
+		return fmt.Errorf("seed adlists: %w", err)
+	}
+	if err := i.FixPermissions(); err != nil {
+		return err
+	}
+	return i.WriteVersion()
 }
 
 func (i *Installer) StorageChange() error {
@@ -116,7 +152,21 @@ func (i *Installer) PreRefresh() error {
 }
 
 func (i *Installer) PostRefresh() error {
-	return i.UpdateConfigs()
+	if err := i.leftovers.Remove(); err != nil {
+		return fmt.Errorf("remove leftovers: %w", err)
+	}
+	if err := i.UpdateConfigs(); err != nil {
+		return err
+	}
+	return os.RemoveAll(path.Join(DataDir, "version"))
+}
+
+func (i *Installer) WriteVersion() error {
+	version, err := os.ReadFile(path.Join(AppDir, "version"))
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path.Join(DataDir, "version"), version, 0644)
 }
 
 func (i *Installer) FixPermissions() error {
@@ -126,6 +176,17 @@ func (i *Installer) FixPermissions() error {
 	return linux.Chown(CommonDir, App)
 }
 
-func (i *Installer) BackupPreStop() error    { return i.PreRefresh() }
-func (i *Installer) RestorePreStart() error  { return i.PostRefresh() }
-func (i *Installer) RestorePostStart() error { return i.AccessChange() }
+func (i *Installer) BackupPreStop() error {
+	return i.PreRefresh()
+}
+
+func (i *Installer) RestorePreStart() error {
+	if err := i.UpdateConfigs(); err != nil {
+		return err
+	}
+	return i.Configure()
+}
+
+func (i *Installer) RestorePostStart() error {
+	return i.AccessChange()
+}
