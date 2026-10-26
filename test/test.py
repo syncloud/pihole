@@ -11,6 +11,13 @@ from syncloudlib.integration.installer import local_install, wait_for_installer
 
 DIR = dirname(__file__)
 TMP_DIR = '/tmp/syncloud'
+FTL = '/snap/pihole/current/FTL/bin/pihole-FTL'
+DIG = '/snap/pihole/current/bind9/bin/dig.sh'
+GRAVITY_DB = '/var/snap/pihole/current/etc/pihole/gravity.db'
+LEGACY_DB = '/var/snap/pihole/current/gravity.db'
+LEGACY_ADLIST = 'https://example.com/legacy-adlist.txt'
+LEGACY_DENY = 'legacy-deny.example.com'
+AD_DOMAIN = 'ad.doubleclick.net'
 
 
 @pytest.fixture(scope="session")
@@ -75,6 +82,32 @@ def test_cli_admin_setdns(device):
 
 def test_cli_gravity(device):
     device.run_ssh('snap run pihole.cli -g')
+
+
+def sql(device, db, query):
+    return device.run_ssh('{0} sqlite3 {1} \\"{2}\\"'.format(FTL, db, query)).strip()
+
+
+def test_blocks_ads(device):
+    assert int(sql(device, GRAVITY_DB, 'select count(*) from adlist')) > 0
+    assert int(sql(device, GRAVITY_DB, 'select count(*) from gravity')) > 0
+    answer = device.run_ssh('{0} @127.0.0.1 +short {1}'.format(DIG, AD_DOMAIN))
+    assert answer.strip() == '0.0.0.0', answer
+
+
+def test_migrates_pre_v6_lists(device, app_archive_path, device_host, device_password):
+    sql(device, LEGACY_DB,
+        "create table adlist (id integer primary key autoincrement, address text unique not null,"
+        " enabled boolean not null default 1, date_added integer not null default 0,"
+        " date_modified integer not null default 0, comment text);"
+        " create table domainlist (id integer primary key autoincrement, type integer not null default 0,"
+        " domain text not null, enabled boolean not null default 1, date_added integer not null default 0,"
+        " date_modified integer not null default 0, comment text, unique(domain, type));"
+        " insert into adlist (address) values ('{0}');"
+        " insert into domainlist (type, domain) values (1, '{1}');".format(LEGACY_ADLIST, LEGACY_DENY))
+    local_install(device_host, device_password, app_archive_path)
+    assert sql(device, GRAVITY_DB, "select count(*) from adlist where address = '{0}'".format(LEGACY_ADLIST)) == '1'
+    assert sql(device, GRAVITY_DB, "select count(*) from domainlist where domain = '{0}'".format(LEGACY_DENY)) == '1'
 
 
 def test_web_requires_auth(app_domain):
