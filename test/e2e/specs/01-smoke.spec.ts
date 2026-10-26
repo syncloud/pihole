@@ -46,7 +46,7 @@ test('pihole', async ({ page }) => {
   })
 
   await test.step('settings-system', async () => {
-    await openPage(page, 'settings/system', page.locator('.content-header'))
+    await openPage(page, 'settings/system', page.locator('#sysinfo-hostname'))
     await shoot(page, 'settings-system')
   })
 })
