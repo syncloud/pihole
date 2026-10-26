@@ -31,6 +31,8 @@ sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/etc/pihole"#' gravity.sh
 grep -q 'piholeDir="/var/snap/pihole/current/etc/pihole"' gravity.sh
+sed -i 's#/etc/pihole/gravity.db#/var/snap/pihole/current/etc/pihole/gravity.db#' advanced/Templates/gravity_copy.sql
+grep -q "'/var/snap/pihole/current/etc/pihole/gravity.db'" advanced/Templates/gravity_copy.sql
 
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
