@@ -3,14 +3,13 @@
 DIR=$( cd "$( dirname "$0" )" && pwd )
 VERSION=6.4.3
 
-apt-get update
-apt-get install -y wget
+${DIR}/../apt.sh wget
 
 BUILD_DIR=${DIR}/../build/snap
 mkdir -p ${BUILD_DIR}/bin
 
 cd ${DIR}/../build
-wget --progress=dot:giga https://github.com/pi-hole/pi-hole/archive/v${VERSION}.tar.gz
+${DIR}/../download-retry.sh https://github.com/pi-hole/pi-hole/archive/v${VERSION}.tar.gz v${VERSION}.tar.gz
 tar xf v${VERSION}.tar.gz
 mv pi-hole-${VERSION} pi-hole
 cd pi-hole
@@ -30,6 +29,10 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#grep -q "pihole"#grep -q $(s
 
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/etc/pihole"#' gravity.sh
+grep -q 'piholeDir="/var/snap/pihole/current/etc/pihole"' gravity.sh
+sed -i 's#/etc/pihole/gravity.db#/var/snap/pihole/current/etc/pihole/gravity.db#' advanced/Templates/gravity_copy.sql
+grep -q "'/var/snap/pihole/current/etc/pihole/gravity.db'" advanced/Templates/gravity_copy.sql
 
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}

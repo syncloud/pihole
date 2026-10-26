@@ -16,12 +16,12 @@ echo ${VERSION} > ${DIR}/version
 
 SNAP_DIR=${DIR}/build/snap
 
-apt update
-apt -y install squashfs-tools
+${DIR}/apt.sh squashfs-tools
 
 rm -rf ${DIR}/*.snap
 
 mkdir -p ${SNAP_DIR}/bin
+echo ${VERSION} > ${SNAP_DIR}/version
 cp -r ${DIR}/bin/* ${SNAP_DIR}/bin
 cp -r ${DIR}/config ${SNAP_DIR}
 cp -r ${DIR}/meta ${SNAP_DIR}
@@ -33,5 +33,5 @@ echo "- ${ARCH}" >> ${SNAP_DIR}/meta/snap.yaml
 PACKAGE=${NAME}_${VERSION}_${ARCH}.snap
 echo ${PACKAGE} > ${DIR}/package.name
 mksquashfs ${SNAP_DIR} ${DIR}/${PACKAGE} -noappend -comp xz -no-xattrs -all-root
-mkdir ${DIR}/artifact
+mkdir -p ${DIR}/artifact
 cp ${DIR}/${PACKAGE} ${DIR}/artifact
