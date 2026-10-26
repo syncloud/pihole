@@ -17,6 +17,7 @@ COMMON_DIR = '/var/snap/pihole/common'
 LEGACY_DB = DATA_DIR + '/gravity.db'
 LEGACY_ADLIST = 'https://example.com/legacy-adlist.txt'
 LEGACY_DENY = 'legacy-deny.example.com'
+HOST_LISTS_CACHE = '/etc/pihole/listsCache'
 LEFTOVERS = [
     COMMON_DIR + '/pihole-FTL.db',
     COMMON_DIR + '/log/pihole-FTL.log',
@@ -99,13 +100,13 @@ def test_refresh_migrates_pre_v6_data(device, app_archive_path, device_host, dev
         " date_modified integer not null default 0, comment text, unique(domain, type));"
         " insert into adlist (address) values ('{0}');"
         " insert into domainlist (type, domain) values (1, '{1}');".format(LEGACY_ADLIST, LEGACY_DENY))
-    device.run_ssh('mkdir -p {0}/log'.format(COMMON_DIR))
+    device.run_ssh('mkdir -p {0}/log {1}'.format(COMMON_DIR, HOST_LISTS_CACHE))
     for leftover in LEFTOVERS:
         device.run_ssh('touch {0}'.format(leftover))
     local_install(device_host, device_password, app_archive_path)
     assert sql(device, GRAVITY_DB, "select count(*) from adlist where address = '{0}'".format(LEGACY_ADLIST)) == '1'
     assert sql(device, GRAVITY_DB, "select count(*) from domainlist where domain = '{0}'".format(LEGACY_DENY)) == '1'
-    remaining = device.run_ssh('ls {0} {1} 2>/dev/null'.format(LEGACY_DB, ' '.join(LEFTOVERS)), throw=False)
+    remaining = device.run_ssh('ls -d {0} {1} {2} 2>/dev/null'.format(LEGACY_DB, HOST_LISTS_CACHE, ' '.join(LEFTOVERS)), throw=False)
     assert remaining.strip() == '', remaining
     wait_for_blocking(device)
     assert_no_restarts(device)

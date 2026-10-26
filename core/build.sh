@@ -29,6 +29,8 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#grep -q "pihole"#grep -q $(s
 
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
 sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/etc/pihole"#' gravity.sh
+grep -q 'piholeDir="/var/snap/pihole/current/etc/pihole"' gravity.sh
 
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}

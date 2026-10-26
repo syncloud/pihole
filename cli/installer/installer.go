@@ -59,8 +59,10 @@ func New(logger *zap.Logger) *Installer {
 				path.Join(DataDir, "config", "pihole", "pihole-FTL.conf"),
 				path.Join(DataDir, "config", "pihole", "setupVars.conf.dist"),
 				path.Join(DataDir, "config", "pihole", "list.*.domains*"),
+				"/etc/pihole/listsCache",
 			},
-			Logger: logger,
+			EmptyDirs: []string{"/etc/pihole"},
+			Logger:    logger,
 		},
 		logger: logger,
 	}

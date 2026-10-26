@@ -1,15 +1,18 @@
 package installer
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"go.uber.org/zap"
 )
 
 type Leftovers struct {
-	Patterns []string
-	Logger   *zap.Logger
+	Patterns  []string
+	EmptyDirs []string
+	Logger    *zap.Logger
 }
 
 func (l *Leftovers) Remove() error {
@@ -23,6 +26,12 @@ func (l *Leftovers) Remove() error {
 			if err := os.RemoveAll(match); err != nil {
 				return err
 			}
+		}
+	}
+	for _, dir := range l.EmptyDirs {
+		err := os.Remove(dir)
+		if err != nil && !errors.Is(err, os.ErrNotExist) && !errors.Is(err, syscall.ENOTEMPTY) && !errors.Is(err, syscall.EEXIST) {
+			return err
 		}
 	}
 	return nil

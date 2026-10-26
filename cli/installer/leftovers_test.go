@@ -27,3 +27,18 @@ func TestLeftovers_RemovesMatchesOnly(t *testing.T) {
 	assert.NoFileExists(t, path.Join(dir, "list.1.example.domains.sha1"))
 	assert.FileExists(t, path.Join(dir, "adlists.list"))
 }
+
+func TestLeftovers_RemovesOnlyEmptyDirs(t *testing.T) {
+	dir := t.TempDir()
+	empty := path.Join(dir, "empty")
+	full := path.Join(dir, "full")
+	require.NoError(t, os.Mkdir(empty, 0755))
+	require.NoError(t, os.Mkdir(full, 0755))
+	require.NoError(t, os.WriteFile(path.Join(full, "keep"), []byte("x"), 0644))
+	leftovers := &Leftovers{EmptyDirs: []string{empty, full, path.Join(dir, "missing")}, Logger: zap.NewNop()}
+
+	require.NoError(t, leftovers.Remove())
+
+	assert.NoDirExists(t, empty)
+	assert.FileExists(t, path.Join(full, "keep"))
+}
