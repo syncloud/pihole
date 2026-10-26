@@ -3,7 +3,7 @@
 APP_DOMAIN=$1
 
 for i in $(seq 1 120); do
-  CODE=$(curl -sk -o /dev/null -w '%{http_code}' "https://${APP_DOMAIN}" || true)
+  CODE=$(curl -skL -o /dev/null -w '%{http_code}' "https://${APP_DOMAIN}" || true)
   if [ "$CODE" = "200" ]; then
     echo "${APP_DOMAIN} is ready"
     exit 0
