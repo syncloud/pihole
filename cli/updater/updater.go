@@ -1,14 +1,16 @@
 package updater
 
 import (
+	"fmt"
 	"time"
 
 	"go.uber.org/zap"
 )
 
 type Updater struct {
-	Run      func() error
-	Sleep    func(time.Duration)
+	Gravity  string
+	Pihole   string
+	Runner   Runner
 	Interval time.Duration
 	Retry    time.Duration
 	MaxRetry time.Duration
@@ -18,12 +20,12 @@ type Updater struct {
 
 func (u *Updater) Loop() {
 	for {
-		u.Sleep(u.Next())
+		time.Sleep(u.Next())
 	}
 }
 
 func (u *Updater) Next() time.Duration {
-	if err := u.Run(); err != nil {
+	if err := u.update(); err != nil {
 		if u.backoff == 0 {
 			u.backoff = u.Retry
 		} else if u.backoff < u.MaxRetry {
@@ -34,4 +36,15 @@ func (u *Updater) Next() time.Duration {
 	}
 	u.backoff = 0
 	return u.Interval
+}
+
+func (u *Updater) update() error {
+	u.Logger.Info("running gravity")
+	if out, err := u.Runner.Run(u.Gravity); err != nil {
+		return fmt.Errorf("gravity: %w: %s", err, out)
+	}
+	if out, err := u.Runner.Run(u.Pihole, "reloadlists"); err != nil {
+		return fmt.Errorf("reload lists: %w: %s", err, out)
+	}
+	return nil
 }
