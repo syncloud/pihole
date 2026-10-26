@@ -3,14 +3,13 @@
 DIR=$( cd "$( dirname "$0" )" && pwd )
 VERSION=6.4.3
 
-apt-get update
-apt-get install -y wget
+${DIR}/../apt.sh wget
 
 BUILD_DIR=${DIR}/../build/snap
 mkdir -p ${BUILD_DIR}/bin
 
 cd ${DIR}/../build
-wget --progress=dot:giga https://github.com/pi-hole/pi-hole/archive/v${VERSION}.tar.gz
+${DIR}/../download-retry.sh https://github.com/pi-hole/pi-hole/archive/v${VERSION}.tar.gz v${VERSION}.tar.gz
 tar xf v${VERSION}.tar.gz
 mv pi-hole-${VERSION} pi-hole
 cd pi-hole

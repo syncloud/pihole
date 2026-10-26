@@ -4,15 +4,14 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 FTL_VERSION=v6.7
 NETTLE_VERSION=3.9
 
-apt-get update
-apt-get install -y wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
+${DIR}/../apt.sh wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
 
 BUILD_DIR=${DIR}/../build/snap/FTL
 mkdir -p ${BUILD_DIR}/bin ${BUILD_DIR}/lib
 
 cd ${DIR}/../build
 
-wget --progress=dot:giga https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz
+${DIR}/../download-retry.sh https://ftp.gnu.org/gnu/nettle/nettle-${NETTLE_VERSION}.tar.gz nettle-${NETTLE_VERSION}.tar.gz
 tar xf nettle-${NETTLE_VERSION}.tar.gz
 cd nettle-${NETTLE_VERSION}
 MULTIARCH=$(gcc -print-multiarch)
@@ -22,7 +21,7 @@ make install
 ldconfig
 cd ${DIR}/../build
 
-wget --progress=dot:giga https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz
+${DIR}/../download-retry.sh https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz ${FTL_VERSION}.tar.gz
 tar xf ${FTL_VERSION}.tar.gz
 mv FTL-* FTL-src
 cd FTL-src
