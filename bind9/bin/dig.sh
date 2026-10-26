@@ -1,4 +1,5 @@
 #!/bin/sh
 DIR=$( cd "$( dirname "$0" )" && cd .. && pwd )
-LIBS="$(echo ${DIR}/lib/*-linux-gnu*):$(echo ${DIR}/usr/lib/*-linux-gnu*)"
-exec ${DIR}/lib/*-linux*/ld-*.so --library-path "$LIBS" ${DIR}/usr/bin/dig "$@"
+LIBS=$(echo ${DIR}/lib/*-linux-gnu* ${DIR}/usr/lib/*-linux-gnu* | tr ' ' ':')
+LOADER=$(ls ${DIR}/lib/*-linux-gnu*/ld-linux*.so* ${DIR}/lib/ld-linux*.so* 2>/dev/null | head -1)
+exec "${LOADER}" --library-path "${LIBS}" ${DIR}/usr/bin/dig "$@"

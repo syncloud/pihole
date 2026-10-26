@@ -42,7 +42,7 @@ local build(arch, test_ui) = [{
     ] + [
         {
             name: "bind9",
-            image: "debian:bullseye-slim",
+            image: "debian:bookworm-slim",
             commands: [ "./bind9/build.sh" ]
         },
     ] + [
