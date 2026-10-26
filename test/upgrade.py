@@ -25,6 +25,7 @@ def module_setup(request, device, artifact_dir):
 
 def test_start(module_setup, app, device_host, domain, device):
     add_host_alias(app, device_host, domain)
+    device.activated()
     snapd.settle(device)
 
 
