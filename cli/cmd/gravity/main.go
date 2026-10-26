@@ -14,13 +14,14 @@ import (
 func main() {
 	logger := log.Logger(zap.DebugLevel)
 	gravity := path.Join(os.Getenv("SNAP"), "bin", "gravity.sh")
+	pihole := path.Join(os.Getenv("SNAP"), "bin", "pihole.sh")
 	u := &updater.Updater{
 		Run: func() error {
 			logger.Info("running gravity")
-			cmd := exec.Command(gravity)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			if err := run(gravity); err != nil {
+				return err
+			}
+			return run(pihole, "reloadlists")
 		},
 		Sleep:    time.Sleep,
 		Interval: 7 * 24 * time.Hour,
@@ -29,4 +30,11 @@ func main() {
 		Logger:   logger,
 	}
 	u.Loop()
+}
+
+func run(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
