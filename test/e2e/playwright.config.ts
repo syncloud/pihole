@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
+import { env } from './helpers/env'
 
-const appDomain = process.env.PLAYWRIGHT_APP_DOMAIN ?? 'pihole.buster.com'
+const appDomain = env('PLAYWRIGHT_APP_DOMAIN')
 
 export default defineConfig({
   testDir: './specs',

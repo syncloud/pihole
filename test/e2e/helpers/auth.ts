@@ -1,7 +1,8 @@
 import { expect, Page } from '@playwright/test'
+import { env } from './env'
 
-const username = process.env.PLAYWRIGHT_DEVICE_USER ?? 'user'
-const password = process.env.PLAYWRIGHT_DEVICE_PASSWORD ?? 'Password1'
+const username = env('PLAYWRIGHT_DEVICE_USER')
+const password = env('PLAYWRIGHT_DEVICE_PASSWORD')
 
 export async function loginViaAuthelia(page: Page) {
   await page.goto('/')

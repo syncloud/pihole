@@ -3,7 +3,7 @@
 DIR=$(cd "$(dirname "$0")" && pwd)
 cd "$DIR"
 
-SPEC=$1
+SPEC=${1:?usage: run.sh <spec>}
 
 export PLAYWRIGHT_FULL_DOMAIN=buster.com
 export PLAYWRIGHT_APP_DOMAIN=pihole.buster.com
