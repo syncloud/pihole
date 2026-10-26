@@ -1,12 +1,10 @@
-import { Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 
-export async function openPage(page: Page, route: string) {
-  if (route.startsWith('settings/')) {
-    const sub = page.locator(`.sidebar a[href$="${route}"]`)
-    if (!(await sub.isVisible())) {
-      await page.locator('.sidebar li.menu-system > a').filter({ hasText: 'Settings' }).click()
-    }
+export async function openPage(page: Page, route: string, ready: Locator) {
+  const link = page.locator(`.sidebar a[href$="${route}"]`)
+  if (route.startsWith('settings/') && !(await link.isVisible())) {
+    await page.locator('.sidebar li.menu-system > a').filter({ hasText: 'Settings' }).click()
   }
-  await page.locator(`.sidebar a[href$="${route}"]`).click()
-  await page.waitForLoadState('networkidle')
+  await link.click()
+  await expect(ready).toBeVisible()
 }
