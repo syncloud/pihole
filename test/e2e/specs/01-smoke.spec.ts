@@ -4,6 +4,8 @@ import { loginViaAuthelia } from '../helpers/auth'
 import { openPage } from '../helpers/nav'
 
 test('pihole', async ({ page }) => {
+  test.setTimeout(900_000)
+
   await test.step('dashboard', async () => {
     await loginViaAuthelia(page)
     await expect(page).toHaveTitle(/Pi-hole/i)
@@ -45,8 +47,27 @@ test('pihole', async ({ page }) => {
     await shoot(page, 'local-dns')
   })
 
+  await test.step('gravity-update', async () => {
+    await openPage(page, 'gravity', page.locator('#gravityBtn'))
+    await page.locator('#gravityBtn').click()
+    await expect(page.locator('#alertSuccess')).toBeVisible({ timeout: 600_000 })
+    await expect(page.locator('#output')).toContainText('Done.')
+    await shoot(page, 'gravity-update')
+  })
+
   await test.step('settings-system', async () => {
     await openPage(page, 'settings/system', page.locator('#sysinfo-hostname'))
     await shoot(page, 'settings-system')
+  })
+
+  await test.step('restart-dns', async () => {
+    await expect(page.locator('.confirm-restartdns')).toBeEnabled()
+    await page.locator('.confirm-restartdns').click()
+    await page.locator('.modal-dialog .btn-danger').click()
+    await expect(async () => {
+      await page.reload()
+      await expect(page.locator('#sysinfo-hostname')).toBeVisible({ timeout: 5_000 })
+    }).toPass({ timeout: 120_000 })
+    await shoot(page, 'restart-dns')
   })
 })
