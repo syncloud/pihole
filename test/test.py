@@ -98,6 +98,12 @@ def test_cli_gravity_concurrent(device):
             run.result()
 
 
+def test_web_action_gravity(device):
+    output = device.run_ssh('curl -s --max-time 600 --unix-socket /var/snap/pihole/current/ftl.socket'
+                            ' -X POST http://localhost/api/action/gravity')
+    assert 'Done.' in output, output
+
+
 def test_refresh_migrates_pre_v6_data(device, app_archive_path, device_host, device_password):
     sql(device, LEGACY_DB,
         "create table adlist (id integer primary key autoincrement, address text unique not null,"
