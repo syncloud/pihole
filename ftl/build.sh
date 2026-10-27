@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-FTL_COMMIT=968754d8bd795982f1d070bb24f2496ddd2460fe
+FTL_COMMIT=9cf6b1a22a495491d67e84790ae25079ce6c90e7
 NETTLE_VERSION=3.9
 
 ${DIR}/../apt.sh wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
@@ -33,11 +33,10 @@ grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
 
 mkdir cmake
 cd cmake
-cmake -DPIHOLE_SCRIPT=/snap/pihole/current/bin/pihole.sh "-DFTL_RESTART_COMMAND=systemctl --no-block restart snap.pihole.ftl.service" ..
+cmake -DPIHOLE_SCRIPT=/snap/pihole/current/bin/pihole.sh -DFTL_EXIT_ON_RESTART=ON ..
 cmake --build . -- -j$(nproc)
 ./pihole-FTL verify
 grep -q '/snap/pihole/current/bin/pihole.sh' pihole-FTL
-grep -q 'systemctl --no-block restart snap.pihole.ftl.service' pihole-FTL
 mv pihole-FTL ${BUILD_DIR}/bin/pihole-FTL.bin
 
 for lib in $(ldd ${BUILD_DIR}/bin/pihole-FTL.bin | grep '=>' | awk '{print $3}'); do
