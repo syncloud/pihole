@@ -1,5 +1,6 @@
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 from os.path import join
 from subprocess import check_output
 
@@ -88,6 +89,13 @@ def test_services_started_cleanly(device):
 
 def test_cli_gravity(device):
     device.run_ssh('snap run pihole.cli -g')
+
+
+def test_cli_gravity_concurrent(device):
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        runs = [pool.submit(device.run_ssh, 'snap run pihole.cli -g') for _ in range(2)]
+        for run in runs:
+            run.result()
 
 
 def test_refresh_migrates_pre_v6_data(device, app_archive_path, device_host, device_password):
