@@ -23,7 +23,7 @@ cd ${DIR}/../build
 
 ${DIR}/../download-retry.sh https://github.com/cyberb/FTL/archive/${FTL_COMMIT}.tar.gz FTL-${FTL_COMMIT}.tar.gz
 tar xf FTL-${FTL_COMMIT}.tar.gz
-mv FTL-* FTL-src
+mv FTL-${FTL_COMMIT} FTL-src
 cd FTL-src
 
 grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
