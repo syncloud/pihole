@@ -72,7 +72,13 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
 
 
 def test_cli_status_web(device):
-    assert "-1" not in device.run_ssh('snap run pihole.cli status web')
+    status = ''
+    for _ in range(60):
+        status = device.run_ssh('snap run pihole.cli status web').strip()
+        if status != '-1':
+            break
+        time.sleep(1)
+    assert status == '53', status
 
 
 def test_cli_admin_setdns(device):
