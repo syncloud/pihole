@@ -1,5 +1,6 @@
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 from os.path import join
 from subprocess import check_output
 
@@ -9,7 +10,7 @@ from syncloudlib.integration.hosts import add_host_alias
 from syncloudlib.integration.installer import local_install, wait_for_installer
 from test import snapd
 from test.blocking import GRAVITY_DB, sql, wait_for_blocking
-from test.services import assert_no_restarts
+from test.services import assert_no_restarts, main_pid, wait_for_new_main_pid
 
 TMP_DIR = '/tmp/syncloud'
 DATA_DIR = '/var/snap/pihole/current'
@@ -71,7 +72,13 @@ def test_install(device_session, app_archive_path, device_host, app_domain, devi
 
 
 def test_cli_status_web(device):
-    assert "-1" not in device.run_ssh('snap run pihole.cli status web')
+    status = ''
+    for _ in range(60):
+        status = device.run_ssh('snap run pihole.cli status web').strip()
+        if status != '-1':
+            break
+        time.sleep(1)
+    assert status == '53', status
 
 
 def test_cli_admin_setdns(device):
@@ -88,6 +95,28 @@ def test_services_started_cleanly(device):
 
 def test_cli_gravity(device):
     device.run_ssh('snap run pihole.cli -g')
+
+
+def test_cli_gravity_concurrent(device):
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        runs = [pool.submit(device.run_ssh, 'snap run pihole.cli -g') for _ in range(2)]
+        for run in runs:
+            run.result()
+
+
+def test_web_action_gravity(device):
+    output = device.run_ssh('curl -s --max-time 600 --unix-socket /var/snap/pihole/current/ftl.socket'
+                            ' -X POST http://localhost/api/action/gravity')
+    assert 'Done.' in output, output
+
+
+def test_web_action_restartdns(device):
+    pid = main_pid(device, 'ftl')
+    device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
+                   ' -X POST http://localhost/api/action/restartdns')
+    wait_for_new_main_pid(device, 'ftl', pid)
+    wait_for_blocking(device)
+    assert_no_restarts(device)
 
 
 def test_refresh_migrates_pre_v6_data(device, app_archive_path, device_host, device_password):

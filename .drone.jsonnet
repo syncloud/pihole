@@ -1,5 +1,5 @@
 local name = "pihole";
-local platform = '26.08.01';
+local platform = '26.10.02';
 local nginx = '1.24.0';
 local store_publisher = 'stable-346';
 local distro_default = 'buster';
@@ -9,6 +9,8 @@ local playwright = '1.59.1';
 
 local platform_image(distro) =
     "syncloud/platform-" + distro + ":" + platform;
+
+local snapd_hold = "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init";
 
 local build(arch, test_ui) = [{
     kind: "pipeline",
@@ -171,7 +173,7 @@ local build(arch, test_ui) = [{
             name: name + "." + distro + ".com",
             image: platform_image(distro),
             privileged: true,
-            entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
+            entrypoint: ['/bin/sh', '-c', snapd_hold],
             volumes: [
                 {
                     name: "dbus",
