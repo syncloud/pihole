@@ -61,6 +61,9 @@ test('pihole', async ({ page }) => {
   })
 
   await test.step('restart-dns', async () => {
+    await page.locator('.settings-selector .toggle:has(#expert-settings)').click()
+    await expect(page.locator('#expert-settings')).toBeChecked()
+    await expect(page.locator('.confirm-restartdns')).toBeVisible()
     await expect(page.locator('.confirm-restartdns')).toBeEnabled()
     await page.locator('.confirm-restartdns').click()
     await page.locator('.modal-dialog .btn-danger').click()
