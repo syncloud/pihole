@@ -5,9 +5,11 @@ import "strings"
 type fakeRunner struct {
 	count string
 	sql   []string
+	args  [][]string
 }
 
 func (f *fakeRunner) Run(_ string, args ...string) (string, error) {
+	f.args = append(f.args, args)
 	query := args[len(args)-1]
 	if strings.HasPrefix(query, "SELECT count(*)") {
 		return f.count + "\n", nil

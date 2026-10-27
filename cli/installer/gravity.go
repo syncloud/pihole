@@ -51,7 +51,7 @@ func (g *Gravity) importLegacy() error {
 }
 
 func (g *Gravity) adlistCount() (int, error) {
-	out, err := g.Runner.Run(g.Ftl, "sqlite3", g.Db, "SELECT count(*) FROM adlist;")
+	out, err := g.sqlite("SELECT count(*) FROM adlist;")
 	if err != nil {
 		return 0, fmt.Errorf("count adlists: %w: %s", err, out)
 	}
@@ -100,11 +100,15 @@ func (g *Gravity) defaultAddresses() ([]string, error) {
 }
 
 func (g *Gravity) exec(sql string) error {
-	out, err := g.Runner.Run(g.Ftl, "sqlite3", g.Db, sql)
+	out, err := g.sqlite(sql)
 	if err != nil {
 		return fmt.Errorf("%w: %s", err, out)
 	}
 	return nil
+}
+
+func (g *Gravity) sqlite(sql string) (string, error) {
+	return g.Runner.Run(g.Ftl, "sqlite3", "-cmd", ".timeout 30000", g.Db, sql)
 }
 
 func exists(file string) bool {
