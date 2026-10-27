@@ -31,6 +31,9 @@ grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
   -e 's#/var/log/pihole#/var/snap/pihole/common/log/pihole#g' \
   -e 's#/run/pihole-FTL.pid#/var/snap/pihole/common/ftl.pid#g'
 
+sed -i 's#"/usr/local/bin/pihole"#"/snap/pihole/current/bin/pihole.sh"#' src/api/action.c
+grep -q '"/snap/pihole/current/bin/pihole.sh"' src/api/action.c
+
 sed -i 's/TIMER_RESOLUTION=1000/TIMER_RESOLUTION=1000\n    USE_X_DOM_SOCKET/' src/webserver/civetweb/CMakeLists.txt
 
 sed -i 's/== NULL || !get_server_ports())/== NULL || (get_server_ports(), false))/' src/webserver/webserver.c
