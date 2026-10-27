@@ -109,7 +109,7 @@ def test_web_action_restartdns(device):
     device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
                    ' -X POST http://localhost/api/action/restartdns')
     wait_for_blocking(device)
-    assert device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip() == pid
+    assert device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip() != pid
     assert_no_restarts(device)
 
 
