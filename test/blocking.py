@@ -7,7 +7,7 @@ AD_DOMAIN = 'ad.doubleclick.net'
 
 
 def sql(device, db, query):
-    return device.run_ssh('{0} sqlite3 {1} \\"{2}\\"'.format(FTL, db, query)).strip()
+    return device.run_ssh('{0} sqlite3 -cmd \\".timeout 30000\\" {1} \\"{2}\\"'.format(FTL, db, query)).strip()
 
 
 def wait_for_blocking(device):

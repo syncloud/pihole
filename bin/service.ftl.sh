@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
+${SNAP}/bin/wait-for-configure.sh
 rm -rf /dev/shm/FTL*
 rm -f ${SNAP_DATA}/ftl.socket
 
