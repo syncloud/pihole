@@ -83,3 +83,16 @@ func TestSeed_MovesLegacyIntoPlaceWithoutDatabase(t *testing.T) {
 	assert.NoFileExists(t, g.LegacyDb)
 	assert.Empty(t, runner.sql)
 }
+
+func TestSeed_WaitsForDatabaseLock(t *testing.T) {
+	runner := &fakeRunner{count: "0"}
+	g := newGravity(t, runner)
+	touch(t, g.Db)
+
+	require.NoError(t, g.Seed())
+
+	require.Len(t, runner.args, 2)
+	for _, args := range runner.args {
+		assert.Equal(t, []string{"sqlite3", "-cmd", ".timeout 30000", g.Db}, args[:4])
+	}
+}
