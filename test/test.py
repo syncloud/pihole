@@ -10,7 +10,7 @@ from syncloudlib.integration.hosts import add_host_alias
 from syncloudlib.integration.installer import local_install, wait_for_installer
 from test import snapd
 from test.blocking import GRAVITY_DB, sql, wait_for_blocking
-from test.services import assert_no_restarts
+from test.services import assert_no_restarts, main_pid, wait_for_new_main_pid
 
 TMP_DIR = '/tmp/syncloud'
 DATA_DIR = '/var/snap/pihole/current'
@@ -105,11 +105,11 @@ def test_web_action_gravity(device):
 
 
 def test_web_action_restartdns(device):
-    pid = device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip()
+    pid = main_pid(device, 'ftl')
     device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
                    ' -X POST http://localhost/api/action/restartdns')
+    wait_for_new_main_pid(device, 'ftl', pid)
     wait_for_blocking(device)
-    assert device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip() != pid
     assert_no_restarts(device)
 
 
