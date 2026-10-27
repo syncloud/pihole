@@ -104,6 +104,15 @@ def test_web_action_gravity(device):
     assert 'Done.' in output, output
 
 
+def test_web_action_restartdns(device):
+    pid = device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip()
+    device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
+                   ' -X POST http://localhost/api/action/restartdns')
+    wait_for_blocking(device)
+    assert device.run_ssh('systemctl show -p MainPID --value snap.pihole.ftl.service').strip() == pid
+    assert_no_restarts(device)
+
+
 def test_refresh_migrates_pre_v6_data(device, app_archive_path, device_host, device_password):
     sql(device, LEGACY_DB,
         "create table adlist (id integer primary key autoincrement, address text unique not null,"
