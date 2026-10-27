@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-FTL_VERSION=v6.7
+FTL_COMMIT=968754d8bd795982f1d070bb24f2496ddd2460fe
 NETTLE_VERSION=3.9
 
 ${DIR}/../apt.sh wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
@@ -21,8 +21,8 @@ make install
 ldconfig
 cd ${DIR}/../build
 
-${DIR}/../download-retry.sh https://github.com/pi-hole/FTL/archive/${FTL_VERSION}.tar.gz ${FTL_VERSION}.tar.gz
-tar xf ${FTL_VERSION}.tar.gz
+${DIR}/../download-retry.sh https://github.com/cyberb/FTL/archive/${FTL_COMMIT}.tar.gz FTL-${FTL_COMMIT}.tar.gz
+tar xf FTL-${FTL_COMMIT}.tar.gz
 mv FTL-* FTL-src
 cd FTL-src
 
@@ -31,14 +31,13 @@ grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
   -e 's#/var/log/pihole#/var/snap/pihole/common/log/pihole#g' \
   -e 's#/run/pihole-FTL.pid#/var/snap/pihole/common/ftl.pid#g'
 
-sed -i 's#"/usr/local/bin/pihole"#"/snap/pihole/current/bin/pihole.sh"#' src/api/action.c
-grep -q '"/snap/pihole/current/bin/pihole.sh"' src/api/action.c
-
-sed -i 's/TIMER_RESOLUTION=1000/TIMER_RESOLUTION=1000\n    USE_X_DOM_SOCKET/' src/webserver/civetweb/CMakeLists.txt
-
-sed -i 's/== NULL || !get_server_ports())/== NULL || (get_server_ports(), false))/' src/webserver/webserver.c
-
-bash build.sh
+mkdir cmake
+cd cmake
+cmake -DPIHOLE_SCRIPT=/snap/pihole/current/bin/pihole.sh "-DFTL_RESTART_COMMAND=systemctl --no-block restart snap.pihole.ftl.service" ..
+cmake --build . -- -j$(nproc)
+./pihole-FTL verify
+grep -q '/snap/pihole/current/bin/pihole.sh' pihole-FTL
+grep -q 'systemctl --no-block restart snap.pihole.ftl.service' pihole-FTL
 mv pihole-FTL ${BUILD_DIR}/bin/pihole-FTL.bin
 
 for lib in $(ldd ${BUILD_DIR}/bin/pihole-FTL.bin | grep '=>' | awk '{print $3}'); do
