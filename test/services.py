@@ -12,7 +12,7 @@ def assert_no_restarts(device):
 
 def requested_restarts(device, service):
     output = device.run_ssh('journalctl -u snap.pihole.{0}.service -o cat'
-                            ' | grep -c "Main process exited, code=exited, status=22/"'.format(service), throw=False)
+                            " | grep -c 'Main process exited, code=exited, status=22/'".format(service), throw=False)
     return int(output.strip() or 0)
 
 
