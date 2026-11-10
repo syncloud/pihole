@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Boris Rybalkin <ribalkin@gmail.com>
+Date: Tue, 10 Nov 2026 20:45:00 +0000
+Subject: [PATCH 4/4] webserver: set the request method for web page auth
+
+lua_web builds a minimal ftl_conn without the method, so cross_site_request()
+sees HTTP_UNKNOWN and treats every same-site or cross-site GET navigation as
+a cross-site request. With no password set, opening the dashboard from another
+host of the same site (e.g. after an SSO redirect) was answered with 403.
+---
+ src/webserver/lua_web.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/webserver/lua_web.c
++++ b/src/webserver/lua_web.c
+@@ -80,7 +80,7 @@
+ 	}
+ 
+ 	// Build minimal api struct to check authentication
+-	struct ftl_conn api = { 0 };
++	struct ftl_conn api = { .method = http_method(conn) };
+ 	api.conn = conn;
+ 	api.request = req_info;
+ 	api.now = double_time();

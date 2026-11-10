@@ -14,5 +14,6 @@ export FTLCONF_dns_upstreams="208.67.222.222;2620:0:ccc::2"
 export FTLCONF_dns_listeningMode=all
 export FTLCONF_dns_queryLogging=false
 export FTLCONF_webserver_port="x${SNAP_DATA}/ftl.socket"
+. ${SNAP_DATA}/config/ftl.env
 
 exec $DIR/FTL/bin/pihole-FTL -f

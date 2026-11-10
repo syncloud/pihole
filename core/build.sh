@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-VERSION=6.4.3
+VERSION=${1:?usage: build.sh <version>}
 
 ${DIR}/../apt.sh wget
 
@@ -28,7 +28,11 @@ find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#dig +#/snap/pihole/current/b
 find . -regex "\(.*.sh\|.*pihole\)" -exec sed -i 's#grep -q "pihole"#grep -q $(systemctl show --property MainPID snap.pihole.ftl | cut -d= -f2)#g' {} +
 
 sed -i 's#lsof -Pni:53#netstat -lnp | grep 53#g' pihole
+sed -i 's#\[ "\$(cat "/proc/\${FTL_PID}/comm" 2>/dev/null)" = "[^"]*" \]#{ [ "$(cat "/proc/${FTL_PID}/comm" 2>/dev/null)" = "pihole-FTL" ] || grep -qa "pihole-FTL.bin" "/proc/${FTL_PID}/cmdline" 2>/dev/null; }#' advanced/Scripts/utils.sh
+grep -qF 'grep -qa "pihole-FTL.bin" "/proc/${FTL_PID}/cmdline"' advanced/Scripts/utils.sh
 sed -i 's#dig #/snap/pihole/current/bind9/bin/dig.sh #g' gravity.sh
+sed -i '/^if \[\[ "${EUID}" -eq 0 \]\]; then$/,/^fi$/d' gravity.sh
+if grep -q 'exec sudo -u pihole' gravity.sh; then exit 1; fi
 sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/etc/pihole"#' gravity.sh
 grep -q 'piholeDir="/var/snap/pihole/current/etc/pihole"' gravity.sh
 sed -i 's#/etc/pihole/gravity.db#/var/snap/pihole/current/etc/pihole/gravity.db#' advanced/Templates/gravity_copy.sql
