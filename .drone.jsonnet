@@ -1,9 +1,9 @@
 local name = "pihole";
 local platform = '26.10.02';
 local nginx = '1.30.6';
-local core = '6.5';
+local core = '6.6';
 local web = '6.6.1';
-local ftl = '6.8';
+local ftl = '6.9';
 local store_publisher = 'stable-346';
 local distro_default = 'buster';
 local distros = ['bookworm', 'buster'];
