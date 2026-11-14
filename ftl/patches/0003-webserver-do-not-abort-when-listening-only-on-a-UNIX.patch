@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Boris Rybalkin <ribalkin@gmail.com>
+Date: Tue, 27 Oct 2026 14:08:17 +0000
+Subject: [PATCH 3/3] webserver: do not abort when listening only on a UNIX
+ domain socket
+
+get_server_ports() reports failure when CivetWeb listens on no TCP port,
+which is the case when webserver.port is a single x<path> socket. FTL then
+stopped the web server it had just started successfully. Keep collecting the
+ports for /info but no longer treat an empty TCP port list as a start failure.
+---
+ src/webserver/webserver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/webserver/webserver.c b/src/webserver/webserver.c
+index c1e47e2f..6d2b2843 100644
+--- a/src/webserver/webserver.c
++++ b/src/webserver/webserver.c
+@@ -942,7 +942,7 @@ void http_init(void)
+ 	init.configuration_options = (const char**)conf_opts;
+ 
+ 	/* Start the server */
+-	if((ctx = mg_start2(&init, &error)) == NULL || !get_server_ports())
++	if((ctx = mg_start2(&init, &error)) == NULL || (get_server_ports(), false))
+ 	{
+ 		log_err("Start of webserver failed! Web interface will not be available!");
+ 		print_webserver_opts(false, idx, (const char **)conf_opts);

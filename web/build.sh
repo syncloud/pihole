@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-VERSION=6.6
+VERSION=${1:?usage: build.sh <version>}
 
 ${DIR}/../apt.sh wget
 

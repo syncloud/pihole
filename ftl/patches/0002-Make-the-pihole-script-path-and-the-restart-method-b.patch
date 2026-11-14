@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Boris Rybalkin <ribalkin@gmail.com>
+Date: Tue, 27 Oct 2026 14:07:44 +0000
+Subject: [PATCH 2/3] Make the pihole script path and the restart method build
+ options
+
+FTL runs /usr/local/bin/pihole for gravity updates and restarts itself by
+re-executing argv[0]. Packagers that install the script elsewhere, or that
+start FTL through a loader or wrapper so argv[0] cannot be re-executed on its
+own, have to patch the sources.
+
+PIHOLE_SCRIPT (default /usr/local/bin/pihole) sets the script path.
+FTL_EXIT_ON_RESTART (default OFF) skips the re-exec, so FTL exits with
+RESTART_FTL_CODE and leaves the restart to its supervisor. Defaults keep the
+current behaviour.
+
+Signed-off-by: Boris Rybalkin <ribalkin@gmail.com>
+---
+ CMakeLists.txt   | 11 +++++++++++
+ src/api/action.c |  2 +-
+ src/main.c       |  2 ++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8c037acd..ef2ebbd3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,4 +18,15 @@ project(PIHOLE_FTL C)
+ 
+ set(DNSMASQ_VERSION pi-hole-v2.93+30)
+ 
++set(PIHOLE_SCRIPT "/usr/local/bin/pihole" CACHE STRING "Path of the pihole script FTL runs for gravity updates")
++if(NOT PIHOLE_SCRIPT MATCHES "^/")
++    message(FATAL_ERROR "PIHOLE_SCRIPT must be an absolute path, got \"${PIHOLE_SCRIPT}\"")
++endif()
++add_compile_definitions(PIHOLE_SCRIPT="${PIHOLE_SCRIPT}")
++
++option(FTL_EXIT_ON_RESTART "Exit with the restart code instead of re-executing FTL, leaving the restart to a supervisor" OFF)
++if(FTL_EXIT_ON_RESTART)
++    add_compile_definitions(FTL_EXIT_ON_RESTART)
++endif()
++
+ add_subdirectory(src)
+diff --git a/src/api/action.c b/src/api/action.c
+index 1e449018..41e9daed 100644
+--- a/src/api/action.c
++++ b/src/api/action.c
+@@ -235,7 +235,7 @@ int api_action_gravity(struct ftl_conn *api)
+ 		                       "Gravity is already running",
+ 		                       NULL);
+ 
+-	const int ret = run_and_stream_command(api, "/usr/local/bin/pihole", (const char *const []){ "pihole", "-g", NULL }, extra_env);
++	const int ret = run_and_stream_command(api, PIHOLE_SCRIPT, (const char *const []){ "pihole", "-g", NULL }, extra_env);
+ 	atomic_store(&gravity_running, false);
+ 
+ 	// If a termination/restart was requested while gravity was running,
+diff --git a/src/main.c b/src/main.c
+index d0e191ef..4e039cba 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -201,6 +201,7 @@ int main (int argc, char *argv[])
+ 
+ 	cleanup(exit_code);
+ 
++#ifndef FTL_EXIT_ON_RESTART
+ 	if(exit_code == RESTART_FTL_CODE)
+ 	{
+ 		// A binary without file capabilities only keeps the ambient set
+@@ -213,6 +214,7 @@ int main (int argc, char *argv[])
+ 		alarm(0);
+ 		execvp(argv[0], argv);
+ 	}
++#endif
+ 
+ 	return exit_code;
+ }

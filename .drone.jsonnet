@@ -1,6 +1,9 @@
 local name = "pihole";
 local platform = '26.10.02';
-local nginx = '1.24.0';
+local nginx = '1.30.6';
+local core = '6.6';
+local web = '6.6.1';
+local ftl = '6.9';
 local store_publisher = 'stable-346';
 local distro_default = 'buster';
 local distros = ['bookworm', 'buster'];
@@ -24,17 +27,17 @@ local build(arch, test_ui) = [{
         {
             name: "web",
             image: "debian:bookworm-slim",
-            commands: [ "./web/build.sh" ]
+            commands: [ "./web/build.sh " + web ]
         },
         {
             name: "core",
             image: "debian:bookworm-slim",
-            commands: [ "./core/build.sh" ]
+            commands: [ "./core/build.sh " + core ]
         },
         {
             name: "ftl",
             image: "debian:bookworm-slim",
-            commands: [ "./ftl/build.sh" ]
+            commands: [ "./ftl/build.sh " + ftl ]
         },
     ] + [
         {

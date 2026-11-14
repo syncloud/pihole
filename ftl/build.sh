@@ -1,10 +1,10 @@
 #!/bin/bash -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-FTL_COMMIT=9cf6b1a22a495491d67e84790ae25079ce6c90e7
+VERSION=${1:?usage: build.sh <version>}
 NETTLE_VERSION=3.9
 
-${DIR}/../apt.sh wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd
+${DIR}/../apt.sh wget build-essential cmake git m4 libgmp-dev libidn2-dev libunistring-dev libreadline-dev xxd patch
 
 BUILD_DIR=${DIR}/../build/snap/FTL
 mkdir -p ${BUILD_DIR}/bin ${BUILD_DIR}/lib
@@ -21,16 +21,20 @@ make install
 ldconfig
 cd ${DIR}/../build
 
-${DIR}/../download-retry.sh https://github.com/cyberb/FTL/archive/${FTL_COMMIT}.tar.gz FTL-${FTL_COMMIT}.tar.gz
-tar xf FTL-${FTL_COMMIT}.tar.gz
-mv FTL-${FTL_COMMIT} FTL-src
+${DIR}/../download-retry.sh https://github.com/pi-hole/FTL/archive/v${VERSION}.tar.gz FTL-${VERSION}.tar.gz
+tar xf FTL-${VERSION}.tar.gz
+mv FTL-${VERSION} FTL-src
 cd FTL-src
+for p in ${DIR}/patches/*.patch; do
+  patch -p1 < ${p}
+done
 
 grep -rlE '/etc/pihole|/var/log/pihole|/run/pihole-FTL.pid' src | xargs sed -i \
   -e 's#/etc/pihole#/var/snap/pihole/current/etc/pihole#g' \
   -e 's#/var/log/pihole#/var/snap/pihole/common/log/pihole#g' \
   -e 's#/run/pihole-FTL.pid#/var/snap/pihole/common/ftl.pid#g'
 
+export GIT_BRANCH=master GIT_VERSION=v${VERSION} GIT_TAG=v${VERSION} GIT_HASH=v${VERSION}
 mkdir cmake
 cd cmake
 cmake -DPIHOLE_SCRIPT=/snap/pihole/current/bin/pihole.sh -DFTL_EXIT_ON_RESTART=ON ..
