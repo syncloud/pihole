@@ -11,6 +11,5 @@ export async function capture(page: Page, name: string): Promise<void> {
 }
 
 export async function shoot(page: Page, name: string): Promise<void> {
-  await page.waitForTimeout(500)
   await capture(page, name)
 }

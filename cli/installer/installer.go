@@ -23,6 +23,7 @@ type Variables struct {
 	AppDir          string
 	DataDir         string
 	CommonDir       string
+	Domain          string
 	AuthUrl         string
 	AuthLocalSocket string
 }
@@ -122,11 +123,16 @@ func (i *Installer) GenerateConfig() error {
 	if err != nil {
 		return err
 	}
+	domain, err := i.platformClient.GetAppDomainName(App)
+	if err != nil {
+		return err
+	}
 	variables := Variables{
 		App:             App,
 		AppDir:          AppDir,
 		DataDir:         DataDir,
 		CommonDir:       CommonDir,
+		Domain:          domain,
 		AuthUrl:         authUrl,
 		AuthLocalSocket: i.platformClient.GetAuthLocalSocket(),
 	}

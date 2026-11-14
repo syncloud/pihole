@@ -110,6 +110,12 @@ def test_web_action_gravity(device):
     assert 'Done.' in output, output
 
 
+def test_dns_rate_limit_disabled(device):
+    output = device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
+                            ' http://localhost/api/config/dns/rateLimit')
+    assert '"count":0' in output, output
+
+
 def test_web_action_restartdns(device):
     pid = main_pid(device, 'ftl')
     device.run_ssh('curl -s --max-time 30 --unix-socket /var/snap/pihole/current/ftl.socket'
