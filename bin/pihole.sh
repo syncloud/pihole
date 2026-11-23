@@ -1,5 +1,6 @@
 #!/bin/bash
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
+export PATH=${DIR}/bin:${PATH}
 case "$1" in
     -g|updateGravity)
         exec flock ${SNAP_DATA}/gravity.lock ${DIR}/bin/pihole "$@"

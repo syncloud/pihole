@@ -104,6 +104,13 @@ def test_cli_gravity_concurrent(device):
             run.result()
 
 
+def test_cli_deny(device):
+    device.run_ssh('snap run pihole.cli deny cli-deny.example.com')
+    assert 'cli-deny.example.com' in device.run_ssh('snap run pihole.cli deny -l')
+    device.run_ssh('snap run pihole.cli deny remove cli-deny.example.com')
+    assert 'cli-deny.example.com' not in device.run_ssh('snap run pihole.cli deny -l')
+
+
 def test_web_action_gravity(device):
     output = device.run_ssh('curl -s --max-time 600 --unix-socket /var/snap/pihole/current/ftl.socket'
                             ' -X POST http://localhost/api/action/gravity')

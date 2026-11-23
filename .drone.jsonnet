@@ -1,7 +1,8 @@
 local name = "pihole";
 local platform = '26.10.02';
-local nginx = '1.30.6';
+local nginx = '1.30.7';
 local core = '6.6';
+local jq = '1.8.2';
 local web = '6.6.1';
 local ftl = '6.9';
 local store_publisher = 'stable-346';
@@ -32,7 +33,7 @@ local build(arch, test_ui) = [{
         {
             name: "core",
             image: "debian:bookworm-slim",
-            commands: [ "./core/build.sh " + core ]
+            commands: [ "./core/build.sh " + core + " " + jq ]
         },
         {
             name: "ftl",
