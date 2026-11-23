@@ -46,17 +46,20 @@ func TestSeed_EmptyDatabaseGetsDefaults(t *testing.T) {
 
 	require.NoError(t, g.Seed())
 
-	assert.Equal(t, []string{"INSERT OR IGNORE INTO adlist (address) VALUES ('https://lists.example/hosts');"}, runner.sql)
+	assert.Equal(t, []string{
+		"DELETE FROM adlist WHERE address IN ('https://mirror1.malwaredomains.com/files/justdomains', 'https://hosts-file.net/ad_servers.txt');",
+		"INSERT OR IGNORE INTO adlist (address) VALUES ('https://lists.example/hosts');",
+	}, runner.sql)
 }
 
-func TestSeed_KeepsExistingAdlists(t *testing.T) {
+func TestSeed_KeepsExistingAdlistsAndRemovesDeadOnes(t *testing.T) {
 	runner := &fakeRunner{count: "3"}
 	g := newGravity(t, runner)
 	touch(t, g.Db)
 
 	require.NoError(t, g.Seed())
 
-	assert.Empty(t, runner.sql)
+	assert.Equal(t, []string{"DELETE FROM adlist WHERE address IN ('https://mirror1.malwaredomains.com/files/justdomains', 'https://hosts-file.net/ad_servers.txt');"}, runner.sql)
 }
 
 func TestSeed_ImportsLegacyIntoExistingDatabase(t *testing.T) {
@@ -67,13 +70,14 @@ func TestSeed_ImportsLegacyIntoExistingDatabase(t *testing.T) {
 
 	require.NoError(t, g.Seed())
 
-	require.Len(t, runner.sql, 1)
+	require.Len(t, runner.sql, 2)
 	assert.Contains(t, runner.sql[0], "ATTACH DATABASE '"+g.LegacyDb+"' AS legacy;")
+	assert.Equal(t, "DELETE FROM adlist WHERE address IN ('https://mirror1.malwaredomains.com/files/justdomains', 'https://hosts-file.net/ad_servers.txt');", runner.sql[1])
 	assert.NoFileExists(t, g.LegacyDb)
 }
 
 func TestSeed_MovesLegacyIntoPlaceWithoutDatabase(t *testing.T) {
-	runner := &fakeRunner{}
+	runner := &fakeRunner{count: "6"}
 	g := newGravity(t, runner)
 	touch(t, g.LegacyDb)
 
@@ -81,7 +85,7 @@ func TestSeed_MovesLegacyIntoPlaceWithoutDatabase(t *testing.T) {
 
 	assert.FileExists(t, g.Db)
 	assert.NoFileExists(t, g.LegacyDb)
-	assert.Empty(t, runner.sql)
+	assert.Equal(t, []string{"DELETE FROM adlist WHERE address IN ('https://mirror1.malwaredomains.com/files/justdomains', 'https://hosts-file.net/ad_servers.txt');"}, runner.sql)
 }
 
 func TestSeed_WaitsForDatabaseLock(t *testing.T) {
@@ -91,7 +95,7 @@ func TestSeed_WaitsForDatabaseLock(t *testing.T) {
 
 	require.NoError(t, g.Seed())
 
-	require.Len(t, runner.args, 2)
+	require.Len(t, runner.args, 3)
 	for _, args := range runner.args {
 		assert.Equal(t, []string{"sqlite3", "-cmd", ".timeout 30000", g.Db}, args[:4])
 	}

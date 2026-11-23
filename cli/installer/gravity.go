@@ -17,20 +17,31 @@ type Gravity struct {
 	Runner         Runner
 }
 
+var deadAdlists = []string{
+	"https://mirror1.malwaredomains.com/files/justdomains",
+	"https://hosts-file.net/ad_servers.txt",
+}
+
 func (g *Gravity) Seed() error {
 	if exists(g.LegacyDb) {
 		if !exists(g.Db) {
-			return os.Rename(g.LegacyDb, g.Db)
-		}
-		if err := g.importLegacy(); err != nil {
-			return fmt.Errorf("import %s: %w", g.LegacyDb, err)
-		}
-		if err := os.Remove(g.LegacyDb); err != nil {
-			return err
+			if err := os.Rename(g.LegacyDb, g.Db); err != nil {
+				return err
+			}
+		} else {
+			if err := g.importLegacy(); err != nil {
+				return fmt.Errorf("import %s: %w", g.LegacyDb, err)
+			}
+			if err := os.Remove(g.LegacyDb); err != nil {
+				return err
+			}
 		}
 	}
 	if !exists(g.Db) {
 		return g.writeAdlistsFile()
+	}
+	if err := g.removeDeadAdlists(); err != nil {
+		return fmt.Errorf("remove dead adlists: %w", err)
 	}
 	count, err := g.adlistCount()
 	if err != nil {
@@ -48,6 +59,10 @@ func (g *Gravity) importLegacy() error {
 			" INSERT OR IGNORE INTO adlist (address, enabled, comment) SELECT address, enabled, comment FROM legacy.adlist;"+
 			" INSERT OR IGNORE INTO domainlist (type, domain, enabled, comment) SELECT type, domain, enabled, comment FROM legacy.domainlist;",
 		g.LegacyDb))
+}
+
+func (g *Gravity) removeDeadAdlists() error {
+	return g.exec(fmt.Sprintf("DELETE FROM adlist WHERE address IN ('%s');", strings.Join(deadAdlists, "', '")))
 }
 
 func (g *Gravity) adlistCount() (int, error) {

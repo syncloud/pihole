@@ -10,5 +10,11 @@ export async function loginViaAuthelia(page: Page) {
   await page.locator('input#username-textfield').fill(username)
   await page.locator('input#password-textfield').fill(password)
   await page.locator('button#sign-in-button').click()
-  await expect(page.locator('#total_queries')).toBeVisible()
+  const dashboard = page.locator('#total_queries')
+  const skipPasskey = page.getByTestId('passkey-skip')
+  await expect(dashboard.or(skipPasskey)).toBeVisible()
+  if (await skipPasskey.isVisible()) {
+    await skipPasskey.click()
+  }
+  await expect(dashboard).toBeVisible()
 }
