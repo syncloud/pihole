@@ -1,7 +1,8 @@
 #!/bin/sh -ex
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-VERSION=${1:?usage: build.sh <version>}
+VERSION=${1:?usage: build.sh <version> <jq version>}
+JQ_VERSION=${2:?usage: build.sh <version> <jq version>}
 
 ${DIR}/../apt.sh wget
 
@@ -37,6 +38,15 @@ sed -i 's#piholeDir="/etc/${basename}"#piholeDir="/var/snap/pihole/current/etc/p
 grep -q 'piholeDir="/var/snap/pihole/current/etc/pihole"' gravity.sh
 sed -i 's#/etc/pihole/gravity.db#/var/snap/pihole/current/etc/pihole/gravity.db#' advanced/Templates/gravity_copy.sql
 grep -q "'/var/snap/pihole/current/etc/pihole/gravity.db'" advanced/Templates/gravity_copy.sql
+
+sed -i 's#^\( *chaos_api_list=\)"$(.*local\.api\.ftl.*)"$#\1"\\"http://localhost/api/\\""#' advanced/Scripts/api.sh
+grep -qF 'chaos_api_list="\"http://localhost/api/\""' advanced/Scripts/api.sh
+sed -i 's#curl #curl --unix-socket /var/snap/pihole/current/ftl.socket #g' advanced/Scripts/api.sh
+if grep 'curl ' advanced/Scripts/api.sh | grep -qv -- '--unix-socket'; then exit 1; fi
+
+${DIR}/../download-retry.sh https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-$(dpkg --print-architecture) ${BUILD_DIR}/bin/jq
+chmod +x ${BUILD_DIR}/bin/jq
+${BUILD_DIR}/bin/jq --version
 
 cp pihole ${BUILD_DIR}/bin
 cp -r advanced ${BUILD_DIR}
